@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import Trophy from '../assets/trophy.svg';
 import Loginout from '../assets/loginout.svg';
@@ -7,8 +6,7 @@ import AdminPanel from '../assets/adminpanel.svg';
 import Profile from '../assets/profile.svg';
 import Wallet from '../assets/wallet.svg';
 
-export default function Navbar() {
-    const [role, setRole] = useState(null);
+export default function Navbar({ role, setRole }) {
 
     const toggleRole = () => {
         if (role === null) setRole("user");
