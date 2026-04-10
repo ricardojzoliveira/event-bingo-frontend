@@ -5,6 +5,7 @@ export const ALL_CARDS = {
     prizePerLine: "€50",
     fullPrize: "€500",
     progress: "2/9",
+    isPurchased: true,
     events: [
       { sport: "Football", team1: "FC Porto", team2: "Benfica", prediction: "FC Porto wins", date: "15/03/2026", status: "won" },
       { sport: "Football", team1: "Sporting", team2: "Braga", prediction: "Over 2.5 goals", date: "16/03/2026", status: "pending" },
@@ -24,6 +25,7 @@ export const ALL_CARDS = {
     prizePerLine: "€100",
     fullPrize: "€2000",
     progress: "0/16",
+    isPurchased: true,
     events: [
       { sport: "Basketball", team1: "Lakers", team2: "Warriors", prediction: "Lakers win", date: "14/03/2026", status: "pending" },
       { sport: "Football", team1: "Real Madrid", team2: "Barcelona", prediction: "Real Madrid wins", date: "15/03/2026", status: "pending" },
@@ -50,6 +52,7 @@ export const ALL_CARDS = {
     prizePerLine: "€200",
     fullPrize: "€5000",
     progress: "0/25",
+    isPurchased: false,
     events: [
       { sport: "Football", team1: "Real Madrid", team2: "Benfica", prediction: "Real Madrid wins", date: "15/03/2026", status: "pending" },
       { sport: "Football", team1: "Barcelona", team2: "FC Porto", prediction: "FC Porto wins", date: "16/03/2026", status: "pending" },

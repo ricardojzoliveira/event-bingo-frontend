@@ -14,7 +14,7 @@ function App() {
       <main className="flex-grow"> 
         <Routes>
           <Route path="/card/:id" element={<GamePage role={role} />} />
-          <Route path="/" element={<Homepage />} />
+          <Route path="/" element={<Homepage role={role} setRole={setRole}/>} />
         </Routes>
       </main>
     </div>
