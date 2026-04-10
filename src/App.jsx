@@ -8,10 +8,10 @@ function App() {
   const [role, setRole] = useState(null);
 
   return (
-    <div className="min-h-screen bg-[#010B13] text-white">
+    <div className="min-h-screen bg-[#010B13] text-white flex flex-col">
       <Navbar role={role} setRole={setRole} />
       
-      <main className="p-6">
+      <main className="flex-grow"> 
         <Routes>
           <Route path="/card/:id" element={<GamePage role={role} />} />
           <Route path="/" element={<Homepage />} />

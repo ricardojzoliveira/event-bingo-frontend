@@ -34,39 +34,41 @@ export default function GamePage({ role }) {
     };
 
     return (
-        <div className="p-6 md:p-12 max-w-5xl mx-auto space-y-8">
-            
-            {showSuccessMsg && (
-                <div className="bg-green-500/10 border border-green-500/50 p-4 rounded-xl text-green-500 text-center font-medium animate-in fade-in zoom-in duration-300">
-                    Card purchased successfully! Good luck.
-                </div>
-            )}
-
-            <div className="border-2 border-bingo-red rounded-2xl p-6 bg-[#02182B] shadow-[0_0_20px_rgba(220,38,38,0.1)] text-white">
-                <div className="flex justify-between items-start mb-8">
-                    <div>
-                        <h2 className="text-3xl font-black tracking-tight">{currentCard.title}</h2>
-                        <p className="text-slate-400 text-sm">Card {currentCard.size} • {currentCard.events.length} events</p>
+        <div className="min-h-screen bg-bingo-dark p-6 md:p-12">
+            <div className="max-w-5xl mx-auto space-y-8">
+                
+                {showSuccessMsg && (
+                    <div className="bg-green-500/10 border border-green-500/50 p-4 rounded-xl text-green-500 text-center font-medium animate-in fade-in zoom-in duration-300">
+                        Card purchased successfully! Good luck.
                     </div>
-                    <img src={Trophy} alt="Trophy" className="w-8 h-8" />
+                )}
+
+                <div className="border-2 border-bingo-red rounded-2xl p-6 bg-[#02182B] shadow-[0_0_20px_rgba(220,38,38,0.1)] text-white">
+                    <div className="flex justify-between items-start mb-8">
+                        <div>
+                            <h2 className="text-3xl font-black tracking-tight">{currentCard.title}</h2>
+                            <p className="text-slate-400 text-sm">Card {currentCard.size} • {currentCard.events.length} events</p>
+                        </div>
+                        <img src={Trophy} alt="Trophy" className="w-8 h-8" />
+                    </div>
+                    <div className="flex flex-col md:flex-row gap-4">
+                        <StatBox label="Prize per Line" value={currentCard.prizePerLine} />
+                        <StatBox label="Full Card Prize" value={currentCard.fullPrize} />
+                        <StatBox label="Progress" value={dynamicProgress} />
+                    </div>
                 </div>
-                <div className="flex flex-col md:flex-row gap-4">
-                    <StatBox label="Prize per Line" value={currentCard.prizePerLine} />
-                    <StatBox label="Full Card Prize" value={currentCard.fullPrize} />
-                    <StatBox label="Progress" value={dynamicProgress} />
-                </div>
+
+                {(!isLogged || !hasPurchased) && (
+                    <GuestCTA role={role} onBuy={handleBuyCard} />
+                )}
+
+                <BingoCard 
+                    data={currentCard} 
+                    isLogged={isLogged && hasPurchased} 
+                />
+
+                {hasPurchased && <BingoLegend />}
             </div>
-
-            {(!isLogged || !hasPurchased) && (
-                <GuestCTA role={role} onBuy={handleBuyCard} />
-            )}
-
-            <BingoCard 
-                data={currentCard} 
-                isLogged={isLogged && hasPurchased} 
-            />
-
-            {hasPurchased && <BingoLegend />}
         </div>
     );
 }

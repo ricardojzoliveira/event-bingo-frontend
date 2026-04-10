@@ -1,32 +1,14 @@
 import { Lock, Grid3x3, DollarSign, Trophy } from "lucide-react";
+import { Link } from "react-router-dom";
+
+import { ALL_CARDS } from "../data/Cards";
 
 export default function Homepage() {
-  const cards = [
-    {
-      title: "Premium Football Card",
-      date: "03/10/2026",
-      size: "3x3",
-      events: 9,
-      line: 50,
-      full: 500,
-    },
-    {
-      title: "Multi-Sport Card",
-      date: "11/03/2026",
-      size: "4x4",
-      events: 16,
-      line: 75,
-      full: 1000,
-    },
-    {
-      title: "Champions League Card",
-      date: "12/03/2026",
-      size: "5x5",
-      events: 25,
-      line: 100,
-      full: 2000,
-    },
-  ];
+
+  const cardsList = Object.entries(ALL_CARDS).map(([key, value]) => ({
+    ...value,
+    id: key
+  }));
 
   const steps = [
     {
@@ -66,9 +48,9 @@ export default function Homepage() {
       </header>
 
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl">
-        {cards.map((card, index) => (
+        {cardsList.map((card, index) => (
           <div
-            key={index}
+            key={card.id || index}
             className="border-2 border-bingo-red rounded-[2rem] bg-slate-900/40 flex flex-col overflow-hidden"
           >
             <div className="p-6 border-b border-bingo-red">
@@ -82,26 +64,22 @@ export default function Homepage() {
 
             <div className="p-6 space-y-2 bg-slate-900/20 grow">
               <div className="flex items-center gap-2 text-xs">
-                <Grid3x3 size={15} className="text-blue-600"/>
+                <Grid3x3 size={15} className="text-blue-600" />
                 <span className="text-slate-400 font-medium">Size:</span>
                 <span className="text-white font-bold">{card.size}</span>
-                <span className="text-slate-500">({card.events} events)</span>
+                <span className="text-slate-500">({card.events?.length || 0} events)</span>
               </div>
 
               <div className="flex items-center gap-2 text-xs">
                 <DollarSign size={15} className="text-green-500" />
-                <span className="text-slate-400 font-medium">
-                  Prize per line:
-                </span>
-                <span className="text-green-500 font-bold">€{card.line}</span>
+                <span className="text-slate-400 font-medium">Prize per line:</span>
+                <span className="text-green-500 font-bold">€{card.prizePerLine || card.line}</span>
               </div>
 
               <div className="flex items-center gap-2 text-xs">
                 <Trophy size={15} className="text-orange-500" />
-                <span className="text-slate-400 font-medium">
-                  Full card prize:
-                </span>
-                <span className="text-orange-500 font-bold">€{card.full}</span>
+                <span className="text-slate-400 font-medium">Full card prize:</span>
+                <span className="text-orange-500 font-bold">€{card.fullPrize || card.full}</span>
               </div>
 
               <div className="mt-4 pt-4 border-t border-bingo-red">
@@ -120,9 +98,12 @@ export default function Homepage() {
             </div>
 
             <div className="px-6 pb-6">
-              <button className="w-full py-3 bg-bingo-red text-white font-black rounded-xl hover:brightness-110 uppercase text-[11px] tracking-wider transition-all">
+              <Link
+                to={`/card/${card.id}`}
+                className="block w-full py-3 bg-bingo-red text-white font-black rounded-xl hover:brightness-110 uppercase text-[11px] tracking-wider transition-all text-center"
+              >
                 View Card
-              </button>
+              </Link>
             </div>
           </div>
         ))}
