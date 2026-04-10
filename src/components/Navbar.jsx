@@ -1,11 +1,6 @@
 import { Link } from "react-router-dom";
-import Trophy from '../assets/trophy.svg';
-import Loginout from '../assets/loginout.svg';
-import Support from '../assets/support.svg';
-import AdminPanel from '../assets/adminpanel.svg';
-import Profile from '../assets/profile.svg';
-import Wallet from '../assets/wallet.svg';
 import { useNavigate } from "react-router-dom";
+import { Trophy, Headset, LogIn, User, Wallet, LogOut, LayoutDashboard } from "lucide-react";
 
 export default function Navbar({ role, setRole }) {
 
@@ -33,7 +28,7 @@ export default function Navbar({ role, setRole }) {
                     to="/"
                     className="text-2xl font-bold flex items-center gap-2 hover:opacity-80 transition-opacity"
                 >
-                    <img src={Trophy} alt="Trophy" className="w-8 h-8" />
+                    <Trophy size={30} className="text-bingo-red"/>
                     <span>Event Bingo</span>
                 </Link>
 
@@ -51,13 +46,13 @@ export default function Navbar({ role, setRole }) {
                     <>
                         <li>
                             <Link to="/support" className={btnStyle}>
-                                <img src={Support} alt="Support" className="w-6 h-6" />
+                                <Headset size={20} />
                                 Support
                             </Link>
                         </li>
                         <li>
                             <button onClick={() => setRole("user")} className={btnStyle}>
-                                <img src={Loginout} alt="Loginout" className="w-6 h-6" />
+                                <LogIn size={20} />
                                 Login
                             </button>
                         </li>
@@ -68,25 +63,25 @@ export default function Navbar({ role, setRole }) {
                     <>
                         <li>
                             <Link to="/profile" className={btnStyle}>
-                                <img src={Profile} alt="Profile" className="w-6 h-6" />
+                                <User size={20} />
                                 Profile
                             </Link>
                         </li>
                         <li>
                             <Link to="/support" className={btnStyle}>
-                                <img src={Support} alt="Support" className="w-6 h-6" />
+                                <Headset size={20} />
                                 Support
                             </Link>
                         </li>
                         <li>
                             <Link to="/wallet" className={btnStyle}>
-                                <img src={Wallet} alt="Wallet" className="w-6 h-6" />
+                                <Wallet size={20} />
                                 Wallet
                             </Link>
                         </li>
                         <li>
                             <button onClick={handleLogout} className={btnStyle}>
-                                <img src={Loginout} alt="Loginout" className="w-6 h-6" />
+                                <LogOut size={20} />
                                 Logout
                             </button>
                         </li>
@@ -97,19 +92,19 @@ export default function Navbar({ role, setRole }) {
                     <>
                         <li>
                             <Link to="/profile" className={btnStyle}>
-                                <img src={Profile} alt="Profile" className="w-6 h-6" />
+                                <User size={20} />
                                 Profile
                             </Link>
                         </li>
                         <li>
                             <Link to="/admin" className={btnStyle}>
-                                <img src={AdminPanel} alt="AdminPanel" className="w-6 h-6" />
+                                <LayoutDashboard size={20} />
                                 Admin Panel
                             </Link>
                         </li>
                         <li>
                             <button onClick={handleLogout} className={btnStyle}>
-                                <img src={Loginout} alt="Loginout" className="w-6 h-6" />
+                                <LogOut size={20} />
                                 Logout
                             </button>
                         </li>
