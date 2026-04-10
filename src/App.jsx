@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import GamePage from "./pages/GamePage";
+import Homepage from './pages/Homepage.jsx'
 
 function App() {
   const [role, setRole] = useState(null);
@@ -13,7 +14,7 @@ function App() {
       <main className="p-6">
         <Routes>
           <Route path="/card/:id" element={<GamePage role={role} />} />
-          <Route path="/" element={<div className="text-center py-20">Home (Colega)</div>} />
+          <Route path="/" element={<Homepage />} />
         </Routes>
       </main>
     </div>

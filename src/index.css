@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bingo-dark: #02182B;
-  --color-bingo-red: #D7263D;
+    --color-bingo-red: #d7263d;
+    --color-bingo-dark: #02182B;
 }

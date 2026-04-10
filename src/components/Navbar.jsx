@@ -5,8 +5,11 @@ import Support from '../assets/support.svg';
 import AdminPanel from '../assets/adminpanel.svg';
 import Profile from '../assets/profile.svg';
 import Wallet from '../assets/wallet.svg';
+import { useNavigate } from "react-router-dom";
 
 export default function Navbar({ role, setRole }) {
+
+    const navigate = useNavigate();
 
     const toggleRole = () => {
         if (role === null) setRole("user");
@@ -14,7 +17,11 @@ export default function Navbar({ role, setRole }) {
         else setRole(null);
     };
 
-    const handleLogout = () => setRole(null);
+    const handleLogout = () => {
+        setRole(null);
+        navigate('/');
+    };
+        
 
     const btnStyle = "bg-bingo-red text-bingo-dark font-bold py-2 px-4 rounded-lg hover:brightness-110 flex items-center gap-2 transition-all shadow-md active:scale-95 whitespace-nowrap";
 
