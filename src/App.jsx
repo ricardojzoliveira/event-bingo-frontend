@@ -1,15 +1,8 @@
+import Homepage from './pages/Homepage.jsx'
+
 function App() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-slate-900 text-white font-sans">
-      <div className="p-8 bg-slate-800 rounded-2xl shadow-2xl border border-slate-700">
-        <h1 className="text-4xl font-extrabold text-blue-400 mb-4">
-          Event Bingo 🎲
-        </h1>
-        <p className="text-slate-400">
-          Tailwind v4 + Vite + React funcionando!
-        </p>
-      </div>
-    </div>
+    <Homepage />
   )
 }
 
