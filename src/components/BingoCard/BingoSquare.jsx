@@ -43,7 +43,6 @@ export default function BingoSquare({ event, isLogged }) {
     <div
       className={`border-2 rounded-xl p-2 sm:p-4 flex flex-col gap-2 sm:gap-3 transition-all min-w-[130px] ${currentStatus.border} ${currentStatus.bg}`}
     >
-      {/* Header do Square */}
       <div className="flex justify-between items-start gap-1">
         <span
           className={`text-[8px] sm:text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider truncate ${currentSportStyle}`}
@@ -62,7 +61,6 @@ export default function BingoSquare({ event, isLogged }) {
         </div>
       </div>
 
-      {/* Equipas */}
       <div className="text-center my-1">
         <p className="text-[11px] sm:text-sm font-bold text-white leading-tight break-words line-clamp-2">
           {event.team1}
@@ -75,12 +73,10 @@ export default function BingoSquare({ event, isLogged }) {
         </p>
       </div>
 
-      {/* Prediction Badge */}
       <div className="bg-white text-slate-900 text-center py-1 rounded-lg font-black text-[9px] sm:text-xs shadow-inner uppercase tracking-tighter sm:tracking-normal">
         {event.prediction}
       </div>
 
-      {/* Footer do Square */}
       <div className="flex flex-col items-center gap-0.5 mt-auto pt-2">
         <span className="text-[8px] sm:text-[10px] text-slate-400 whitespace-nowrap">
           📅 {event.date}

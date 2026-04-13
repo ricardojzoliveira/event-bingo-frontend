@@ -12,8 +12,6 @@ export default function BingoCard({ data, isLogged }) {
         <div
           className="grid gap-3 sm:gap-6 mx-auto"
           style={{
-            // No mobile (ecrãs < 640px) ele tenta ajustar.
-            // No desktop mantém o gridSize original.
             gridTemplateColumns:
               window.innerWidth < 640
                 ? `repeat(auto-fit, minmax(140px, 1fr))`
