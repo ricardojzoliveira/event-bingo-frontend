@@ -1,7 +1,7 @@
-import { useAdminEvents, useDeleteEvent, useUpdateEventStatus } from "../hooks/useAdmin";
+import { useAdminEvents, useDeleteEvent, useUpdateEventStatus } from "../../hooks/useAdmin";
 import { Plus, Search, Filter, Edit2, Trash2, CheckCircle, XCircle, Clock, ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
-import LoadingState from "../components/common/LoadingState";
+import LoadingState from "../../components/common/LoadingState";
 
 export default function EventManagement() {
   const { data: events, isLoading } = useAdminEvents();

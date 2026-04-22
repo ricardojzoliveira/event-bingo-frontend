@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { useAdminEvent, useUpdateEvent } from "../hooks/useAdmin";
+import { useAdminEvent, useUpdateEvent } from "../../hooks/useAdmin";
 import { ChevronLeft, Trophy, Target, Save, Calendar, Clock } from "lucide-react";
-import LoadingState from "../components/common/LoadingState";
+import LoadingState from "../../components/common/LoadingState";
 
 export default function EditEvent() {
   const { id } = useParams();

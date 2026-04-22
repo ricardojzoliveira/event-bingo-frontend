@@ -4,13 +4,13 @@ import Navbar from "./components/Navbar";
 import GamePage from "./pages/GamePage";
 import Homepage from "./pages/Homepage.jsx";
 import NotFound from "./pages/NotFound.jsx";
-import LoginPage from "./pages/LoginPage.jsx";
-import Logout from "./pages/LogoutPage.jsx";
+import LoginPage from "./pages/auth/LoginPage.jsx";
+import Logout from "./pages/auth/LogoutPage.jsx";
 import AdminPanel from "./components/admin/AdminPanel.jsx";
-import EventManagement from "./pages/EventsManagement.jsx";
-import CreateEvent from "./pages/CreateEvent.jsx";
+import EventManagement from "./pages/events/EventsManagement.jsx";
+import CreateEvent from "./pages/events/CreateEvent.jsx";
 import { Navigate } from "react-router-dom";
-import EditEvent from "./pages/EditEvent.jsx";
+import EditEvent from "./pages/events/EditEvent.jsx";
 
 function App() {
   const [role, setRole] = useState(() => {
