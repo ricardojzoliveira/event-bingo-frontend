@@ -1,6 +1,16 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Trophy, Headset, LogIn, User, Wallet, LogOut, LayoutDashboard, Menu, X } from "lucide-react";
+import {
+  Trophy,
+  Headset,
+  LogIn,
+  User,
+  Wallet,
+  LogOut,
+  LayoutDashboard,
+  Menu,
+  X,
+} from "lucide-react";
 
 export default function Navbar({ role, setRole }) {
   const navigate = useNavigate();
@@ -75,15 +85,10 @@ export default function Navbar({ role, setRole }) {
               </Link>
             </li>
             <li className="w-full md:w-auto">
-              <button
-                onClick={() => {
-                  setRole("user");
-                  closeMenu();
-                }}
-                className={btnStyle}
-              >
-                <LogIn size={20} /> Login
-              </button>
+              <Link to="/login" className={btnStyle}>
+                <LogIn size={20} />
+                Login
+              </Link>
             </li>
           </>
         )}

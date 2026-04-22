@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import GamePage from "./pages/GamePage";
 import Homepage from "./pages/Homepage.jsx";
 import NotFound from "./pages/NotFound.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
 
 function App() {
   const [role, setRole] = useState(null);
@@ -19,7 +20,7 @@ function App() {
             path="/"
             element={<Homepage role={role} setRole={setRole} />}
           />
-
+          <Route path="/login" element={<LoginPage setRole={setRole}/>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

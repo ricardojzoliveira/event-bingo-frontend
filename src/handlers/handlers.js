@@ -102,14 +102,31 @@ export const handlers = [
     return HttpResponse.json(card);
   }),
 
-  // Login
   http.post("/api/login", async ({ request }) => {
-    const { username } = await request.json();
-    return HttpResponse.json({
-      id: "user-123",
-      username,
-      role: "user",
-      balance: 1000,
-    });
+    const { username, password } = await request.json();
+    await delay(1000); 
+
+    if (username === "userTest" && password === "user123") {
+      return HttpResponse.json({
+        id: "user-123",
+        username: "userTest",
+        role: "user",
+        balance: 1000,
+      });
+    }
+
+    if (username === "admin" && password === "admin123") {
+      return HttpResponse.json({
+        id: "admin-999",
+        username: "admin",
+        role: "admin",
+        balance: 999999,
+      });
+    }
+
+    return new HttpResponse(
+      JSON.stringify({ message: "Credenciais inválidas. Tenta userTest/user123 ou admin/admin123" }),
+      { status: 401, headers: { "Content-Type": "application/json" } }
+    );
   }),
 ];
