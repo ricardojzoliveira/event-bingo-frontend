@@ -10,7 +10,10 @@ import AdminPanel from "./components/admin/AdminPanel.jsx";
 import { Navigate } from "react-router-dom";
 
 function App() {
-  const [role, setRole] = useState(null);
+  const [role, setRole] = useState(() => {
+    return localStorage.getItem("user_role") || null;
+  });
+
 
   return (
     <div className="min-h-screen flex flex-col">

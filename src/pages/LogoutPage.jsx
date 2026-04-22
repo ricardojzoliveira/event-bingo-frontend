@@ -1,18 +1,16 @@
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 export default function Logout({ setRole }) {
-    const navigate = useNavigate();
-    const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        setRole(null);
+  useEffect(() => {
+    localStorage.removeItem("user_role");
+    
+    setRole(null);
+    
+    navigate("/");
+  }, [setRole, navigate]);
 
-        queryClient.clear();
-
-        navigate("/");
-    }, [setRole, navigate, queryClient]);
-
-    return null;
+  return null;
 }

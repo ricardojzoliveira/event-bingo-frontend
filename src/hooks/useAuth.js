@@ -13,6 +13,7 @@ export function useLogin(setRole, onSuccesCallback){
             return response.json();
         },
         onSuccess: (data) => {
+            localStorage.setItem("user_role", data.role);
             setRole(data.role);
             if (onSuccesCallback) onSuccesCallback(data);
         },
