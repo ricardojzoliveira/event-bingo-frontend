@@ -1,4 +1,4 @@
-import { useAdminEvents, useDeleteEvent } from "../hooks/useAdmin";
+import { useAdminEvents, useDeleteEvent, useUpdateEventStatus } from "../hooks/useAdmin";
 import { Plus, Search, Filter, Edit2, Trash2, CheckCircle, XCircle, Clock, ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import LoadingState from "../components/common/LoadingState";
@@ -6,6 +6,7 @@ import LoadingState from "../components/common/LoadingState";
 export default function EventManagement() {
   const { data: events, isLoading } = useAdminEvents();
   const { mutate: deleteEvent} = useDeleteEvent();
+  const { mutate: updateStatus } = useUpdateEventStatus();
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this event ?")){
@@ -80,14 +81,28 @@ export default function EventManagement() {
                   <td className="p-4 text-slate-400">{event.date}</td>
                   <td className="p-4">
                     <div className="flex justify-center gap-2 text-slate-600">
-                      <CheckCircle size={18} className={event.status === 'won' ? "text-green-500" : ""} />
-                      <XCircle size={18} className={event.status === 'lost' ? "text-red-500" : ""} />
-                      <Clock size={18} className={event.status === 'pending' ? "text-white" : ""} />
+                      <button
+                        onClick={() => updateStatus({ eventId: event.id, status: "won"})} 
+                        className={`p-1 rounded-md transition-all ${event.status === 'won' ? 'text-green-500 bg-green-500/10' : 'text-slate-600 hover:text-green-500'}`}>
+                        <CheckCircle size={18} className={event.status === 'won' ? "text-green-500" : ""} />
+                      </button>
+                      <button
+                        onClick={() => updateStatus({ eventId: event.id, status: "lost"})}
+                        className={`p-1 rounded-md transition-all ${event.status === 'lost' ? 'text-red-500 bg-red-500/10' : 'text-slate-600 hover:text-red-500'}`}>
+                        <XCircle size={18} className={event.status === 'lost' ? "text-red-500" : ""} />
+                      </button>
+                      <button
+                        onClick={() => updateStatus({ eventId: event.id, status: "pending"})}
+                        className={`p-1 rounded-md transition-all ${event.status === 'pending' ? 'text-white bg-white/10' : 'text-slate-600 hover:text-white'}`}>
+                        <Clock size={18} className={event.status === 'pending' ? "text-white" : ""} />
+                      </button>
                     </div>
                   </td>
                   <td className="p-4 text-center">
                     <div className="flex justify-center gap-3">
-                      <button className="text-blue-500 hover:text-blue-400"><Edit2 size={16}/></button>
+                      <Link to={`/admin/events/edit/${event.id}`}>
+                        <button className="text-blue-500 hover:text-blue-400"><Edit2 size={16}/></button>
+                      </Link>
                       <button onClick={() => handleDelete(event.id)} className="text-red-500 hover:text-red-400"><Trash2 size={16}/></button>
                     </div>
                   </td>

@@ -9,6 +9,7 @@ import AdminPanel from "./components/admin/AdminPanel.jsx";
 import EventManagement from "./pages/EventsManagement.jsx";
 import CreateEvent from "./pages/CreateEvent.jsx";
 import { Navigate } from "react-router-dom";
+import EditEvent from "./pages/EditEvent.jsx";
 
 function App() {
   const [role, setRole] = useState(null);
@@ -42,6 +43,8 @@ function App() {
             path="/admin/events/create"
             element={role === "admin" ? <CreateEvent /> : <Navigate to="/" />}
           />
+          <Route path="/admin/events/edit/:id" element={role === "admin" ? <EditEvent /> : <Navigate to="/" />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

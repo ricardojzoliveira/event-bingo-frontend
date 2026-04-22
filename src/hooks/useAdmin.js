@@ -46,3 +46,52 @@ export function useDeleteEvent() {
     }
   });
 }
+
+export function useUpdateEventStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ eventId, status }) => {
+      const response = await fetch(`/api/admin/events/${eventId}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      if (!response.ok) throw new Error("Error updating status");
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "events"] });
+    }
+  });
+}
+
+export function useAdminEvent(id) {
+  return useQuery({
+    queryKey: ["admin", "events", id], // Key específica para este evento
+    queryFn: async () => {
+      const response = await fetch("/api/admin/events");
+      const events = await response.json();
+      const found = events.find(e => e.id === id);
+      if (!found) throw new Error("Event not Found");
+      return found;
+    },
+  });
+}
+
+export function useUpdateEvent() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, eventData }) => {
+      const response = await fetch(`/api/admin/events/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(eventData),
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "events"] });
+    }
+  });
+}
