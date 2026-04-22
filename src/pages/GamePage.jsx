@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom"; 
-import { ALL_CARDS } from "../data/Cards";
+import { useCard } from "../hooks/useCards";
 
 import BingoCard from "../components/BingoCard/BingoCard";
 import BingoLegend from "../components/BingoCard/BingoLegend";
@@ -11,21 +11,29 @@ import { Trophy } from "lucide-react";
 export default function GamePage({ role }) {
     const { id } = useParams(); 
     
-    const currentCard = ALL_CARDS[id] || ALL_CARDS["1"];
+    const { data: currentCard, isLoading, isError } = useCard(id);
     
-    const [hasPurchased, setHasPurchased] = useState(currentCard.isPurchased && role === "user");
+    const [purchasedOverride, setPurchasedOverride] = useState(false);
     const [showSuccessMsg, setShowSuccessMsg] = useState(false);
 
-
-    useEffect(() => {
-        setHasPurchased(currentCard.isPurchased && role === "user");
-    }, [id, role, currentCard.isPurchased]);
-    
     const isLogged = role !== null;
     const isUser = role === "user"; 
 
-    const totalEvents = currentCard.events.length;
+    if (isLoading) return (
+        <div className="min-h-screen bg-bingo-dark flex items-center justify-center">
+            <div className="text-white font-black text-2xl animate-pulse">LOADING BINGO CARD...</div>
+        </div>
+    );
 
+    if (isError || !currentCard) return (
+        <div className="min-h-screen bg-bingo-dark flex items-center justify-center">
+            <div className="text-red-500 font-bold">Error: Card not found.</div>
+        </div>
+    );
+
+    const hasPurchased = (currentCard.isPurchased || purchasedOverride) && role === "user";
+
+    const totalEvents = currentCard.events?.length || 0;
     const wonEvents = hasPurchased 
         ? currentCard.events.filter(e => e.status === "won").length 
         : 0;
@@ -33,7 +41,7 @@ export default function GamePage({ role }) {
     const dynamicProgress = hasPurchased ? `${wonEvents}/${totalEvents}` : `--/${totalEvents}`;
 
     const handleBuyCard = () => {
-        setHasPurchased(true);
+        setPurchasedOverride(true);
         setShowSuccessMsg(true);
         setTimeout(() => setShowSuccessMsg(false), 4000);
     };
@@ -49,7 +57,6 @@ export default function GamePage({ role }) {
                 )}
 
                 <div className="border-2 border-bingo-red rounded-2xl p-6 bg-bingo-dark shadow-[0_0_20px_rgba(220,38,38,0.1)] text-white relative overflow-hidden">
-
                     <div className="flex justify-between items-start mb-8">
                         <div>
                             <h2 className="text-3xl font-black tracking-tight">{currentCard.title}</h2>

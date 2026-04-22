@@ -1,11 +1,16 @@
-export const ALL_CARDS = {
-  "1": {
+// src/mocks/handlers.js
+import { http, HttpResponse } from "msw";
+import { delay } from "msw";
+
+const ALL_CARDS_DATA = [
+  {
+    id: "1",
     title: "Champions League Final",
-    size: "3×3",
+    size: "3x3",
     prizePerLine: "€50",
     fullPrize: "€500",
-    progress: "2/9",
     isPurchased: true,
+    date: "10/03/2026",
     events: [
       { sport: "Football", team1: "FC Porto", team2: "Benfica", prediction: "FC Porto wins", date: "15/03/2026", status: "won" },
       { sport: "Football", team1: "Sporting", team2: "Braga", prediction: "Over 2.5 goals", date: "16/03/2026", status: "pending" },
@@ -18,14 +23,14 @@ export const ALL_CARDS = {
       { sport: "Football", team1: "Moreirense", team2: "Farense", prediction: "Moreirense wins", date: "23/03/2026", status: "pending" },
     ]
   },
-
-  "2": {
+  {
+    id: "2",
     title: "Multi-Sport Special",
-    size: "4×4",
+    size: "4x4",
     prizePerLine: "€100",
     fullPrize: "€2000",
-    progress: "0/16",
     isPurchased: true,
+    date: "11/03/2026",
     events: [
       { sport: "Basketball", team1: "Lakers", team2: "Warriors", prediction: "Lakers win", date: "14/03/2026", status: "pending" },
       { sport: "Football", team1: "Real Madrid", team2: "Barcelona", prediction: "Real Madrid wins", date: "15/03/2026", status: "pending" },
@@ -45,14 +50,14 @@ export const ALL_CARDS = {
       { sport: "Football", team1: "Arsenal", team2: "Chelsea", prediction: "Arsenal wins", date: "29/03/2026", status: "pending" }
     ]
   },
-
-  "3": {
+  {
+    id: "3",
     title: "European Football Bonanza",
-    size: "5×5",
+    size: "5x5",
     prizePerLine: "€200",
     fullPrize: "€5000",
-    progress: "0/25",
     isPurchased: false,
+    date: "12/03/2026",
     events: [
       { sport: "Football", team1: "Real Madrid", team2: "Benfica", prediction: "Real Madrid wins", date: "15/03/2026", status: "pending" },
       { sport: "Football", team1: "Barcelona", team2: "FC Porto", prediction: "FC Porto wins", date: "16/03/2026", status: "pending" },
@@ -81,4 +86,30 @@ export const ALL_CARDS = {
       { sport: "Football", team1: "PSG", team2: "Atlético", prediction: "Both score", date: "24/05/2026", status: "pending" }
     ]
   }
-};
+];
+
+export const handlers = [
+  http.get("/api/cards", async () => {
+    console.log("MSW: Enviando todos os cards");
+    await delay(1000);
+    return HttpResponse.json(ALL_CARDS_DATA);
+  }),
+
+  http.get("/api/cards/:id", ({ params }) => {
+    const { id } = params;
+    const card = ALL_CARDS_DATA.find((c) => c.id === id);
+    if (!card) return new HttpResponse(null, { status: 404 });
+    return HttpResponse.json(card);
+  }),
+
+  // Login
+  http.post("/api/login", async ({ request }) => {
+    const { username } = await request.json();
+    return HttpResponse.json({
+      id: "user-123",
+      username,
+      role: "user",
+      balance: 1000,
+    });
+  }),
+];

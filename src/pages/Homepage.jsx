@@ -1,22 +1,28 @@
 import { Lock, Grid3x3, DollarSign, Trophy, Check, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
-import { ALL_CARDS } from "../data/Cards";
+import { useCards } from "../hooks/useCards";
+import LoadingState from "../components/common/LoadingState";
 
 export default function Homepage({ role, setRole }) {
-  const cardsList = Object.entries(ALL_CARDS).map(([id, data]) => {
-    const wins = data.events.filter((e) => e.status === "won").length;
-    const losses = data.events.filter((e) => e.status === "lost").length;
-    const pending = data.events.filter((e) => e.status === "pending").length;
-    const total = data.events.length;
+  const { data: serverCards, isLoading, isError} = useCards();
+
+  if (isLoading) return <LoadingState message="Loading Cards"/>;
+
+  if (isError) return <div className="text-red-500 p-10 text-center">Error loading cards.</div>;
+
+  const cardsList = serverCards.map((card) => {
+    const wins = card.events.filter((e) => e.status === "won").length;
+    const losses = card.events.filter((e) => e.status === "lost").length;
+    const pending = card.events.filter((e) => e.status === "pending").length;
+    const total = card.events.length;
 
     return {
-      ...data,
-      id,
+      ...card,
       wins,
       losses,
       pending,
       total,
-      isPurchased: id === "1" || id === "2", 
+      isPurchased: card.id === "1" || card.id === "2", 
     };
   });
 
