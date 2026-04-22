@@ -6,6 +6,8 @@ import Homepage from "./pages/Homepage.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import AdminPanel from "./components/admin/AdminPanel.jsx";
+import EventManagement from "./pages/EventsManagement.jsx";
+import CreateEvent from "./pages/CreateEvent.jsx";
 import { Navigate } from "react-router-dom";
 
 function App() {
@@ -22,8 +24,24 @@ function App() {
             path="/"
             element={<Homepage role={role} setRole={setRole} />}
           />
-          <Route path="/login" element={<LoginPage setRole={setRole}/>} />
-          <Route path="/admin" element={role === "admin" ? <AdminPanel /> : <Navigate to="/" />} />
+          <Route path="/login" element={<LoginPage setRole={setRole} />} />
+
+          <Route
+            path="/admin"
+            element={
+              role === "admin" ? <AdminPanel /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/admin/events"
+            element={
+              role === "admin" ? <EventManagement /> : <Navigate to="/" />
+            }
+          />
+          <Route
+            path="/admin/events/create"
+            element={role === "admin" ? <CreateEvent /> : <Navigate to="/" />}
+          />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
