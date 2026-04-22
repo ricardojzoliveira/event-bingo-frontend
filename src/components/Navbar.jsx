@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Trophy,
   Headset,
@@ -12,21 +12,8 @@ import {
   X,
 } from "lucide-react";
 
-export default function Navbar({ role, setRole }) {
-  const navigate = useNavigate();
+export default function Navbar({ role }) {
   const [isOpen, setIsOpen] = useState(false);
-
-  const toggleRole = () => {
-    if (role === null) setRole("user");
-    else if (role === "user") setRole("admin");
-    else setRole(null);
-  };
-
-  const handleLogout = () => {
-    setRole(null);
-    setIsOpen(false);
-    navigate("/");
-  };
 
   const closeMenu = () => setIsOpen(false);
 
@@ -35,7 +22,6 @@ export default function Navbar({ role, setRole }) {
 
   return (
     <nav className="bg-bingo-dark text-white px-6 py-4 flex justify-between items-center shadow-md border-b-2 border-white relative z-50">
-      {/* LOGO E ESTADO */}
       <div className="flex items-center gap-6">
         <Link
           to="/"
@@ -45,16 +31,6 @@ export default function Navbar({ role, setRole }) {
           <Trophy size={30} className="text-bingo-red" />
           <span>Event Bingo</span>
         </Link>
-
-        <button
-          onClick={toggleRole}
-          className="hidden sm:block text-[10px] bg-slate-800 hover:bg-slate-700 px-2 py-1 rounded border border-slate-600 text-slate-400 uppercase tracking-wider"
-        >
-          Estado:{" "}
-          <span className="text-yellow-400 font-mono">
-            {role || "Visitante"}
-          </span>
-        </button>
       </div>
 
       <button
@@ -77,6 +53,7 @@ export default function Navbar({ role, setRole }) {
                 shadow-xl md:shadow-none
             `}
       >
+
         {!role && (
           <>
             <li className="w-full md:w-auto">
@@ -85,7 +62,7 @@ export default function Navbar({ role, setRole }) {
               </Link>
             </li>
             <li className="w-full md:w-auto">
-              <Link to="/login" className={btnStyle}>
+              <Link to="/login" onClick={closeMenu} className={btnStyle}>
                 <LogIn size={20} />
                 Login
               </Link>
@@ -101,19 +78,19 @@ export default function Navbar({ role, setRole }) {
               </Link>
             </li>
             <li className="w-full md:w-auto">
-              <Link to="/support" onClick={closeMenu} className={btnStyle}>
-                <Headset size={20} /> Support
-              </Link>
-            </li>
-            <li className="w-full md:w-auto">
               <Link to="/wallet" onClick={closeMenu} className={btnStyle}>
                 <Wallet size={20} /> Wallet
               </Link>
             </li>
             <li className="w-full md:w-auto">
-              <button onClick={handleLogout} className={btnStyle}>
+              <Link to="/support" onClick={closeMenu} className={btnStyle}>
+                <Headset size={20} /> Support
+              </Link>
+            </li>
+            <li className="w-full md:w-auto">
+              <Link to="/logout" onClick={closeMenu} className={btnStyle}>
                 <LogOut size={20} /> Logout
-              </button>
+              </Link>
             </li>
           </>
         )}
@@ -121,19 +98,19 @@ export default function Navbar({ role, setRole }) {
         {role === "admin" && (
           <>
             <li className="w-full md:w-auto">
-              <Link to="/profile" onClick={closeMenu} className={btnStyle}>
-                <User size={20} /> Profile
-              </Link>
-            </li>
-            <li className="w-full md:w-auto">
               <Link to="/admin" onClick={closeMenu} className={btnStyle}>
                 <LayoutDashboard size={20} /> Admin Panel
               </Link>
             </li>
             <li className="w-full md:w-auto">
-              <button onClick={handleLogout} className={btnStyle}>
+              <Link to="/profile" onClick={closeMenu} className={btnStyle}>
+                <User size={20} /> Profile
+              </Link>
+            </li>
+            <li className="w-full md:w-auto">
+              <Link to="/logout" onClick={closeMenu} className={btnStyle}>
                 <LogOut size={20} /> Logout
-              </button>
+              </Link>
             </li>
           </>
         )}

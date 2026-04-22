@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 
 export function useCards() {
@@ -26,5 +26,23 @@ export function useCard(id) {
       return response.json();
     },
     enabled: !!id, 
+  });
+}
+
+export function useBuyCard() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id) => {
+      const response = await fetch(`/api/cards/${id}/buy`, {
+        method: "POST",
+      });
+      if (!response.ok) throw new Error("Falha na compra");
+      return response.json();
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["cards"] });
+      queryClient.invalidateQueries({ queryKey: ["card", variables] });
+    },
   });
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom"; 
-import { useCard } from "../hooks/useCards";
+import { useCard, useBuyCard } from "../hooks/useCards";
 
 import BingoCard from "../components/BingoCard/BingoCard";
 import BingoLegend from "../components/BingoCard/BingoLegend";
@@ -13,11 +13,24 @@ export default function GamePage({ role }) {
     
     const { data: currentCard, isLoading, isError } = useCard(id);
     
-    const [purchasedOverride, setPurchasedOverride] = useState(false);
+    const buyMutation = useBuyCard();
+    
     const [showSuccessMsg, setShowSuccessMsg] = useState(false);
 
     const isLogged = role !== null;
     const isUser = role === "user"; 
+
+    const handleBuyCard = () => {
+        buyMutation.mutate(id, {
+            onSuccess: () => {
+                setShowSuccessMsg(true);
+                setTimeout(() => setShowSuccessMsg(false), 4000);
+            },
+            onError: (error) => {
+                console.error("Erro na compra:", error.message);
+            }
+        });
+    };
 
     if (isLoading) return (
         <div className="min-h-screen bg-bingo-dark flex items-center justify-center">
@@ -31,7 +44,7 @@ export default function GamePage({ role }) {
         </div>
     );
 
-    const hasPurchased = (currentCard.isPurchased || purchasedOverride) && role === "user";
+    const hasPurchased = currentCard.isPurchased && role === "user";
 
     const totalEvents = currentCard.events?.length || 0;
     const wonEvents = hasPurchased 
@@ -40,12 +53,6 @@ export default function GamePage({ role }) {
     
     const dynamicProgress = hasPurchased ? `${wonEvents}/${totalEvents}` : `--/${totalEvents}`;
 
-    const handleBuyCard = () => {
-        setPurchasedOverride(true);
-        setShowSuccessMsg(true);
-        setTimeout(() => setShowSuccessMsg(false), 4000);
-    };
-
     return (
         <div className="min-h-screen bg-bingo-dark p-6 md:p-12">
             <div className="max-w-5xl mx-auto space-y-8">
@@ -53,6 +60,12 @@ export default function GamePage({ role }) {
                 {showSuccessMsg && (
                     <div className="bg-green-500/10 border border-green-500/50 p-4 rounded-xl text-green-500 text-center font-medium animate-in fade-in zoom-in duration-300">
                         Card purchased successfully! Good luck.
+                    </div>
+                )}
+
+                {buyMutation.isError && (
+                    <div className="bg-red-500/10 border border-red-500/50 p-4 rounded-xl text-red-500 text-center font-medium">
+                        {buyMutation.error.message}
                     </div>
                 )}
 
@@ -73,7 +86,11 @@ export default function GamePage({ role }) {
                 </div>
 
                 {(!hasPurchased && (isUser || !isLogged)) && (
-                    <GuestCTA role={role} onBuy={handleBuyCard} />
+                    <GuestCTA 
+                        role={role} 
+                        onBuy={handleBuyCard} 
+                        isLoading={buyMutation.isPending} 
+                    />
                 )}
 
                 {role === "admin" && (

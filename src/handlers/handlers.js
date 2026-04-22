@@ -2,7 +2,7 @@
 import { http, HttpResponse } from "msw";
 import { delay } from "msw";
 
-const ALL_CARDS_DATA = [
+let ALL_CARDS_DATA = [
   {
     id: "1",
     title: "Champions League Final",
@@ -104,7 +104,7 @@ export const handlers = [
 
   http.post("/api/login", async ({ request }) => {
     const { username, password } = await request.json();
-    await delay(1000); 
+    await delay(1000);
 
     if (username === "userTest" && password === "user123") {
       return HttpResponse.json({
@@ -129,4 +129,26 @@ export const handlers = [
       { status: 401, headers: { "Content-Type": "application/json" } }
     );
   }),
+
+  http.post('/api/cards/:id/buy', ({ params }) => {
+    const { id } = params;
+    const card = ALL_CARDS_DATA.find((c) => c.id === id);
+
+    if (card) {
+      card.isPurchased = true;
+
+      console.log(`MSW: Card ${id} comprado com sucesso e guardado na memória!`);
+
+      return HttpResponse.json({
+        message: "Compra realizada com sucesso!",
+        cardId: id,
+        isPurchased: true
+      }, { status: 200 });
+    }
+
+    return new HttpResponse(
+      JSON.stringify({ message: "Card não encontrado" }),
+      { status: 404 }
+    );
+  })
 ];

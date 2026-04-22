@@ -4,9 +4,9 @@ import { useCards } from "../hooks/useCards";
 import LoadingState from "../components/common/LoadingState";
 
 export default function Homepage({ role, setRole }) {
-  const { data: serverCards, isLoading, isError} = useCards();
+  const { data: serverCards, isLoading, isError } = useCards();
 
-  if (isLoading) return <LoadingState message="Loading Cards"/>;
+  if (isLoading) return <LoadingState message="Loading Cards" />;
 
   if (isError) return <div className="text-red-500 p-10 text-center">Error loading cards.</div>;
 
@@ -22,7 +22,7 @@ export default function Homepage({ role, setRole }) {
       losses,
       pending,
       total,
-      isPurchased: card.id === "1" || card.id === "2", 
+      isPurchased: card.isPurchased,
     };
   });
 
@@ -53,20 +53,20 @@ export default function Homepage({ role, setRole }) {
           Available Bingo Cards
         </h1>
         <p className="text-slate-400">
-          {isLogged 
-            ? `Welcome back! You have ${cardsList.filter(c => c.isPurchased).length} active cards.` 
+          {isLogged
+            ? `Welcome back! You have ${cardsList.filter(c => c.isPurchased).length} active cards.`
             : "Choose your card and win prizes by predicting sports events"}
         </p>
-        
+
         {!isLogged && (
           <div className="flex justify-center">
-            <button 
-              onClick={() => setRole("user")}
+            <Link
+              to="/login"
               className="mt-6 bg-bingo-red text-bingo-dark px-10 py-4 rounded-2xl hover:brightness-110 font-bold transition-all flex items-center justify-center gap-3 uppercase tracking-tight shadow-lg shadow-bingo-red/20"
             >
               <Lock size={20} strokeWidth={3} />
               <span className="text-lg">Log in to interact with cards</span>
-            </button>
+            </Link>
           </div>
         )}
       </header>
@@ -151,11 +151,10 @@ export default function Homepage({ role, setRole }) {
               <div className="p-8 pt-0">
                 <Link
                   to={`/card/${card.id}`}
-                  className={`block w-full py-4 rounded-2xl font-black text-center uppercase text-xs tracking-widest transition-all transform active:scale-95 shadow-xl ${
-                    hasCard
+                  className={`block w-full py-4 rounded-2xl font-black text-center uppercase text-xs tracking-widest transition-all transform active:scale-95 shadow-xl ${hasCard
                       ? "bg-green-600 hover:bg-green-500 text-white shadow-green-900/20"
                       : "bg-bingo-red hover:bg-red-500 text-white shadow-red-900/20"
-                  }`}
+                    }`}
                 >
                   {hasCard ? "View My Card" : "View Card"}
                 </Link>

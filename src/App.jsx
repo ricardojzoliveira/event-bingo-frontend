@@ -5,6 +5,7 @@ import GamePage from "./pages/GamePage";
 import Homepage from "./pages/Homepage.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
+import Logout from "./pages/LogoutPage.jsx";
 
 function App() {
   const [role, setRole] = useState(null);
@@ -22,6 +23,7 @@ function App() {
           />
           <Route path="/login" element={<LoginPage setRole={setRole}/>} />
           <Route path="*" element={<NotFound />} />
+          <Route path="/logout" element={<Logout setRole={setRole} />} />
         </Routes>
       </main>
     </div>

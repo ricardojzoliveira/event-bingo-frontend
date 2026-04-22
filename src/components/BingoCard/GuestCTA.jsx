@@ -1,48 +1,54 @@
 import { ShoppingCart, Lock } from "lucide-react";
 
-export default function GuestCTA({ role, onBuy }) {
+export default function GuestCTA({ role, onBuy, isLoading }) {
   if (role === "user") {
     return (
-      <div className="border-2 border-bingo-red rounded-2xl p-10 bg-[#02182B] shadow-[0_0_30px_rgba(220,38,38,0.2)] text-white flex flex-col items-center text-center gap-6">
-        <div className="flex flex-col items-center gap-2">
-          <div className="text-bingo-red mb-2">
-            <ShoppingCart size={48} strokeWidth={1.5} />
+      <div className="border border-bingo-red/40 rounded-xl p-5 bg-[#02182B] shadow-lg text-white flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex items-center gap-4">
+          <div className="bg-bingo-red/20 p-3 rounded-lg text-bingo-red">
+            <ShoppingCart size={24} />
           </div>
-          <h3 className="text-2xl font-black uppercase tracking-tight">Buy Card</h3>
-          <p className="text-slate-400 text-sm max-w-sm">
-            Get this card to participate and have the chance to win prizes!
-          </p>
+          <div className="text-left">
+            <h3 className="text-lg font-bold uppercase tracking-tight">Buy this Card</h3>
+            <p className="text-slate-400 text-xs">Get full access to events and win prizes.</p>
+          </div>
         </div>
 
-        <div className="bg-bingo-red rounded-2xl p-6 w-48 flex flex-col items-center justify-center shadow-xl border border-white/10 my-2">
-          <span className="text-[10px] uppercase font-black opacity-80 mb-1 tracking-widest">Price of the card</span>
-          <span className="text-4xl font-black">€100</span>
+        <div className="flex items-center gap-6">
+          <div className="text-right">
+            <span className="block text-[10px] uppercase font-black opacity-60 tracking-widest">Price</span>
+            <span className="text-2xl font-black text-white">€100</span>
+          </div>
+
+          <button
+            onClick={onBuy}
+            disabled={isLoading}
+            className="bg-bingo-red hover:bg-red-700 text-white font-bold uppercase tracking-widest transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 text-xs py-2.5 px-8 rounded-lg shadow-md shadow-red-600/20"
+          >
+            {isLoading ? (
+              <div className="h-4 w-4 animate-spin border-2 border-white/30 border-t-white rounded-full" />
+            ) : (
+              "Confirm Purchase"
+            )}
+          </button>
         </div>
-        
-        <button 
-          onClick={onBuy}
-          className="bg-bingo-red hover:bg-red-700 text-white font-black py-4 px-12 rounded-2xl transition-all shadow-lg shadow-red-600/40 flex items-center gap-3 active:scale-95 transform"
-        >
-          <ShoppingCart size={20} />
-          Buy Card
-        </button>
       </div>
     );
   }
 
   return (
-    <div className="border-2 border-bingo-red rounded-2xl p-8 bg-[#02182B] shadow-[0_0_25px_rgba(220,38,38,0.15)] text-white flex flex-col md:flex-row items-center justify-between gap-6">
+    <div className="border border-bingo-red rounded-xl p-5 bg-[#02182B] shadow-md text-white flex flex-col md:flex-row items-center justify-between gap-4">
       <div className="flex items-center gap-4">
-        <div className="bg-bingo-red/20 p-4 rounded-full text-bingo-red">
-          <Lock size={32} />
+        <div className="bg-white/5 p-3 rounded-lg">
+          <Lock size={24} className="text-bingo-red" />
         </div>
-        <div>
-          <h3 className="text-xl font-bold">Log in to purchase this card</h3>
-          <p className="text-slate-400 text-sm">To purchase and participate in this bingo card, you need to have an account.</p>
+        <div className="text-left">
+          <h3 className="text-lg font-bold">Log in to purchase</h3>
+          <p className="text-slate-400 text-xs">Account required to participate.</p>
         </div>
       </div>
-      
-      <a href="/login" className="bg-bingo-red hover:bg-red-700 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-red-600/20">
+
+      <a href="/login" className="bg-bingo-red hover:bg-red-700 text-white font-bold text-xs py-2.5 px-8 rounded-lg transition-all shadow-md">
         Sign in
       </a>
     </div>
