@@ -14,7 +14,7 @@ export function useLogin(setRole, onSuccesCallback){
         },
         onSuccess: (data) => {
             setRole(data.role);
-            if (onSuccesCallback) onSuccesCallback();
+            if (onSuccesCallback) onSuccesCallback(data);
         },
     });
 }

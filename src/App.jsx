@@ -5,6 +5,8 @@ import GamePage from "./pages/GamePage";
 import Homepage from "./pages/Homepage.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
+import AdminPanel from "./components/admin/AdminPanel.jsx";
+import { Navigate } from "react-router-dom";
 
 function App() {
   const [role, setRole] = useState(null);
@@ -21,6 +23,7 @@ function App() {
             element={<Homepage role={role} setRole={setRole} />}
           />
           <Route path="/login" element={<LoginPage setRole={setRole}/>} />
+          <Route path="/admin" element={role === "admin" ? <AdminPanel /> : <Navigate to="/" />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
