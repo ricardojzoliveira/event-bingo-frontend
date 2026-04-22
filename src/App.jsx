@@ -7,7 +7,10 @@ import NotFound from "./pages/NotFound.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import Logout from "./pages/LogoutPage.jsx";
 import AdminPanel from "./components/admin/AdminPanel.jsx";
+import EventManagement from "./pages/EventsManagement.jsx";
+import CreateEvent from "./pages/CreateEvent.jsx";
 import { Navigate } from "react-router-dom";
+import EditEvent from "./pages/EditEvent.jsx";
 
 function App() {
   const [role, setRole] = useState(() => {
@@ -26,8 +29,26 @@ function App() {
             path="/"
             element={<Homepage role={role} setRole={setRole} />}
           />
-          <Route path="/login" element={<LoginPage setRole={setRole}/>} />
-          <Route path="/admin" element={role === "admin" ? <AdminPanel /> : <Navigate to="/" />} />
+          <Route path="/login" element={<LoginPage setRole={setRole} />} />
+
+          <Route
+            path="/admin"
+            element={
+              role === "admin" ? <AdminPanel /> : <Navigate to="/login" />
+            }
+          />
+          <Route
+            path="/admin/events"
+            element={
+              role === "admin" ? <EventManagement /> : <Navigate to="/" />
+            }
+          />
+          <Route
+            path="/admin/events/create"
+            element={role === "admin" ? <CreateEvent /> : <Navigate to="/" />}
+          />
+          <Route path="/admin/events/edit/:id" element={role === "admin" ? <EditEvent /> : <Navigate to="/" />} />
+
           <Route path="*" element={<NotFound />} />
           <Route path="/logout" element={<Logout setRole={setRole} />} />
         </Routes>
