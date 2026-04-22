@@ -10,8 +10,13 @@ export default function LoginPage({ setRole }) {
   
   const navigate = useNavigate();
 
-  const { mutate: login, isPending, isError, error } = useLogin(setRole, () => {
-    navigate("/");
+  const { mutate: login, isPending, isError, error } = useLogin(setRole, (data) => {
+    if (data.role === "admin") {
+      navigate("/admin");
+    } else {
+      navigate("/");
+    }
+
   });
 
   const handleSubmit = (e) => {
