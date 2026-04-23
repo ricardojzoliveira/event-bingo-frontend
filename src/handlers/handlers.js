@@ -1,5 +1,26 @@
 import { http, HttpResponse, delay } from "msw";
 
+const INITIAL_USERS = [
+  {
+    id: "a-1",
+    username: "admin",
+    password: "admin123",
+    role: "admin",
+    balance: 999999,
+    fullName: "Administrator",
+    email: "admin@eventbingo.com"
+  },
+  {
+    id: "u-1",
+    username: "userTest",
+    password: "user123",
+    role: "user",
+    balance: 1000,
+    fullName: "João Silva",
+    email: "joao@example.com"
+  },
+];
+
 const INITIAL_CARDS = [
   {
     id: "1",
@@ -73,6 +94,18 @@ const INITIAL_EVENTS = [
   },
 ];
 
+const getUsersDB = () => {
+  try {
+    const data = localStorage.getItem("bingo_db_users");
+    const parsed = data ? JSON.parse(data) : INITIAL_USERS;
+    return Array.isArray(parsed) ? parsed : INITIAL_USERS;
+  } catch (e) {
+    return INITIAL_USERS;
+  }
+};
+
+const saveUsersDB = (data) => localStorage.setItem("bingo_db_users", JSON.stringify(data));
+
 const getCardsDB = () => {
   try {
     const data = localStorage.getItem("bingo_db_cards");
@@ -83,8 +116,7 @@ const getCardsDB = () => {
   }
 };
 
-const saveCardsDB = (data) =>
-  localStorage.setItem("bingo_db_cards", JSON.stringify(data));
+const saveCardsDB = (data) => localStorage.setItem("bingo_db_cards", JSON.stringify(data));
 
 const getEventsDB = () => {
   try {
@@ -96,36 +128,54 @@ const getEventsDB = () => {
   }
 };
 
-const saveEventsDB = (data) =>
-  localStorage.setItem("bingo_db_events", JSON.stringify(data));
+const saveEventsDB = (data) => localStorage.setItem("bingo_db_events", JSON.stringify(data));
 
 export const handlers = [
   http.post("/api/login", async ({ request }) => {
     const { username, password } = await request.json();
+    const db = getUsersDB();
     await delay(1000);
 
-    if (username === "userTest" && password === "user123") {
-      return HttpResponse.json({
-        id: "u-1",
-        username: "userTest",
-        role: "user",
-        balance: 1000,
-      });
-    }
+    const user = db.find((u) => u.username === username && u.password === password);
 
-    if (username === "admin" && password === "admin123") {
-      return HttpResponse.json({
-        id: "a-1",
-        username: "admin",
-        role: "admin",
-        balance: 999999,
-      });
+    if (user) {
+      const { password: _, ...userWithoutPassword } = user;
+      return HttpResponse.json(userWithoutPassword);
     }
 
     return new HttpResponse(
       JSON.stringify({ message: "Credenciais inválidas." }),
-      { status: 401, headers: { "Content-Type": "application/json" } },
+      { status: 401, headers: { "Content-Type": "application/json" } }
     );
+  }),
+
+  http.post("/api/register", async ({ request }) => {
+    const userData = await request.json();
+    const db = getUsersDB();
+    await delay(1000);
+
+    if (db.some(u => u.username === userData.username || u.email === userData.email)) {
+      return new HttpResponse(
+        JSON.stringify({ message: "Utilizador ou Email já registado." }),
+        { status: 400 }
+      );
+    }
+
+    const newUser = {
+      id: crypto.randomUUID(),
+      username: userData.username || userData.email.split('@')[0], // Fallback se não vier username
+      password: userData.password,
+      fullName: userData.fullName,
+      email: userData.email,
+      role: "user",
+      balance: 500, 
+    };
+
+    db.push(newUser);
+    saveUsersDB(db);
+
+    const { password: _, ...userResponse } = newUser;
+    return HttpResponse.json(userResponse, { status: 201 });
   }),
 
   http.get("/api/cards", async () => {
@@ -194,8 +244,6 @@ export const handlers = [
       };
 
       saveEventsDB(db);
-
-      console.log(`MSW: Evento ${id} atualizado com sucesso!`);
       return HttpResponse.json(db[index]);
     }
 
@@ -208,7 +256,6 @@ export const handlers = [
   http.delete("/api/admin/events/:id", async ({ params }) => {
     const { id } = params;
     const db = getEventsDB();
-
     const filteredDB = db.filter((event) => event.id !== id);
 
     if (db.length !== filteredDB.length) {

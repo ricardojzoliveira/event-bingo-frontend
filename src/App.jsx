@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import GamePage from "./pages/GamePage";
 import Homepage from "./pages/Homepage.jsx";
 import NotFound from "./pages/NotFound.jsx";
+import RegisterPage from "./pages/auth/RegisterPage.jsx";
 import LoginPage from "./pages/auth/LoginPage.jsx";
 import Logout from "./pages/auth/LogoutPage.jsx";
 import AdminPanel from "./components/admin/AdminPanel.jsx";
@@ -51,6 +52,7 @@ function App() {
 
           <Route path="*" element={<NotFound />} />
           <Route path="/logout" element={<Logout setRole={setRole} />} />
+          <Route path="/register" element={<RegisterPage setRole={setRole} />} />
         </Routes>
       </main>
     </div>
