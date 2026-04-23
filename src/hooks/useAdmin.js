@@ -95,3 +95,22 @@ export function useUpdateEvent() {
     }
   });
 }
+
+
+export function useCreateCard() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (cardData) => {
+      const response = await fetch("/api/admin/cards", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(cardData),
+      });
+      if (!response.ok) throw new Error("Erro ao criar cartão");
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cards"] });
+    }
+  });
+}

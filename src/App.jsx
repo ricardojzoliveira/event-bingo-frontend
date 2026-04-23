@@ -11,6 +11,8 @@ import EventManagement from "./pages/events/EventsManagement.jsx";
 import CreateEvent from "./pages/events/CreateEvent.jsx";
 import { Navigate } from "react-router-dom";
 import EditEvent from "./pages/events/EditEvent.jsx";
+import CardManagement from "./pages/cards/CardManagement.jsx";
+import CreateCard from "./pages/cards/CreateCard.jsx";
 
 function App() {
   const [role, setRole] = useState(() => {
@@ -48,6 +50,9 @@ function App() {
             element={role === "admin" ? <CreateEvent /> : <Navigate to="/" />}
           />
           <Route path="/admin/events/edit/:id" element={role === "admin" ? <EditEvent /> : <Navigate to="/" />} />
+
+          <Route path="/admin/cards" element={role === "admin" ? <CardManagement /> : <Navigate to="/" />} />
+          <Route path="/admin/cards/create" element={role === "admin" ? <CreateCard /> : <Navigate to="/" />} />
 
           <Route path="*" element={<NotFound />} />
           <Route path="/logout" element={<Logout setRole={setRole} />} />

@@ -189,8 +189,8 @@ export const handlers = [
       db[index] = {
         ...db[index],
         ...updatedData,
-        id: db[index].id, 
-        status: db[index].status, 
+        id: db[index].id,
+        status: db[index].status,
       };
 
       saveEventsDB(db);
@@ -219,6 +219,23 @@ export const handlers = [
     return new HttpResponse(JSON.stringify({ message: "Event Not Found" }), {
       status: 404,
     });
+  }),
+
+  http.post("/api/admin/cards", async ({ request }) => {
+    const cardData = await request.json();
+    const db = getCardsDB();
+
+    const newCard = {
+      id: crypto.randomUUID(),
+      date: new Date().toLocaleDateString("pt-PT"),
+      isPurchased: false,
+      ...cardData,
+    };
+
+    db.push(newCard);
+    saveCardsDB(db);
+
+    return HttpResponse.json(newCard, { status: 201 });
   }),
 
   http.post("/api/admin/cards/add-event", async ({ request }) => {
