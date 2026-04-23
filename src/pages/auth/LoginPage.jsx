@@ -7,16 +7,17 @@ export default function LoginPage({ setRole }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  
+
   const navigate = useNavigate();
 
-  const { mutate: login, isPending, isError, error } = useLogin(setRole, (data) => {
-    if (data.role === "admin") {
+  const { mutate: login, isPending, isError, error } = useLogin(setRole, () => {
+
+    const savedRole = localStorage.getItem("user_role");
+    if (savedRole === "admin") {
       navigate("/admin");
     } else {
       navigate("/");
     }
-
   });
 
   const handleSubmit = (e) => {
@@ -26,7 +27,7 @@ export default function LoginPage({ setRole }) {
 
   return (
     <div className="flex-grow flex flex-col items-center justify-center bg-bingo-dark p-6 min-h-[calc(100vh-76px)]">
-      
+
       <div className="flex flex-col items-center mb-8">
         <div className="bg-bingo-red p-3 rounded-xl mb-4 shadow-lg shadow-bingo-red/20">
           <Trophy size={40} className="text-bingo-dark" />
@@ -37,7 +38,7 @@ export default function LoginPage({ setRole }) {
 
       <div className="w-full max-w-[400px] bg-transparent border border-slate-800 rounded-3xl p-8 shadow-2xl">
         <form onSubmit={handleSubmit} className="space-y-6">
-          
+
           {isError && (
             <div className="bg-red-500/10 border border-red-500/50 p-3 rounded-lg text-red-500 text-xs font-bold flex items-center gap-2 animate-shake">
               <AlertCircle size={16} /> {error.message || "Invalid credentials"}
@@ -50,7 +51,7 @@ export default function LoginPage({ setRole }) {
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
                 <User size={18} />
               </div>
-              <input 
+              <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -67,7 +68,7 @@ export default function LoginPage({ setRole }) {
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
                 <Lock size={18} />
               </div>
-              <input 
+              <input
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -75,7 +76,7 @@ export default function LoginPage({ setRole }) {
                 placeholder="••••••••"
                 className="w-full bg-slate-900/50 border border-slate-700 rounded-xl py-3 pl-11 pr-12 text-white placeholder:text-slate-600 focus:border-bingo-red focus:ring-1 focus:ring-bingo-red outline-none transition-all text-sm"
               />
-              <button 
+              <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 hover:text-white transition-colors"
@@ -95,7 +96,7 @@ export default function LoginPage({ setRole }) {
             </button>
           </div>
 
-          <button 
+          <button
             type="submit"
             disabled={isPending}
             className="w-full bg-bingo-red text-white py-3.5 rounded-xl font-bold transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-50 disabled:cursor-wait shadow-lg shadow-bingo-red/20 flex items-center justify-center gap-2"

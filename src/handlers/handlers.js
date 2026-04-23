@@ -163,12 +163,13 @@ export const handlers = [
 
     const newUser = {
       id: crypto.randomUUID(),
-      username: userData.username || userData.email.split('@')[0], // Fallback se não vier username
+      username: userData.username || userData.email.split('@')[0],
       password: userData.password,
       fullName: userData.fullName,
       email: userData.email,
+      avatar: userData.avatar,
       role: "user",
-      balance: 500, 
+      balance: 0,
     };
 
     db.push(newUser);
@@ -176,6 +177,25 @@ export const handlers = [
 
     const { password: _, ...userResponse } = newUser;
     return HttpResponse.json(userResponse, { status: 201 });
+  }),
+
+  http.get("/api/profile", async ({ request }) => {
+    await delay(500);
+    const db = getUsersDB();
+
+    const userId = request.headers.get("Authorization")?.split(" ")[1];
+
+    const user = db.find((u) => u.id === userId);
+
+    if (user) {
+      const { password: _, ...userResponse } = user;
+      return HttpResponse.json(userResponse);
+    }
+
+    return new HttpResponse(
+      JSON.stringify({ message: "User not found" }),
+      { status: 401 }
+    );
   }),
 
   http.get("/api/cards", async () => {
@@ -239,8 +259,8 @@ export const handlers = [
       db[index] = {
         ...db[index],
         ...updatedData,
-        id: db[index].id, 
-        status: db[index].status, 
+        id: db[index].id,
+        status: db[index].status,
       };
 
       saveEventsDB(db);

@@ -1,50 +1,81 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 
-export function useLogin(setRole, onSuccesCallback){
-    return useMutation({
-        mutationFn: async (credentials) => {
-            const response = await fetch("/api/login", {
-                method: "POST",
-                headers: {"Content-Type": "application/json" },
-                body: JSON.stringify(credentials),
-            });
+export const useLogin = (setRole, onSuccessCallback) => {
+  const queryClient = useQueryClient();
 
-            if (!response.ok) throw new Error("Wrong Credentials");
-            return response.json();
-        },
-        onSuccess: (data) => {
-            localStorage.setItem("user_role", data.role);
-            setRole(data.role);
-            if (onSuccesCallback) onSuccesCallback(data);
-        },
-    });
+  return useMutation({
+    mutationFn: async (credentials) => {
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(credentials),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Login failed");
+      }
+
+      return response.json();
+    },
+    onSuccess: (data) => {
+      localStorage.setItem("user_id", data.id);
+      localStorage.setItem("user_role", data.role);
+      
+      setRole(data.role);
+      queryClient.invalidateQueries(["profile"]);
+      
+      if (onSuccessCallback) onSuccessCallback();
+    },
+  });
+};
+
+export const useRegister = (setRole, onSuccessCallback) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (userData) => {
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Registration failed");
+      }
+
+      return response.json();
+    },
+    onSuccess: (data) => {
+      localStorage.setItem("user_id", data.id);
+      localStorage.setItem("user_role", data.role);
+      
+      setRole(data.role);
+      queryClient.invalidateQueries(["profile"]);
+
+      if (onSuccessCallback) onSuccessCallback();
+    },
+  });
 }
 
-export function useRegister(setRole, onSuccessCallback) {
-    return useMutation({
-        mutationFn: async (userData) => {
-            const response = await fetch("/api/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(userData),
-            });
-
-            // Se o backend retornar um erro (ex: email já existe)
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "Erro ao criar conta");
-            }
-
-            return response.json();
+export function useProfile() {
+  return useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => {
+      const userId = localStorage.getItem("user_id");
+      
+      const response = await fetch("/api/profile", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${userId}`, 
         },
-        onSuccess: (data) => {
-            // Normalmente, após o registo, o utilizador fica logo logado
-            if (data.role) {
-                localStorage.setItem("user_role", data.role);
-                setRole(data.role);
-            }
-            
-            if (onSuccessCallback) onSuccessCallback(data);
-        },
-    });
-}
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch profile");
+      return response.json();
+    },
+  });
+};
