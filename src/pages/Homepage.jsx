@@ -2,31 +2,31 @@ import { Lock, Grid3x3, DollarSign, Trophy, Check, ShoppingCart } from "lucide-r
 import { Link } from "react-router-dom";
 import { useCards } from "../hooks/useCards";
 import LoadingState from "../components/common/LoadingState";
+import { useAdminEvents } from "../hooks/useAdmin";
 
 export default function Homepage({ role, setRole }) {
-  const { data: serverCards, isLoading, isError } = useCards();
+  const { data: serverCards, isLoading: loadingCards } = useCards();
+  const { data: globalEvents, isLoading: loadingEvents } = useAdminEvents();
 
-  if (isLoading) return <LoadingState message="Loading Cards" />;
-
-  if (isError) return <div className="text-red-500 p-10 text-center">Error loading cards.</div>;
-
-  const cardsList = serverCards.map((card) => {
-    const wins = card.events.filter((e) => e.status === "won").length;
-    const losses = card.events.filter((e) => e.status === "lost").length;
-    const pending = card.events.filter((e) => e.status === "pending").length;
-    const total = card.events.length;
-
-    return {
-      ...card,
-      wins,
-      losses,
-      pending,
-      total,
-      isPurchased: card.isPurchased,
-    };
-  });
+  if (loadingCards || loadingEvents) return <LoadingState message="Syncing data..." />;
 
   const isLogged = role !== null;
+
+  const cardsList = serverCards?.map((card) => {
+    const syncedEvents = card.events.map(cardEvent => {
+      const liveEvent = globalEvents?.find(e => e.id === cardEvent.id);
+      return liveEvent || cardEvent;
+    });
+
+    const wins = syncedEvents.filter((e) => e.status === "won").length;
+    const losses = syncedEvents.filter((e) => e.status === "lost").length;
+    const pending = syncedEvents.filter((e) => e.status === "pending").length;
+    const total = syncedEvents.length;
+
+    return { ...card, events: syncedEvents, wins, losses, pending , total };
+     
+  });
+
 
   const steps = [
     {
@@ -97,7 +97,7 @@ export default function Homepage({ role, setRole }) {
                   {card.title}
                 </h2>
                 <p className="text-[10px] text-slate-500 font-bold uppercase mt-2 tracking-widest">
-                  Created on 10/03/2026
+                  Created on {card.date || "Date not available"}
                 </p>
               </div>
 

@@ -1,78 +1,5 @@
 import { http, HttpResponse, delay } from "msw";
 
-const INITIAL_USERS = [
-  {
-    id: "a-1",
-    username: "admin",
-    password: "admin123",
-    role: "admin",
-    balance: 999999,
-    fullName: "Administrator",
-    email: "admin@eventbingo.com"
-  },
-  {
-    id: "u-1",
-    username: "userTest",
-    password: "user123",
-    role: "user",
-    balance: 1000,
-    fullName: "João Silva",
-    email: "joao@example.com"
-  },
-];
-
-const INITIAL_CARDS = [
-  {
-    id: "1",
-    title: "Champions League Final",
-    size: "3x3",
-    prizePerLine: "€50",
-    fullPrize: "€500",
-    isPurchased: true,
-    date: "10/03/2026",
-    events: [
-      {
-        id: "e1",
-        sport: "Football",
-        team1: "FC Porto",
-        team2: "Benfica",
-        prediction: "Benfica wins",
-        date: "15/03/2026",
-        status: "won",
-      },
-      {
-        id: "e2",
-        sport: "Football",
-        team1: "Sporting",
-        team2: "Braga",
-        prediction: "Over 2.5 goals",
-        date: "16/03/2026",
-        status: "pending",
-      },
-    ],
-  },
-  {
-    id: "2",
-    title: "Multi-Sport Special",
-    size: "4x4",
-    prizePerLine: "€100",
-    fullPrize: "€2000",
-    isPurchased: true,
-    date: "11/03/2026",
-    events: [],
-  },
-  {
-    id: "3",
-    title: "European Football Bonanza",
-    size: "5x5",
-    prizePerLine: "€200",
-    fullPrize: "€5000",
-    isPurchased: false,
-    date: "12/03/2026",
-    events: [],
-  },
-];
-
 const INITIAL_EVENTS = [
   {
     id: "e1",
@@ -80,7 +7,7 @@ const INITIAL_EVENTS = [
     team1: "FC Porto",
     team2: "Benfica",
     prediction: "Benfica wins",
-    date: "15/03/2026",
+    date: "2026-04-25 20:00",
     status: "won",
   },
   {
@@ -89,8 +16,117 @@ const INITIAL_EVENTS = [
     team1: "Sporting",
     team2: "Braga",
     prediction: "Over 2.5 goals",
-    date: "16/03/2026",
+    date: "2026-04-26 18:00",
     status: "pending",
+  },
+  {
+    id: "e3",
+    sport: "Basketball",
+    team1: "Lakers",
+    team2: "Warriors",
+    prediction: "Home wins",
+    date: "2026-04-27 02:00",
+    status: "pending",
+  },
+  {
+    id: "e4",
+    sport: "Football",
+    team1: "Real Madrid",
+    team2: "Barcelona",
+    prediction: "Both teams score",
+    date: "2026-04-25 21:00",
+    status: "pending",
+  },
+  {
+    id: "e5",
+    sport: "Tennis",
+    team1: "Alcaraz",
+    team2: "Sinner",
+    prediction: "Away wins",
+    date: "2026-04-28 14:00",
+    status: "pending",
+  },
+  {
+    id: "e6",
+    sport: "MMA",
+    team1: "McGregor",
+    team2: "Poirier",
+    prediction: "Home wins",
+    date: "2026-04-29 04:00",
+    status: "pending",
+  },
+  {
+    id: "e7",
+    sport: "Football",
+    team1: "Man. City",
+    team2: "Arsenal",
+    prediction: "Draw",
+    date: "2026-04-26 16:30",
+    status: "pending",
+  },
+  {
+    id: "e8",
+    sport: "Basketball",
+    team1: "Boston",
+    team2: "Miami",
+    prediction: "More than 210 points",
+    date: "2026-04-27 01:30",
+    status: "pending",
+  },
+  {
+    id: "e9",
+    sport: "Football",
+    team1: "PSG",
+    team2: "Dortmund",
+    prediction: "Home wins",
+    date: "2026-05-01 20:00",
+    status: "pending",
+  },
+];
+
+const INITIAL_CARDS = [
+  {
+    id: "c1",
+    title: "Champions League Special",
+    size: "3x3",
+    prizePerLine: "€50",
+    fullPrize: "€500",
+    price: "10",
+    isPurchased: true,
+    date: "20/04/2026",
+    events: INITIAL_EVENTS.slice(0, 9),
+  },
+  {
+    id: "c2",
+    title: "Multi-Sport Weekend",
+    size: "4x4",
+    prizePerLine: "€100",
+    fullPrize: "€2000",
+    price: "25",
+    isPurchased: false,
+    date: "21/04/2026",
+    events: [...INITIAL_EVENTS, ...INITIAL_EVENTS].slice(0, 16),
+  },
+];
+
+const INITIAL_USERS = [
+  {
+    id: "a-1",
+    username: "admin",
+    password: "admin123",
+    role: "admin",
+    balance: 999999,
+    fullName: "Administrator",
+    email: "admin@eventbingo.com",
+  },
+  {
+    id: "u-1",
+    username: "userTest",
+    password: "user123",
+    role: "user",
+    balance: 1000,
+    fullName: "João Silva",
+    email: "joao@example.com",
   },
 ];
 
@@ -104,7 +140,8 @@ const getUsersDB = () => {
   }
 };
 
-const saveUsersDB = (data) => localStorage.setItem("bingo_db_users", JSON.stringify(data));
+const saveUsersDB = (data) =>
+  localStorage.setItem("bingo_db_users", JSON.stringify(data));
 
 const getCardsDB = () => {
   try {
@@ -116,7 +153,8 @@ const getCardsDB = () => {
   }
 };
 
-const saveCardsDB = (data) => localStorage.setItem("bingo_db_cards", JSON.stringify(data));
+const saveCardsDB = (data) =>
+  localStorage.setItem("bingo_db_cards", JSON.stringify(data));
 
 const getEventsDB = () => {
   try {
@@ -128,7 +166,8 @@ const getEventsDB = () => {
   }
 };
 
-const saveEventsDB = (data) => localStorage.setItem("bingo_db_events", JSON.stringify(data));
+const saveEventsDB = (data) =>
+  localStorage.setItem("bingo_db_events", JSON.stringify(data));
 
 export const handlers = [
   http.post("/api/login", async ({ request }) => {
@@ -136,7 +175,9 @@ export const handlers = [
     const db = getUsersDB();
     await delay(1000);
 
-    const user = db.find((u) => u.username === username && u.password === password);
+    const user = db.find(
+      (u) => u.username === username && u.password === password,
+    );
 
     if (user) {
       const { password: _, ...userWithoutPassword } = user;
@@ -145,7 +186,7 @@ export const handlers = [
 
     return new HttpResponse(
       JSON.stringify({ message: "Credenciais inválidas." }),
-      { status: 401, headers: { "Content-Type": "application/json" } }
+      { status: 401, headers: { "Content-Type": "application/json" } },
     );
   }),
 
@@ -154,16 +195,20 @@ export const handlers = [
     const db = getUsersDB();
     await delay(1000);
 
-    if (db.some(u => u.username === userData.username || u.email === userData.email)) {
+    if (
+      db.some(
+        (u) => u.username === userData.username || u.email === userData.email,
+      )
+    ) {
       return new HttpResponse(
         JSON.stringify({ message: "Utilizador ou Email já registado." }),
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const newUser = {
       id: crypto.randomUUID(),
-      username: userData.username || userData.email.split('@')[0],
+      username: userData.username || userData.email.split("@")[0],
       password: userData.password,
       fullName: userData.fullName,
       email: userData.email,
@@ -192,10 +237,9 @@ export const handlers = [
       return HttpResponse.json(userResponse);
     }
 
-    return new HttpResponse(
-      JSON.stringify({ message: "User not found" }),
-      { status: 401 }
-    );
+    return new HttpResponse(JSON.stringify({ message: "User not found" }), {
+      status: 401,
+    });
   }),
 
   http.get("/api/cards", async () => {
@@ -286,6 +330,23 @@ export const handlers = [
     return new HttpResponse(JSON.stringify({ message: "Event Not Found" }), {
       status: 404,
     });
+  }),
+
+  http.post("/api/admin/cards", async ({ request }) => {
+    const cardData = await request.json();
+    const db = getCardsDB();
+
+    const newCard = {
+      id: crypto.randomUUID(),
+      date: new Date().toLocaleDateString("pt-PT"),
+      isPurchased: false,
+      ...cardData,
+    };
+
+    db.push(newCard);
+    saveCardsDB(db);
+
+    return HttpResponse.json(newCard, { status: 201 });
   }),
 
   http.post("/api/admin/cards/add-event", async ({ request }) => {
