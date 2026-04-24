@@ -12,21 +12,6 @@ import AdminPanel from "./components/admin/AdminPanel.jsx";
 import EventManagement from "./pages/events/EventsManagement.jsx";
 import CreateEvent from "./pages/events/CreateEvent.jsx";
 import EditEvent from "./pages/events/EditEvent.jsx";
-import { useState } from "react";
-import { Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import GamePage from "./pages/GamePage";
-import Homepage from "./pages/Homepage.jsx";
-import NotFound from "./pages/NotFound.jsx";
-import LoginPage from "./pages/auth/LoginPage.jsx";
-import Logout from "./pages/auth/LogoutPage.jsx";
-import AdminPanel from "./components/admin/AdminPanel.jsx";
-import EventManagement from "./pages/events/EventsManagement.jsx";
-import CreateEvent from "./pages/events/CreateEvent.jsx";
-import { Navigate } from "react-router-dom";
-import EditEvent from "./pages/events/EditEvent.jsx";
-import CardManagement from "./pages/cards/CardManagement.jsx";
-import CreateCard from "./pages/cards/CreateCard.jsx";
 
 function App() {
   const [role, setRole] = useState(() => {
