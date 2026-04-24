@@ -12,6 +12,8 @@ import AdminPanel from "./components/admin/AdminPanel.jsx";
 import EventManagement from "./pages/events/EventsManagement.jsx";
 import CreateEvent from "./pages/events/CreateEvent.jsx";
 import EditEvent from "./pages/events/EditEvent.jsx";
+import CardManagement from "./pages/cards/CardManagement.jsx";
+import CreateCard from "./pages/cards/CreateCard.jsx"
 
 function App() {
   const [role, setRole] = useState(() => {
