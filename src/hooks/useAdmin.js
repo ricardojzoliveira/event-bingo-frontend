@@ -7,7 +7,7 @@ export function useAdminEvents() {
       const response = await fetch("/api/admin/events");
       if (!response.ok) throw new Error("Erro ao carregar eventos");
       return response.json();
-    }
+    },
   });
 }
 
@@ -26,14 +26,14 @@ export function useCreateEvent() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "events"] });
-    }
+    },
   });
 }
 
 export function useDeleteEvent() {
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-    return useMutation({
+  return useMutation({
     mutationFn: async (eventId) => {
       const response = await fetch(`/api/admin/events/${eventId}`, {
         method: "DELETE",
@@ -43,7 +43,7 @@ export function useDeleteEvent() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "events"] });
-    }
+    },
   });
 }
 
@@ -62,7 +62,7 @@ export function useUpdateEventStatus() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "events"] });
-    }
+    },
   });
 }
 
@@ -72,7 +72,7 @@ export function useAdminEvent(id) {
     queryFn: async () => {
       const response = await fetch("/api/admin/events");
       const events = await response.json();
-      const found = events.find(e => e.id === id);
+      const found = events.find((e) => e.id === id);
       if (!found) throw new Error("Event not Found");
       return found;
     },
@@ -92,10 +92,9 @@ export function useUpdateEvent() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "events"] });
-    }
+    },
   });
 }
-
 
 export function useCreateCard() {
   const queryClient = useQueryClient();
@@ -111,6 +110,34 @@ export function useCreateCard() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cards"] });
-    }
+    },
+  });
+}
+
+export function useDeleteCard() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id) => {
+      const response = await fetch(`/api/admin/cards/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Erro ao eliminar cartão");
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["cards"] }),
+  });
+}
+
+export function useUpdateCard() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, cardData }) => {
+      const response = await fetch(`/api/admin/cards/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(cardData),
+      });
+      return response.json();
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["cards"] }),
   });
 }

@@ -2,8 +2,14 @@
 [] filtros para procurar eventos
 [x] editar eventos
 [] personalized bet na criação de eventos
-[] quando um evento já foi marcado como win ou lost nao dá p editar
+[] quando um evento já foi marcado como win ou lost nao dar p editar
+
+--- CARTOES ---
+[] não deixar repetir eventos no mesmo card
+[] apenas deixar colocar eventos pending no card 
 
 --- HOMEPAGE ---
 [] menu p/ meus cartões comprados ativos
 [] menu p/ meus cartões comprados anteriores
+
+
