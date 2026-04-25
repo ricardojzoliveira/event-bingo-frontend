@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useCards } from "../../hooks/useCards";
 import { useUpdateCard } from "../../hooks/useAdmin";
-import CreateCard from "./CreateCard"; // Vamos ajustar o CreateCard para aceitar props
+import CreateCard from "./CreateCard";
 import LoadingState from "../../components/common/LoadingState";
 
 export default function EditCard() {
