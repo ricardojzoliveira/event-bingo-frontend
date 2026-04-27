@@ -92,7 +92,6 @@ const INITIAL_CARDS = [
     prizePerLine: "€50",
     fullPrize: "€500",
     price: "10",
-    isPurchased: true,
     date: "20/04/2026",
     events: INITIAL_EVENTS.slice(0, 9),
   },
@@ -103,7 +102,6 @@ const INITIAL_CARDS = [
     prizePerLine: "€100",
     fullPrize: "€2000",
     price: "25",
-    isPurchased: false,
     date: "21/04/2026",
     events: [...INITIAL_EVENTS, ...INITIAL_EVENTS].slice(0, 16),
   },
@@ -118,6 +116,7 @@ const INITIAL_USERS = [
     balance: 999999,
     fullName: "Administrator",
     email: "admin@eventbingo.com",
+    purchasedCards: [],
   },
   {
     id: "u-1",
@@ -127,6 +126,7 @@ const INITIAL_USERS = [
     balance: 1000,
     fullName: "João Silva",
     email: "joao@example.com",
+    purchasedCards: [],
   },
 ];
 
@@ -214,7 +214,7 @@ export const handlers = [
       email: userData.email,
       avatar: userData.avatar,
       role: "user",
-      balance: 0,
+      balance: 100,
     };
 
     db.push(newUser);
@@ -242,17 +242,35 @@ export const handlers = [
     });
   }),
 
-  http.get("/api/cards", async () => {
-    await delay(800);
-    return HttpResponse.json(getCardsDB());
+  http.get("/api/cards", async ({ request }) => {
+    const userId = request.headers.get("Authorization")?.split(" ")[1];
+    const allCards = getCardsDB();
+    const inventory = JSON.parse(localStorage.getItem("bingo_db_user_inventory") || "[]");
+
+    const cardsWithStatus = allCards.map(card => ({
+      ...card,
+      isPurchased: inventory.some(item => item.userId === userId && item.cardId === card.id)
+    }));
+
+    return HttpResponse.json(cardsWithStatus);
   }),
 
-  http.get("/api/cards/:id", async ({ params }) => {
+  http.get("/api/cards/:id", async ({ params, request }) => {
     const { id } = params;
-    const db = getCardsDB();
-    const card = db.find((c) => c.id === id);
+    const userId = request.headers.get("Authorization")?.split(" ")[1];
+
+    const cards = getCardsDB();
+    const card = cards.find((c) => c.id === id);
+
     if (!card) return new HttpResponse(null, { status: 404 });
-    return HttpResponse.json(card);
+
+    const inventory = JSON.parse(localStorage.getItem("bingo_db_user_inventory") || "[]");
+    const isOwnedByMe = inventory.some(item => item.userId === userId && item.cardId === id);
+
+    return HttpResponse.json({
+      ...card,
+      isPurchased: isOwnedByMe
+    });
   }),
 
   http.get("/api/admin/events", async () => {
@@ -369,5 +387,55 @@ export const handlers = [
     }
 
     return new HttpResponse("Card not found", { status: 404 });
+  }),
+
+  http.post("/api/user/buy-card", async ({ request }) => {
+    const body = await request.json();
+    const cardId = body.cardId;
+    const price = Number(body.price);
+
+    const authHeader = request.headers.get("Authorization");
+    const userId = authHeader?.split(" ")[1];
+
+    console.log("Tentativa de compra:", { userId, cardId, price });
+
+    const users = getUsersDB();
+    const user = users.find(u => String(u.id).trim() === String(userId).trim());
+
+    if (!user) {
+      console.error("MSW: Utilizador não encontrado para o ID:", userId);
+      return new HttpResponse(JSON.stringify({ message: "Utilizador não encontrado no sistema." }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+
+    if (user.balance < price) {
+      return HttpResponse.json({ message: "Saldo insuficiente!" }, { status: 400 });
+    }
+
+    const inventory = JSON.parse(localStorage.getItem("bingo_db_user_inventory") || "[]");
+    const alreadyHasIt = inventory.some(item => item.userId === userId && item.cardId === cardId);
+
+    if (alreadyHasIt) {
+      return HttpResponse.json({ message: "Já tens este cartão!" }, { status: 400 });
+    }
+
+    user.balance -= price;
+    user.stats = user.stats || { totalPurchased: 0, cardsWon: 0 };
+    user.stats.totalPurchased += 1;
+
+    inventory.push({
+      id: crypto.randomUUID(),
+      userId: userId,
+      cardId: cardId,
+      boughtAt: new Date().toISOString()
+    });
+
+    const updatedUsers = users.map(u => u.id === user.id ? user : u);
+    saveUsersDB(updatedUsers);
+    localStorage.setItem("bingo_db_user_inventory", JSON.stringify(inventory));
+
+    return HttpResponse.json(user, { status: 200 });
   }),
 ];

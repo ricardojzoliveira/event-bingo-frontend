@@ -1,14 +1,17 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-
 export function useCards() {
   return useQuery({
     queryKey: ["cards"],
     queryFn: async () => {
-      const response = await fetch("/api/cards");
-      if (!response.ok) {
-        throw new Error("Erro ao carregar a lista de cartões");
-      }
+      const token = localStorage.getItem("user_id"); 
+
+      const response = await fetch("/api/cards", {
+        headers: {
+          "Authorization": `Bearer ${token}` 
+        }
+      });
+      if (!response.ok) throw new Error("Erro ao carregar cartões");
       return response.json();
     },
   });
@@ -18,31 +21,47 @@ export function useCard(id) {
   return useQuery({
     queryKey: ["card", id],
     queryFn: async () => {
-      const response = await fetch(`/api/cards/${id}`);
-      if (!response.ok) {
-        if (response.status === 404) throw new Error("Cartão não encontrado");
-        throw new Error("Erro ao carregar os detalhes do cartão");
-      }
+      const token = localStorage.getItem("user_id");
+      
+      const response = await fetch(`/api/cards/${id}`, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      if (!response.ok) throw new Error("Erro ao carregar o cartão");
       return response.json();
     },
-    enabled: !!id, 
+    enabled: !!id,
   });
 }
 
-export function useBuyCard() {
+export const useBuyCard = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id) => {
-      const response = await fetch(`/api/cards/${id}/buy`, {
+    mutationFn: async ({ cardId, price }) => {
+      const token = localStorage.getItem("user_id");
+      const response = await fetch("/api/user/buy-card", {
         method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` 
+        },
+        body: JSON.stringify({ cardId, price }),
       });
-      if (!response.ok) throw new Error("Falha na compra");
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
       return response.json();
     },
-    onSuccess: (_data, variables) => {
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["profile"] });
+      
+      queryClient.invalidateQueries({ queryKey: ["card", variables.cardId] });
+      
       queryClient.invalidateQueries({ queryKey: ["cards"] });
-      queryClient.invalidateQueries({ queryKey: ["card", variables] });
     },
   });
-}
+};
