@@ -33,7 +33,6 @@ export default function CreateEvent({ initialData, onSubmit, isEditing = false, 
 
   useEffect(() => {
     if (initialData) {
-      // Lógica para Sport
       if (sports.includes(initialData.sport)) {
         setSport(initialData.sport);
         setIsCustomSport(false);
@@ -46,7 +45,6 @@ export default function CreateEvent({ initialData, onSubmit, isEditing = false, 
       setteam1(initialData.team1 || "");
       setteam2(initialData.team2 || "");
 
-      // Lógica para Prediction
       if (outcomes.includes(initialData.prediction)) {
         setPrediction(initialData.prediction);
         setIsCustomPrediction(false);
