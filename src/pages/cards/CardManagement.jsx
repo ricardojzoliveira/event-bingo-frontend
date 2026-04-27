@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import LoadingState from "../../components/common/LoadingState";
-import { useAdminEvents } from "../../hooks/useAdmin";
+import { useAdminEvents, useDeleteCard } from "../../hooks/useAdmin";
 
 export default function CardManagement() {
   const { data: cards, isLoading: loadingCards } = useCards();
@@ -108,10 +108,18 @@ function StatMiniCard({ label, value, color }) {
 }
 
 function AdminCardItem({ card, globalEvents }) {
+  const { mutate: deleteCard } = useDeleteCard();
+
   const syncedEvents = card.events?.map((cardEvent) => {
     const live = globalEvents?.find((g) => g.id === cardEvent.id);
     return live ? { ...cardEvent, status: live.status } : cardEvent;
   });
+
+  const handleDelete = () => {
+    if (window.confirm("Are you sure you want to delete this card?")) {
+      deleteCard(card.id);
+    }
+  };
 
   const totalEvents = syncedEvents?.length || 0;
   const completedEvents =
@@ -189,13 +197,20 @@ function AdminCardItem({ card, globalEvents }) {
       </div>
 
       <div className="grid grid-cols-3 gap-2 pt-2">
-        <button className="bg-bingo-red/10 hover:bg-bingo-red text-bingo-red hover:text-white py-2.5 rounded-xl transition-all flex justify-center items-center">
-          <Eye size={18} />
-        </button>
-        <button className="bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-xl transition-all flex justify-center items-center border border-slate-700">
-          <Edit2 size={18} />
-        </button>
-        <button className="bg-slate-800 hover:bg-red-900/50 text-white py-2.5 rounded-xl transition-all flex justify-center items-center border border-slate-700">
+        <Link to={`/card/${card.id}`} className="block">
+          <button className="w-full bg-bingo-red/10 hover:bg-bingo-red text-bingo-red hover:text-white py-2.5 rounded-xl transition-all flex justify-center items-center border border-bingo-red/20">
+            <Eye size={18} />
+          </button>
+        </Link>
+        <Link to={`/admin/cards/edit/${card.id}`} className="block">
+          <button className="w-full bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-xl transition-all flex justify-center items-center border border-slate-700">
+            <Edit2 size={18} />
+          </button>
+        </Link>
+        <button
+          onClick={handleDelete}
+          className="bg-slate-800 hover:bg-red-900/50 text-white py-2.5 rounded-xl transition-all flex justify-center items-center border border-slate-700"
+        >
           <Trash2 size={18} />
         </button>
       </div>

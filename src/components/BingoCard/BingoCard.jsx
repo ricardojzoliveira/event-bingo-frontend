@@ -1,7 +1,16 @@
 import BingoSquare from "./BingoSquare";
+import { useAdminEvents } from "../../hooks/useAdmin"
 
 export default function BingoCard({ data, isLogged }) {
+  const { data: globalEvents } = useAdminEvents();
+
   const events = data?.events || [];
+
+  const syncedEvents = events.map(cardEvent => {
+    const live = globalEvents?.find(g => g.id === cardEvent.id);
+    return live ? { ...cardEvent, status: live.status } : cardEvent;
+  });
+
   const gridSize = data?.size ? parseInt(data.size.split("x")[0]) : 3;
 
   return (
@@ -18,7 +27,7 @@ export default function BingoCard({ data, isLogged }) {
                 : `repeat(${gridSize}, minmax(0, 1fr))`,
           }}
         >
-          {events.map((event, index) => (
+          {syncedEvents.map((event, index) => (
             <BingoSquare key={index} event={event} isLogged={isLogged} />
           ))}
         </div>
