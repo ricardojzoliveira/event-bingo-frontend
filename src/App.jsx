@@ -14,6 +14,7 @@ import CreateEvent from "./pages/events/CreateEvent.jsx";
 import EditEvent from "./pages/events/EditEvent.jsx";
 import CardManagement from "./pages/cards/CardManagement.jsx";
 import CreateCard from "./pages/cards/CreateCard.jsx"
+import EditCard from "./pages/cards/EditCard.jsx";
 
 function App() {
   const [role, setRole] = useState(() => {
@@ -75,6 +76,11 @@ function App() {
           <Route
             path="/admin/cards/create"
             element={role === "admin" ? <CreateCard /> : <Navigate to="/" />}
+          />
+
+          <Route 
+            path="/admin/cards/edit/:id"
+            element={role === "admin" ? <EditCard /> : <Navigate to="/" />}
           />
 
           <Route path="*" element={<NotFound />} />

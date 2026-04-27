@@ -438,4 +438,29 @@ export const handlers = [
 
     return HttpResponse.json(user, { status: 200 });
   }),
+  http.delete("/api/admin/cards/:id", async ({ params }) => {
+    const { id } = params;
+    const db = getCardsDB();
+    const filtered = db.filter((c) => c.id !== id);
+
+    if (db.length !== filtered.length) {
+      saveCardsDB(filtered);
+      return new HttpResponse(null, { status: 204 });
+    }
+    return new HttpResponse(null, { status: 404 });
+  }),
+
+  http.put("/api/admin/cards/:id", async ({ params, request }) => {
+  const { id } = params;
+  const updatedCard = await request.json();
+  const db = getCardsDB();
+  const index = db.findIndex(c => c.id === id);
+
+  if (index !== -1) {
+    db[index] = { ...db[index], ...updatedCard, id }; // Mantém o ID original
+    saveCardsDB(db);
+    return HttpResponse.json(db[index]);
+  }
+  return new HttpResponse(null, { status: 404 });
+}),
 ];
