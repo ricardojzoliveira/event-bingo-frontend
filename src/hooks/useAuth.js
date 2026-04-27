@@ -79,3 +79,49 @@ export function useProfile() {
     },
   });
 };
+
+export function useWallet() {
+  const queryClient = useQueryClient();
+  const userId = localStorage.getItem("user_id");
+
+  const useTransactions = () => {
+    return useQuery({
+      queryKey: ["wallet", userId],
+      queryFn: async () => {
+        const response = await fetch("/api/wallet", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${userId}`,
+          },
+        });
+        if (!response.ok) throw new Error("Failed to fetch wallet history");
+        return response.json(); 
+      },
+      enabled: !!userId, 
+    });
+  };
+
+  const useTransactionMutation = () => {
+    return useMutation({
+      mutationFn: async ({ amount, type }) => {
+        const response = await fetch("/api/wallet/transaction", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${userId}`,
+          },
+          body: JSON.stringify({ amount, type }),
+        });
+        if (!response.ok) throw new Error("Transaction failed");
+        return response.json();
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["wallet", userId] });
+        queryClient.invalidateQueries({ queryKey: ["profile"] }); 
+      },
+    });
+  };
+
+  return { useTransactions, useTransactionMutation };
+}

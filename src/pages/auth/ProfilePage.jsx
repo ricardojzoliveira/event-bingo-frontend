@@ -1,5 +1,6 @@
 import { useProfile } from "../../hooks/useAuth";
 import * as Icons from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function ProfilePage() {
   const { data: user, isLoading } = useProfile();
@@ -23,7 +24,7 @@ export default function ProfilePage() {
 
         <div className="relative overflow-hidden bg-slate-900/20 border-2 border-bingo-red p-8 md:p-12 rounded-[3rem] backdrop-blur-md shadow-2xl shadow-bingo-red/5">
           <div className="absolute -top-24 -right-24 w-64 h-64 bg-bingo-red/10 rounded-full blur-[80px]" />
-          
+
           <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
             <div className="relative">
               <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-bingo-red p-1 bg-bingo-dark shadow-2xl shadow-bingo-red/20 transition-transform duration-500 hover:scale-105">
@@ -59,7 +60,7 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
 
           <div className="lg:col-span-4 flex flex-col gap-6">
-            
+
             <div className="flex-1 bg-bingo-dark border-2 border-bingo-red p-8 rounded-[2.5rem] flex flex-col items-center justify-center text-center shadow-xl shadow-bingo-red/5">
               <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.4em] mb-3">
                 Available Balance
@@ -69,12 +70,17 @@ export default function ProfilePage() {
               </h2>
 
               <div className="flex flex-col w-full gap-3 mt-10">
-                <button className="w-full bg-bingo-red hover:bg-[#cc0000] text-white py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] transition-all active:scale-95 shadow-lg shadow-bingo-red/20">
-                  Deposit Now
-                </button>
-                <button className="w-full bg-slate-900 border-2 border-white/10 hover:bg-slate-800 text-white py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] transition-all active:scale-95">
-                  Withdraw Funds
-                </button>
+                <Link to="/wallet" className="w-full">
+                  <button className="w-full bg-bingo-red hover:bg-[#cc0000] text-white py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] transition-all active:scale-95 shadow-lg shadow-bingo-red/20">
+                    Deposit Now
+                  </button>
+                </Link>
+
+                <Link to="/wallet" className="w-full">
+                  <button className="w-full bg-slate-900 border-2 border-white/10 hover:bg-slate-800 text-white py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] transition-all active:scale-95">
+                    Withdraw Funds
+                  </button>
+                </Link>
               </div>
             </div>
 

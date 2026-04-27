@@ -116,7 +116,6 @@ const INITIAL_USERS = [
     balance: 999999,
     fullName: "Administrator",
     email: "admin@eventbingo.com",
-    purchasedCards: [],
   },
   {
     id: "u-1",
@@ -126,7 +125,6 @@ const INITIAL_USERS = [
     balance: 1000,
     fullName: "João Silva",
     email: "joao@example.com",
-    purchasedCards: [],
   },
 ];
 
@@ -397,14 +395,15 @@ export const handlers = [
     const authHeader = request.headers.get("Authorization");
     const userId = authHeader?.split(" ")[1];
 
-    console.log("Tentativa de compra:", { userId, cardId, price });
+    const allCards = JSON.parse(localStorage.getItem("bingo_db_cards") || "[]");
+    const cardInfo = allCards.find(c => String(c.id) === String(cardId));
+    const cardName = cardInfo ? cardInfo.title : "Bingo Card";
 
     const users = getUsersDB();
     const user = users.find(u => String(u.id).trim() === String(userId).trim());
 
     if (!user) {
-      console.error("MSW: Utilizador não encontrado para o ID:", userId);
-      return new HttpResponse(JSON.stringify({ message: "Utilizador não encontrado no sistema." }), {
+      return new HttpResponse(JSON.stringify({ message: "Utilizador não encontrado." }), {
         status: 401,
         headers: { "Content-Type": "application/json" }
       });
@@ -436,6 +435,80 @@ export const handlers = [
     saveUsersDB(updatedUsers);
     localStorage.setItem("bingo_db_user_inventory", JSON.stringify(inventory));
 
+    const transactions = JSON.parse(localStorage.getItem("bingo_db_transactions") || "[]");
+    transactions.unshift({
+      id: crypto.randomUUID(),
+      userId,
+      type: "purchase",
+      amount: -price,
+      label: `Purchase: ${cardName}`,
+      date: new Date().toLocaleString()
+    });
+    localStorage.setItem("bingo_db_transactions", JSON.stringify(transactions));
+
     return HttpResponse.json(user, { status: 200 });
   }),
+
+  http.get("/api/wallet", async ({ request }) => {
+    await delay(500);
+    const db = getUsersDB();
+    const userId = request.headers.get("Authorization")?.split(" ")[1];
+
+    const user = db.find((u) => u.id === userId);
+
+    if (user) {
+      const allTransactions = JSON.parse(localStorage.getItem("bingo_db_transactions") || "[]");
+
+      const userTransactions = allTransactions.filter(t => t.userId === userId);
+
+      return HttpResponse.json({
+        balance: user.balance,
+        transactions: userTransactions
+      });
+    }
+
+    return new HttpResponse(JSON.stringify({ message: "User not found" }), {
+      status: 401,
+    });
+  }),
+
+  http.post("/api/wallet/transaction", async ({ request }) => {
+    await delay(500);
+    const { amount, type } = await request.json();
+    const userId = request.headers.get("Authorization")?.split(" ")[1];
+
+    const users = getUsersDB();
+    const userIndex = users.findIndex((u) => String(u.id) === String(userId));
+
+    if (userIndex === -1) {
+      return new HttpResponse(null, { status: 401 });
+    }
+
+    if (type === "deposit") {
+      users[userIndex].balance += amount;
+    } else if (type === "withdraw") {
+      if (users[userIndex].balance < amount) {
+        return new HttpResponse(JSON.stringify({ message: "Insufficient funds" }), { status: 400 });
+      }
+      users[userIndex].balance -= amount;
+    }
+
+    saveUsersDB(users);
+
+    const allTransactions = JSON.parse(localStorage.getItem("bingo_db_transactions") || "[]");
+    const newTransaction = {
+      id: crypto.randomUUID(),
+      userId: userId,
+      type: type,
+      amount: type === "deposit" ? amount : -amount,
+      label: type === "deposit" ? "Manual Deposit" : "Bank Withdrawal",
+      date: new Date().toLocaleString('pt-PT')
+    };
+
+    allTransactions.unshift(newTransaction);
+    localStorage.setItem("bingo_db_transactions", JSON.stringify(allTransactions));
+
+    return HttpResponse.json({ success: true, balance: users[userIndex].balance });
+  }),
+
 ];

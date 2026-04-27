@@ -14,6 +14,7 @@ import CreateEvent from "./pages/events/CreateEvent.jsx";
 import EditEvent from "./pages/events/EditEvent.jsx";
 import CardManagement from "./pages/cards/CardManagement.jsx";
 import CreateCard from "./pages/cards/CreateCard.jsx"
+import WalletPage from "./pages/auth/WalletPage.jsx"
 
 function App() {
   const [role, setRole] = useState(() => {
@@ -43,6 +44,13 @@ function App() {
             path="/profile"
             element={
               role ? <ProfilePage role={role} /> : <Navigate to="/login" />
+            }
+          />
+
+          <Route
+            path="/wallet"
+            element={
+              role ? <WalletPage role={role} /> : <Navigate to="/login" />
             }
           />
 
