@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import Cookies from "js-cookie";
 
-export default function Logout({ setRole }) {
+export default function Logout({}) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    localStorage.removeItem("user_role");
+    Cookies.remove("token");
     
     setRole(null);
     
