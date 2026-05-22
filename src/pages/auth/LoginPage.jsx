@@ -83,7 +83,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-xs font-medium">
+          {/*<div className="flex items-center justify-between text-xs font-medium">
             <label className="flex items-center gap-2 text-slate-400 cursor-pointer hover:text-slate-300 transition-colors">
               <input type="checkbox" className="rounded border-slate-700 bg-slate-900 text-bingo-red focus:ring-0 w-4 h-4" />
               Remember me
@@ -91,7 +91,7 @@ export default function LoginPage() {
             <button type="button" className="text-bingo-red hover:brightness-125 transition-all">
               Forgot your password?
             </button>
-          </div>
+          </div>*/}
 
           <button
             type="submit"
@@ -110,10 +110,6 @@ export default function LoginPage() {
             </p>
           </div>
         </form>
-      </div>
-
-      <div className="mt-8 text-[10px] text-slate-600 uppercase font-bold tracking-widest bg-slate-900/30 px-4 py-2 rounded-full border border-slate-800">
-        Dev: admin / admin123 | userTest / user123
       </div>
     </div>
   );

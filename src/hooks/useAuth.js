@@ -18,8 +18,8 @@ export const useRegister = (setRole, onSuccessCallback) => {
         Cookies.set("token", data.token, { expires: 1, secure: true, sameSite: "strict" });
       }
       // Atualiza o profile e o user, para não ficar dados antigos.
+      queryClient.invalidateQueries(["currentUser"]);
       queryClient.invalidateQueries(["profile"]);
-      queryClient.invalidateQueries(["user"]);
 
       if (onSuccessCallback) onSuccessCallback();
     },
@@ -50,6 +50,7 @@ export const useLogin = (onSuccessCallback) => {
   });
 };
 
+// Hook para ir buscar o user atual.
 export const useCurrentUser = () => {
   return useQuery({
     queryKey: ["currentUser"],
@@ -71,9 +72,9 @@ export const useCurrentUser = () => {
 
       return userData;
     },
-    staleTime: 1000 * 60 * 5, // Considera os dados "frescos" por 5 minutos (evita pedidos repetidos a cada clique).
-    retry: false, // Se der erro 401 (token expirado), não vale a pena tentar novamente.
-    refetchOnWindowFocus: false, // Evita disparar pedidos sempre que o utilizador muda de aba no browser.
+    staleTime: 1000 * 60 * 5, // Considera os dados "frescos" por 5 minutos (evita pedidos repetidos a cada clique)
+    retry: false, // Se der erro 401 (token expirado), não vale a pena tentar novamente
+    refetchOnWindowFocus: false, // Evita disparar pedidos sempre que o utilizador muda de aba no browser
   });
 };
 
@@ -99,43 +100,50 @@ export function useProfile() {
 
 export function useWallet() {
   const queryClient = useQueryClient();
-  const userId = localStorage.getItem("user_id");
+  const token = Cookies.get("token");
 
   const useTransactions = () => {
     return useQuery({
-      queryKey: ["wallet", userId],
+      queryKey: ["walletTransactions", token], 
       queryFn: async () => {
-        const response = await fetch("/api/wallet", {
-          method: "GET",
+        const response = await api.get("/transactions", {
           headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${userId}`,
+            Authorization: `Bearer ${token}`,
           },
         });
-        if (!response.ok) throw new Error("Failed to fetch wallet history");
-        return response.json(); 
+        
+        return response.data; 
       },
-      enabled: !!userId, 
+      enabled: !!token,
     });
   };
 
   const useTransactionMutation = () => {
     return useMutation({
-      mutationFn: async ({ amount, type }) => {
-        const response = await fetch("/api/wallet/transaction", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${userId}`,
+      mutationFn: async ({ amount, type, cardNumber, cardValid, cardHolderName, ccNumber }) => {
+        const upperType = type.toUpperCase();
+
+        const response = await api.post(
+          "/transactions",
+          {
+            type: upperType,
+            amount: amount,
+            cardNumber: cardNumber,
+            cardValid: cardValid,
+            cardHolderName: cardHolderName,
+            ccNumber: ccNumber
           },
-          body: JSON.stringify({ amount, type }),
-        });
-        if (!response.ok) throw new Error("Transaction failed");
-        return response.json();
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        return response.data;
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["wallet", userId] });
-        queryClient.invalidateQueries({ queryKey: ["profile"] }); 
+        queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+        queryClient.invalidateQueries({ queryKey: ["walletTransactions"] });
       },
     });
   };
