@@ -1,10 +1,12 @@
-import { Lock, Grid3x3, DollarSign, Trophy, Check, ShoppingCart } from "lucide-react";
+import { useState } from "react";
+import { Lock, Grid3x3, DollarSign, Trophy, Check, ShoppingCart, History, PlayCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCards } from "../hooks/useCards";
-import LoadingState from "../components/common/LoadingState";
 import { useAdminEvents } from "../hooks/useAdmin";
+import LoadingState from "../components/common/LoadingState";
 
-export default function Homepage({ role, setRole }) {
+export default function Homepage({ role }) {
+  const [activeTab, setActiveTab] = useState("market");
   const { data: serverCards, isLoading: loadingCards } = useCards();
   const { data: globalEvents, isLoading: loadingEvents } = useAdminEvents();
 
@@ -23,167 +25,196 @@ export default function Homepage({ role, setRole }) {
     const pending = syncedEvents.filter((e) => e.status === "pending").length;
     const total = syncedEvents.length;
 
-    return { ...card, events: syncedEvents, wins, losses, pending , total };
-     
+    return { ...card, events: syncedEvents, wins, losses, pending, total };
   });
 
+  const marketplaceCards = cardsList?.filter(c => !c.isPurchased) || [];
+  const activeUserCards = cardsList?.filter(c => c.isPurchased && c.pending > 0) || [];
+  const historyUserCards = cardsList?.filter(c => c.isPurchased && c.pending === 0) || [];
+
+  const displayCards = (() => {
+    if (role === "user") {
+      if (activeTab === "active") return activeUserCards;
+      if (activeTab === "history") return historyUserCards;
+      return marketplaceCards; 
+    }
+    return marketplaceCards;
+  })();
 
   const steps = [
-    {
-      number: "1",
-      title: "Choose a card",
-      desc: "Select the bingo card with the sports events that interest you the most.",
-    },
-    {
-      number: "2",
-      title: "Track the Events",
-      desc: "The administrators mark the events as won or lost, according to the results",
-    },
-    {
-      number: "3",
-      title: "Win Prizes!",
-      desc: "Complete a line to win the base prize, or the full card for the jackpot!",
-    },
+    { number: "1", title: "Choose a card", desc: "Select the bingo card with the sports events that interest you the most." },
+    { number: "2", title: "Track the Events", desc: "The administrators mark the events as won or lost, according to the results" },
+    { number: "3", title: "Win Prizes!", desc: "Complete a line to win the base prize, or the full card for the jackpot!" },
   ];
 
   return (
     <main className="min-h-screen bg-bingo-dark text-slate-300 p-8 flex flex-col items-center">
       <header className="text-center max-w-2xl mb-12">
-        <h1 className="text-5xl font-black text-bingo-red mb-3 uppercase tracking-tighter">
-          Available Bingo Cards
+        <h1 className="text-5xl font-black text-bingo-red mb-3 uppercase tracking-tighter italic">
+          Bingo Cards
         </h1>
         <p className="text-slate-400">
           {isLogged
-            ? `Welcome back! You have ${cardsList.filter(c => c.isPurchased).length} active cards.`
+            ? `Welcome back! You have ${activeUserCards.length} cards in progress.`
             : "Choose your card and win prizes by predicting sports events"}
         </p>
-
-        {!isLogged && (
-          <div className="flex justify-center">
-            <Link
-              to="/login"
-              className="mt-6 bg-bingo-red text-bingo-dark px-10 py-4 rounded-2xl hover:brightness-110 font-bold transition-all flex items-center justify-center gap-3 uppercase tracking-tight shadow-lg shadow-bingo-red/20"
-            >
-              <Lock size={20} strokeWidth={3} />
-              <span className="text-lg">Log in to interact with cards</span>
-            </Link>
-          </div>
-        )}
       </header>
+      
+      {role === "user" && (
+        <div className="flex gap-2 p-1.5 bg-slate-900/60 rounded-[2rem] border border-white/5 mb-12 backdrop-blur-md">
+        <TabButton 
+          active={activeTab === "market"} 
+          onClick={() => setActiveTab("market")}
+          icon={<ShoppingCart size={16} />}
+          label="Marketplace"
+          count={marketplaceCards.length}
+        />
+        {isLogged && (
+          <>
+            <TabButton 
+              active={activeTab === "active"} 
+              onClick={() => setActiveTab("active")}
+              icon={<PlayCircle size={16} />}
+              label="My Active Cards"
+              count={activeUserCards.length}
+              color="text-green-500"
+            />
+            <TabButton 
+              active={activeTab === "history"} 
+              onClick={() => setActiveTab("history")}
+              icon={<History size={16} />}
+              label="History"
+              count={historyUserCards.length}
+            />
+          </>
+        )}
+      </div>
+      )}
 
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl mb-16">
-        {cardsList.map((card) => {
-          const hasCard = role === "user" && card.isPurchased;
-
-          return (
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-7xl mb-20 transition-all">
+        {displayCards.length > 0 ? (
+          displayCards.map((card) => (
             <div
               key={card.id}
-              className="border-2 border-bingo-red rounded-[2.5rem] bg-slate-900/40 flex flex-col overflow-hidden relative transition-transform hover:scale-[1.02]"
+              className="border-2 border-bingo-red/30 rounded-[2.5rem] bg-slate-900/40 flex flex-col overflow-hidden relative transition-all hover:scale-[1.02] hover:border-bingo-red group shadow-2xl"
             >
-              <div className="absolute top-5 right-5">
-                {hasCard ? (
-                  <span className="bg-green-500 text-[10px] font-black px-3 py-1 rounded-full flex items-center gap-1 text-white uppercase italic">
+              <div className="absolute top-6 right-6 z-10">
+                {card.isPurchased ? (
+                  <span className="bg-green-500 text-[9px] font-black px-3 py-1.5 rounded-full flex items-center gap-1.5 text-white uppercase italic shadow-lg shadow-green-900/20">
                     <Check size={12} strokeWidth={4} /> Purchased
                   </span>
                 ) : (
-                  <span className="bg-orange-500 text-[10px] font-black px-3 py-1 rounded-full flex items-center gap-1 text-white uppercase italic">
-                    <ShoppingCart size={12} strokeWidth={4} /> Available
+                  <span className="bg-orange-500 text-[9px] font-black px-3 py-1.5 rounded-full flex items-center gap-1.5 text-white uppercase italic shadow-lg shadow-orange-900/20">
+                    <ShoppingCart size={12} strokeWidth={4} /> €{card.price}
                   </span>
                 )}
               </div>
 
-              <div className="p-8 border-b border-bingo-red/20">
-                <h2 className="text-2xl font-black text-white leading-tight pr-10">
+              <div className="p-8 border-b border-white/5">
+                <h2 className="text-2xl font-black text-white leading-tight pr-12 group-hover:text-bingo-red transition-colors">
                   {card.title}
                 </h2>
-                <p className="text-[10px] text-slate-500 font-bold uppercase mt-2 tracking-widest">
+                <p className="text-[10px] text-slate-500 font-bold uppercase mt-2 tracking-widest italic">
                   Created on {card.date || "Date not available"}
                 </p>
               </div>
 
-              <div className="p-8 space-y-4 grow bg-slate-900/20">
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center gap-3 text-sm">
-                    <Grid3x3 size={18} className="text-blue-500" />
-                    <span className="text-slate-400">Size: <strong className="text-white">{card.size}</strong></span>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm">
-                    <DollarSign size={18} className="text-green-500" />
-                    <span className="text-slate-400">Prize per line: <strong className="text-green-500">{card.prizePerLine}</strong></span>
-                  </div>
-                  <div className="flex items-center gap-3 text-sm">
-                    <Trophy size={18} className="text-orange-500" />
-                    <span className="text-slate-400">Full prize: <strong className="text-orange-500">{card.fullPrize}</strong></span>
-                  </div>
+              <div className="p-8 space-y-5 grow bg-slate-900/20">
+                <div className="grid grid-cols-1 gap-3">
+                  <DetailItem icon={<Grid3x3 size={16} className="text-blue-500" />} label="Size" value={card.size} />
+                  <DetailItem icon={<DollarSign size={16} className="text-green-500" />} label="Line Prize" value={card.prizePerLine} isPrice />
+                  <DetailItem icon={<Trophy size={16} className="text-orange-500" />} label="Jackpot" value={card.fullPrize} isPrice />
                 </div>
 
                 <div className="mt-6 pt-6 border-t border-white/5">
                   <div className="flex justify-between items-end mb-3">
-                    <span className="text-[10px] uppercase font-black text-slate-500 tracking-tighter">
-                      Progress
-                    </span>
+                    <span className="text-[10px] uppercase font-black text-slate-500 tracking-tighter">Progress</span>
                     <span className="text-xs font-mono font-bold text-white">
-                      {hasCard ? `${card.wins}/${card.total}` : `--/${card.total}`}
+                      {card.isPurchased || role === "admin" ? `${card.wins}/${card.total}` : `--/${card.total}`}
                     </span>
                   </div>
-
-                  <div className="h-3 w-full bg-slate-800 rounded-full flex overflow-hidden shadow-inner">
-                    {hasCard ? (
+                  <div className="h-2 w-full bg-slate-800 rounded-full flex overflow-hidden shadow-inner">
+                    {(card.isPurchased || role === "admin") ? (
                       <>
-                        <div className="bg-green-500 h-full transition-all duration-1000" style={{ width: `${(card.wins / card.total) * 100}%` }} />
-                        <div className="bg-red-500 h-full transition-all duration-1000" style={{ width: `${(card.losses / card.total) * 100}%` }} />
+                        <div className="bg-green-500 h-full transition-all duration-700" style={{ width: `${(card.wins / card.total) * 100}%` }} />
+                        <div className="bg-red-500 h-full transition-all duration-700" style={{ width: `${(card.losses / card.total) * 100}%` }} />
                       </>
                     ) : (
                       <div className="w-0 bg-slate-700 h-full" />
                     )}
                   </div>
-
-                  {hasCard && (
-                    <div className="flex justify-between mt-4 text-[10px] font-bold italic">
-                      <span className="text-green-500">✓ {card.wins} wins</span>
-                      <span className="text-red-500">× {card.losses} lost</span>
-                      <span className="text-slate-400">○ {card.pending} pending</span>
-                    </div>
-                  )}
                 </div>
               </div>
 
               <div className="p-8 pt-0">
                 <Link
                   to={`/card/${card.id}`}
-                  className={`block w-full py-4 rounded-2xl font-black text-center uppercase text-xs tracking-widest transition-all transform active:scale-95 shadow-xl ${hasCard
-                      ? "bg-green-600 hover:bg-green-500 text-white shadow-green-900/20"
-                      : "bg-bingo-red hover:bg-red-500 text-white shadow-red-900/20"
-                    }`}
+                  className={`block w-full py-4 rounded-2xl font-black text-center uppercase text-xs tracking-widest transition-all transform active:scale-95 shadow-xl ${
+                    card.isPurchased
+                      ? "bg-slate-800 hover:bg-slate-700 text-white border border-slate-700"
+                      : "bg-bingo-red hover:bg-red-600 text-white shadow-red-900/20"
+                  }`}
                 >
-                  {hasCard ? "View My Card" : "View Card"}
+                  {role === "admin" ? "Preview Structure" : card.isPurchased ? "Open My Card" : "View Card Details"}
                 </Link>
               </div>
             </div>
-          );
-        })}
+          ))
+        ) : (
+          <div className="col-span-full py-20 text-center bg-slate-900/20 rounded-[3rem] border-2 border-dashed border-slate-800">
+            <p className="text-slate-500 font-bold italic uppercase tracking-widest">No cards found in this category.</p>
+          </div>
+        )}
       </section>
 
-      <section className="w-full max-w-6xl border-2 border-bingo-red rounded-[3rem] p-12 bg-slate-900/30 backdrop-blur-sm mb-20">
-        <h2 className="text-center text-white font-black text-3xl uppercase mb-12 tracking-widest">How it Works</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
-          {steps.map((step, index) => (
-            <div key={index} className="flex flex-col items-center text-center gap-5">
-              <div className="w-16 h-16 bg-bingo-red text-bingo-dark flex items-center justify-center rounded-2xl text-3xl font-black rotate-3 shadow-lg">
-                <span className="-rotate-3">{step.number}</span>
+      {activeTab === "market" && (
+        <section className="w-full max-w-6xl border-2 border-bingo-red/20 rounded-[3rem] p-12 bg-slate-900/30 backdrop-blur-sm mb-20 shadow-2xl">
+          <h2 className="text-center text-white font-black text-3xl uppercase mb-12 tracking-widest italic">How it Works</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+            {steps.map((step, index) => (
+              <div key={index} className="flex flex-col items-center text-center gap-5">
+                <div className="w-14 h-14 bg-bingo-red text-bingo-dark flex items-center justify-center rounded-2xl text-2xl font-black rotate-3 shadow-lg">
+                  <span className="-rotate-3">{step.number}</span>
+                </div>
+                <div>
+                  <h3 className="text-bingo-red text-lg font-black mb-2 uppercase italic">{step.title}</h3>
+                  <p className="text-slate-500 text-xs leading-relaxed font-medium">{step.desc}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-bingo-red text-xl font-black mb-3 uppercase tracking-tight">
-                  {step.title}
-                </h3>
-                <p className="text-slate-400 text-sm leading-relaxed font-medium">
-                  {step.desc}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      )}
     </main>
+  );
+}
+
+
+function TabButton({ active, onClick, icon, label, count, color = "text-slate-400" }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-6 py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all flex items-center gap-3 border ${
+        active 
+          ? "bg-slate-800 border-white/10 text-white shadow-xl scale-105" 
+          : "border-transparent text-slate-500 hover:text-slate-300"
+      }`}
+    >
+      <span className={active ? "text-bingo-red" : ""}>{icon}</span>
+      {label}
+      <span className={`ml-1 px-1.5 py-0.5 rounded-md bg-black/40 text-[8px] ${active ? "text-white" : "text-slate-600"}`}>
+        {count}
+      </span>
+    </button>
+  );
+}
+
+function DetailItem({ icon, label, value, isPrice = false }) {
+  return (
+    <div className="flex items-center gap-3 text-sm">
+      {icon}
+      <span className="text-slate-500 font-bold uppercase text-[10px] tracking-tighter">{label}:</span>
+      <strong className={`font-black ${isPrice ? 'text-white' : 'text-slate-200'}`}>{value}</strong>
+    </div>
   );
 }
