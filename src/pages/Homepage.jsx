@@ -123,7 +123,7 @@ export default function Homepage({ role }) {
                 <div className="grid grid-cols-1 gap-3">
                   <DetailItem icon={<Grid3x3 size={16} className="text-blue-500" />} label="Size" value={card.size} />
                   <DetailItem icon={<DollarSign size={16} className="text-green-500" />} label="Line Prize" value={card.prizePerLine} isPrice />
-                  <DetailItem icon={<Trophy size={16} className="text-orange-500" />} label="Jackpot" value={card.fullPrize} isPrice />
+                  <DetailItem icon={<Trophy size={16} className="text-orange-500" />} label="Bingo" value={card.fullPrize} isPrice />
                 </div>
 
                 <div className="mt-6 pt-6 border-t border-white/5">
