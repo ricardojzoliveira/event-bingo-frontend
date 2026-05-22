@@ -8,10 +8,8 @@ export default function Logout({}) {
   useEffect(() => {
     Cookies.remove("token");
     
-    setRole(null);
-    
     navigate("/");
-  }, [setRole, navigate]);
+  }, [navigate]);
 
   return null;
 }
