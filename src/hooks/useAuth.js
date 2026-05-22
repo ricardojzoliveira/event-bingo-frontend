@@ -50,6 +50,33 @@ export const useLogin = (onSuccessCallback) => {
   });
 };
 
+export const useCurrentUser = () => {
+  return useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
+      const token = Cookies.get("token");
+
+      if (!token) return null;
+
+      const response = await api.get("/users/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const userData = response.data;
+      if (userData && userData.role) {
+        userData.role = userData.role.toLowerCase();
+      }
+
+      return userData;
+    },
+    staleTime: 1000 * 60 * 5, // Considera os dados "frescos" por 5 minutos (evita pedidos repetidos a cada clique)
+    retry: false, // Se der erro 401 (token expirado), não vale a pena tentar novamente
+    refetchOnWindowFocus: false, // Evita disparar pedidos sempre que o utilizador muda de aba no browser
+  });
+};
+
 export function useProfile() {
   return useQuery({
     queryKey: ["profile"],
@@ -68,7 +95,7 @@ export function useProfile() {
       return response.json();
     },
   });
-};
+}; 
 
 export function useWallet() {
   const queryClient = useQueryClient();

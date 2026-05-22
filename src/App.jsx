@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useCurrentUser } from "./hooks/useAuth.js";
 import Navbar from "./components/Navbar";
 import GamePage from "./pages/GamePage";
 import Homepage from "./pages/Homepage.jsx";
@@ -16,30 +17,32 @@ import CardManagement from "./pages/cards/CardManagement.jsx";
 import CreateCard from "./pages/cards/CreateCard.jsx"
 import WalletPage from "./pages/auth/WalletPage.jsx"
 import EditCard from "./pages/cards/EditCard.jsx";
+import LoadingState from "./components/common/LoadingState.jsx";
 
 function App() {
-  const [role, setRole] = useState(() => {
-    return localStorage.getItem("user_role") || null;
-  });
+  const { data: user, isLoading} = useCurrentUser();
+
+  if (isLoading) {
+    return <LoadingState />
+  }
+
+  const role = user?.role || null;
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar role={role} setRole={setRole} />
+      <Navbar user={user} role={role} />
 
       <main className="flex-grow flex flex-col">
         <Routes>
           <Route
             path="/"
-            element={<Homepage role={role} setRole={setRole} />}
+            element={<Homepage role={role} />}
           />
           <Route path="/card/:id" element={<GamePage role={role} />} />
 
-          <Route path="/login" element={<LoginPage setRole={setRole} />} />
-          <Route
-            path="/register"
-            element={<RegisterPage setRole={setRole} />}
-          />
-          <Route path="/logout" element={<Logout setRole={setRole} />} />
+          <Route path="/login" element={!role ? <LoginPage /> : <Navigate to="/" />} />
+          <Route path="/register" element={!role ? <RegisterPage /> : <Navigate to="/" />} />
+          <Route path="/logout" element={<Logout />} />
 
           <Route
             path="/profile"
