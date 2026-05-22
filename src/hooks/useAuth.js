@@ -71,9 +71,9 @@ export const useCurrentUser = () => {
 
       return userData;
     },
-    staleTime: 1000 * 60 * 5, // Considera os dados "frescos" por 5 minutos (evita pedidos repetidos a cada clique)
-    retry: false, // Se der erro 401 (token expirado), não vale a pena tentar novamente
-    refetchOnWindowFocus: false, // Evita disparar pedidos sempre que o utilizador muda de aba no browser
+    staleTime: 1000 * 60 * 5, // Considera os dados "frescos" por 5 minutos (evita pedidos repetidos a cada clique).
+    retry: false, // Se der erro 401 (token expirado), não vale a pena tentar novamente.
+    refetchOnWindowFocus: false, // Evita disparar pedidos sempre que o utilizador muda de aba no browser.
   });
 };
 
