@@ -4,6 +4,7 @@ import { useRegister } from "../../hooks/useAuth";
 import * as Icons from "lucide-react";
 
 export default function RegisterPage({ setRole }) {
+  // Campos para o forms.
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -11,6 +12,7 @@ export default function RegisterPage({ setRole }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   
+  // Campo com os avatars disponíveis.
   const avatarChoices = [
     { id: 'av-1', url: '/avatars/avatar1.png' },
     { id: 'av-2', url: '/avatars/avatar2.png' },
@@ -18,14 +20,18 @@ export default function RegisterPage({ setRole }) {
     { id: 'av-4', url: '/avatars/avatar4.png' },
   ];
 
+  // Campo para o avatar selecionado.
   const [selectedAvatar, setSelectedAvatar] = useState(avatarChoices[0].url);
+  // Campo para ver se o menu dos avatars está aberto.
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
 
   const navigate = useNavigate();
   const { mutate: register, isPending, isError, error } = useRegister(setRole, () => {
+    // Se fizer register com sucesso, volta para a homepage com login feito.
     navigate("/");
   });
 
+  // Função para submeter os dados para o hook.
   const handleSubmit = (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
@@ -33,12 +39,15 @@ export default function RegisterPage({ setRole }) {
       return;
     }
 
+    // Transformação do nome do avatar para o formato selecionado.
+    const avatarName = selectedAvatar.split("/").pop().replace(".png", "");
+
     register({ 
-      fullName, 
+      full_name: fullName, 
       username, 
       email, 
       password, 
-      avatar: selectedAvatar 
+      avatar: avatarName
     });
   };
 

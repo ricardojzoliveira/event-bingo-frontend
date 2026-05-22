@@ -3,23 +3,20 @@ import { useNavigate, Link } from "react-router-dom";
 import { useLogin } from "../../hooks/useAuth";
 import { User, Lock, Eye, EyeOff, Trophy, AlertCircle, Loader2 } from "lucide-react";
 
-export default function LoginPage({ setRole }) {
+export default function LoginPage() {
+  // Campos para o forms.
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
-  const { mutate: login, isPending, isError, error } = useLogin(setRole, () => {
-
-    const savedRole = localStorage.getItem("user_role");
-    if (savedRole === "admin") {
-      navigate("/admin");
-    } else {
-      navigate("/");
-    }
+  const { mutate: login, isPending, isError, error } = useLogin(() => {
+    // Se fizer login com sucesso, vai para a homepage com login feito.
+    navigate("/"); 
   });
 
+  // Função para submeter os dados para o hook.
   const handleSubmit = (e) => {
     e.preventDefault();
     login({ username, password });

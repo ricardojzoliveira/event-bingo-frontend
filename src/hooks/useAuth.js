@@ -1,64 +1,54 @@
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import api from "../api/api";
+import Cookies from "js-cookie";
 
-export const useLogin = (setRole, onSuccessCallback) => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (credentials) => {
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(credentials),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Login failed");
-      }
-
-      return response.json();
-    },
-    onSuccess: (data) => {
-      localStorage.setItem("user_id", data.id);
-      localStorage.setItem("user_role", data.role);
-      
-      setRole(data.role);
-      queryClient.invalidateQueries(["profile"]);
-      
-      if (onSuccessCallback) onSuccessCallback();
-    },
-  });
-};
-
+// Hook para o registo.
 export const useRegister = (setRole, onSuccessCallback) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (userData) => {
-      const response = await fetch("/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Registration failed");
-      }
-
-      return response.json();
+      const response = await api.post("/auth/register", userData);
+      // Guarda o token de autenticação.
+      return response.data; 
     },
     onSuccess: (data) => {
-      localStorage.setItem("user_id", data.id);
-      localStorage.setItem("user_role", data.role);
-      
-      setRole(data.role);
+      if (data.token) {
+        // Guarda o token nos cookies(mais seguros).
+        Cookies.set("token", data.token, { expires: 1, secure: true, sameSite: "strict" });
+      }
+      // Atualiza o profile e o user, para não ficar dados antigos.
+      queryClient.invalidateQueries(["profile"]);
+      queryClient.invalidateQueries(["user"]);
+
+      if (onSuccessCallback) onSuccessCallback();
+    },
+  });
+};
+
+// Hook para o login.
+export const useLogin = (onSuccessCallback) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (credentials) => {
+      const response = await api.post("/auth/login", credentials);
+      // Guarda o token de autenticação.
+      return response.data;
+    },
+    onSuccess: (data) => {
+      if (data.token) {
+        // Guarda o token nos cookies(mais seguros).
+        Cookies.set("token", data.token, { expires: 1, secure: true, sameSite: "strict" });
+      }
+      // Atualiza o profile e o user, para não ficar dados antigos.
+      queryClient.invalidateQueries(["currentUser"]);
       queryClient.invalidateQueries(["profile"]);
 
       if (onSuccessCallback) onSuccessCallback();
     },
   });
-}
+};
 
 export function useProfile() {
   return useQuery({
