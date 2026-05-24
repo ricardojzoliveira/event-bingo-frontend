@@ -160,10 +160,12 @@ export function useUpdateProfile() {
 // Elimina a conta do utilizador.
 export function useDeleteAccount() {
   const queryClient = useQueryClient();
-  const token = Cookies.get("token");
 
   return useMutation({
     mutationFn: async (userId) => {
+      //ler token aqui para garantir que no momento certo
+      const token = Cookies.get("token");
+      
       return await api.delete(`/users/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -172,7 +174,8 @@ export function useDeleteAccount() {
     },
     onSuccess: () => {
       Cookies.remove("token");
-      queryClient.clear();
+      queryClient.setQueryData(["currentUser"], null); // limpa a cache do user
+      queryClient.clear(); // limpa o resto da cache
     },
   });
 }

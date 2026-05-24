@@ -18,7 +18,7 @@ export default function RegisterPage({ setRole }) {
     { id: 'av-2', url: '/avatars/avatar1.png' },
     { id: 'av-3', url: '/avatars/avatar2.png' },
     { id: 'av-4', url: '/avatars/avatar3.png' },
-    { id: 'av-4', url: '/avatars/avatar4.png' },
+    { id: 'av-5', url: '/avatars/avatar4.png' },
   ];
 
   // Campo para o avatar selecionado.

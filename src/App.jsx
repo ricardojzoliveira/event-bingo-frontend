@@ -19,17 +19,23 @@ import WalletPage from "./pages/auth/WalletPage.jsx"
 import EditCard from "./pages/cards/EditCard.jsx";
 import LoadingState from "./components/common/LoadingState.jsx";
 import SettingsPage from "./pages/auth/UpdateProfilePage.jsx";
+import SuspendedScreen from "./pages/auth/SuspendedScreen.jsx";
 
 function App() {
-  const { data: user, isLoading} = useCurrentUser();
+  const { data: user, isLoading, isError, error } = useCurrentUser();
 
   if (isLoading) {
     return <LoadingState />
   }
 
+  /*if (user?.status === "SUSPENDED"){
+    return <SuspendedScreen />
+  }*/
+
   const role = user?.role || null;
 
   return (
+
     <div className="min-h-screen flex flex-col">
       <Navbar user={user} role={role} />
 

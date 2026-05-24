@@ -2,15 +2,18 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCurrentUser, useUpdateProfile, useDeleteAccount, useSelfExclusion } from "../../hooks/useAuth";
 import * as Icons from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import Cookies from "js-cookie";
 
 export default function ProfileUpdatePage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { data: user, isLoading } = useCurrentUser();
   const mutation = useUpdateProfile();
   const deleteMutation = useDeleteAccount();
   const selfExclusionMutation = useSelfExclusion();
 
-  // Capos para o forms.
+  // Campos para o forms.
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -84,10 +87,17 @@ export default function ProfileUpdatePage() {
   };
 
   const handleDelete = () => {
+    if (!user?.id) return;
+
     if (window.confirm("ARE YOU SURE? Your account will be eliminated from the platform.")) {
-      const payload = { status: "DELETED" };
-      selfExclusionMutation.mutate(payload, {
-        onSuccess: () => navigate("/login")
+      deleteMutation.mutate(user.id, {
+        onSuccess: () => {
+          navigate("/")
+        },
+        onError: (error) => {
+          console.error("Delete Failed!", error);
+          alert("Could not delete account");
+        }
       });
     }
   };
