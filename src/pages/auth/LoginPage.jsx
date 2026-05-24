@@ -38,7 +38,7 @@ export default function LoginPage() {
 
           {isError && (
             <div className="bg-red-500/10 border border-red-500/50 p-3 rounded-lg text-red-500 text-xs font-bold flex items-center gap-2 animate-shake">
-              <AlertCircle size={16} /> {error.message || "Invalid credentials"}
+              <AlertCircle size={16} /> {"Invalid credentials"}
             </div>
           )}
 

@@ -14,9 +14,10 @@ export default function RegisterPage({ setRole }) {
   
   // Campo com os avatars disponíveis.
   const avatarChoices = [
-    { id: 'av-1', url: '/avatars/avatar1.png' },
-    { id: 'av-2', url: '/avatars/avatar2.png' },
-    { id: 'av-3', url: '/avatars/avatar3.png' },
+    { id: 'av-1', url: '/avatars/anonymous.png' },
+    { id: 'av-2', url: '/avatars/avatar1.png' },
+    { id: 'av-3', url: '/avatars/avatar2.png' },
+    { id: 'av-4', url: '/avatars/avatar3.png' },
     { id: 'av-4', url: '/avatars/avatar4.png' },
   ];
 

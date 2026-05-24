@@ -9,10 +9,13 @@ export default function Logout() {
 
   useEffect(() => {
 
+    //Remove o token do utilizador dos cookies.
     Cookies.remove("token");
 
+    // Dá reset do estado do utiliador.
     queryClient.setQueryData(["currentUser"], null);
 
+    // Redireciona para a página inicial.
     navigate("/");
   }, [navigate, queryClient]);
 

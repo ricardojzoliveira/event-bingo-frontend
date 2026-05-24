@@ -18,6 +18,7 @@ import CreateCard from "./pages/cards/CreateCard.jsx"
 import WalletPage from "./pages/auth/WalletPage.jsx"
 import EditCard from "./pages/cards/EditCard.jsx";
 import LoadingState from "./components/common/LoadingState.jsx";
+import SettingsPage from "./pages/auth/UpdateProfilePage.jsx";
 
 function App() {
   const { data: user, isLoading} = useCurrentUser();
@@ -50,6 +51,12 @@ function App() {
               role ? <ProfilePage role={role} /> : <Navigate to="/login" />
             }
           />
+
+          <Route 
+            path="/settings" 
+            element={
+              role ? <SettingsPage role={role} /> : <Navigate to="/login" />} 
+            />
 
           <Route
             path="/wallet"
