@@ -141,16 +141,23 @@ export function useCreateCard() {
   });
 }
 
+// delete card
 export function useDeleteCard() {
   const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: async (id) => {
-      const response = await fetch(`/api/admin/cards/${id}`, {
-        method: "DELETE",
+    mutationFn: async (cardId) => {
+      const token = Cookies.get("token");
+      const response = await api.delete(`/cards/${cardId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-      if (!response.ok) throw new Error("Erro ao eliminar cartão");
+      return response.data;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["cards"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cards"] });
+    },
   });
 }
 

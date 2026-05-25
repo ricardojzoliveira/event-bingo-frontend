@@ -72,9 +72,6 @@ export default function EventManagement() {
               value={searchQuery} 
               onChange={(e) => setSearchQuery(e.target.value)} />
           </div>
-          <button className="bg-slate-800 px-4 rounded-xl border border-slate-700 flex items-center gap-2 text-sm">
-            <Filter size={18} /> Filter
-          </button>
           <Link to="/admin/events/create" className="bg-bingo-red px-6 rounded-xl flex items-center gap-2 text-sm font-bold">
             <Plus size={18} /> New Event
           </Link>

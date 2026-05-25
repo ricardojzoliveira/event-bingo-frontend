@@ -12,19 +12,28 @@ import {
 import { Link } from "react-router-dom";
 import LoadingState from "../../components/common/LoadingState";
 import { useAdminEvents, useDeleteCard } from "../../hooks/useAdmin";
+import { useState } from "react";
+import { calculateCardProgress } from "../../utils/cardHelpers";
 
 export default function CardManagement() {
   const { data: cards, isLoading: loadingCards } = useCards();
   const { data: globalEvents, isLoading: loadingEvents } = useAdminEvents();
 
+  const [ searchBox, setSearchBox ] = useState("");
+
   if (loadingCards || loadingEvents) return <LoadingState />;
 
   const stats = {
     total: cards?.length || 0,
-    s3x3: cards?.filter((c) => c.size === "3x3").length || 0,
-    s4x4: cards?.filter((c) => c.size === "4x4").length || 0,
-    s5x5: cards?.filter((c) => c.size === "5x5").length || 0,
+    s3x3: cards?.filter((c) => c.cols === 3).length || 0,
+    s4x4: cards?.filter((c) => c.cols === 4).length || 0,
+    s5x5: cards?.filter((c) => c.size === 5).length || 0,
   };
+
+  const filteredCards = cards?.filter((card) => {
+    const cardName = (card.title || card.name || "").toLowerCase();
+    return cardName.includes(searchBox.toLowerCase());
+  });
 
   return (
     <div className="min-h-screen bg-bingo-dark p-6 md:p-12 text-white">
@@ -61,12 +70,10 @@ export default function CardManagement() {
             />
             <input
               className="w-full bg-slate-900/50 border border-bingo-red rounded-xl py-4 pl-12 text-sm focus:border-bingo-red outline-none transition-all"
-              placeholder="Search Cards..."
+              placeholder="Search Cards..." 
+              onChange={(e) => setSearchBox(e.target.value)}
             />
           </div>
-          <button className="bg-slate-800 px-6 rounded-xl border border-slate-700 flex items-center gap-2 text-sm font-bold hover:bg-slate-700 transition-colors">
-            Filter
-          </button>
           <Link
             to="/admin/cards/create"
             className="bg-bingo-red hover:bg-red-600 px-8 rounded-xl flex items-center gap-3 text-sm font-black uppercase transition-all shadow-lg shadow-red-900/20"
@@ -76,7 +83,7 @@ export default function CardManagement() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {cards?.map((card) => (
+          {filteredCards?.map((card) => (
             <AdminCardItem
               key={card.id}
               card={card}
@@ -121,11 +128,7 @@ function AdminCardItem({ card, globalEvents }) {
     }
   };
 
-  const totalEvents = syncedEvents?.length || 0;
-  const completedEvents =
-    syncedEvents?.filter((e) => e.status !== "pending").length || 0;
-  const progressPercent =
-    totalEvents > 0 ? (completedEvents / totalEvents) * 100 : 0;
+  const { totalEvents, completedEvents, progressPercent } = calculateCardProgress(syncedEvents)
 
   return (
     <div className="bg-slate-900/20 border border-bingo-red rounded-3xl p-6 space-y-6 hover:border-bingo-red/30 transition-all group">
