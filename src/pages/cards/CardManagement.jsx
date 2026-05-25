@@ -132,7 +132,7 @@ function AdminCardItem({ card, globalEvents }) {
       <div className="flex justify-between items-start">
         <div>
           <h3 className="text-xl font-black uppercase leading-tight">
-            {card.title}
+            {card.name}
           </h3>
           <p className="text-slate-500 text-[10px] font-bold uppercase mt-1">
             Created at {card.date || "10/03/2026"}
@@ -146,7 +146,7 @@ function AdminCardItem({ card, globalEvents }) {
 
       <div className="flex gap-2">
         <span className="bg-slate-800 text-[10px] font-black px-2 py-1 rounded text-slate-400 uppercase">
-          {card.size}
+          {`${card.cols}x${card.rows}`}
         </span>
         <span className="bg-slate-800 text-[10px] font-black px-2 py-1 rounded text-slate-400 uppercase">
           {totalEvents} events
@@ -174,7 +174,7 @@ function AdminCardItem({ card, globalEvents }) {
             Line Prize
           </p>
           <p className="text-green-500 font-bold">
-            {card.prizePerLine || "€50"}
+            {card.line_prize || "€50"}
           </p>
         </div>
         <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800">
@@ -182,7 +182,7 @@ function AdminCardItem({ card, globalEvents }) {
             Bingo Prize
           </p>
           <p className="text-yellow-500 font-bold">
-            {card.fullPrize || "€500"}
+            {card.bingo_prize || "€500"}
           </p>
         </div>
       </div>

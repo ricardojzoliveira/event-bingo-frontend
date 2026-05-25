@@ -1,19 +1,19 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useCards } from "../../hooks/useCards";
+import { useCard } from "../../hooks/useCards";
 import { useUpdateCard } from "../../hooks/useAdmin";
 import CreateCard from "./CreateCard";
 import LoadingState from "../../components/common/LoadingState";
 
 export default function EditCard() {
+
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: cards, isLoading } = useCards();
+  const { data: card, isLoading } = useCard(id);
   const { mutate: updateCard, isPending } = useUpdateCard();
 
-  const cardToEdit = cards?.find((c) => c.id === id);
 
   if (isLoading) return <LoadingState />;
-  if (!cardToEdit) return <div className="text-white p-10">Card not found.</div>;
+  if (!card) return <div className="text-white p-10">Card not found.</div>;
 
   const handleUpdate = (cardData) => {
     updateCard({ id, cardData }, {
@@ -23,7 +23,7 @@ export default function EditCard() {
 
   return (
     <CreateCard 
-      initialData={cardToEdit} 
+      initialData={card} 
       onSubmit={handleUpdate} 
       isEditing={true}
       externalLoading={isPending}

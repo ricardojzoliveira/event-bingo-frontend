@@ -1,35 +1,27 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import Cookies from "js-cookie";
+import api from "../api/api";
 
+// get all cards
 export function useCards() {
   return useQuery({
     queryKey: ["cards"],
     queryFn: async () => {
-      const token = localStorage.getItem("user_id"); 
+      const response = await api.get("/cards");
 
-      const response = await fetch("/api/cards", {
-        headers: {
-          "Authorization": `Bearer ${token}` 
-        }
-      });
-      if (!response.ok) throw new Error("Erro ao carregar cartões");
-      return response.json();
+      return response.data;
     },
   });
 }
 
+// get card by id
 export function useCard(id) {
   return useQuery({
     queryKey: ["card", id],
-    queryFn: async () => {
-      const token = localStorage.getItem("user_id");
-      
-      const response = await fetch(`/api/cards/${id}`, {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-      if (!response.ok) throw new Error("Erro ao carregar o cartão");
-      return response.json();
+    queryFn: async () => {      
+      const response = await api.get(`cards/${id}`);
+
+      return response.data;
     },
     enabled: !!id,
   });

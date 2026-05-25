@@ -118,18 +118,22 @@ export function useUpdateEvent() {
   });
 }
 
-
+// create card
 export function useCreateCard() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (cardData) => {
-      const response = await fetch("/api/admin/cards", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(cardData),
+      const token = Cookies.get("token");
+
+      //console.log("DADOS A ENVIAR:", JSON.stringify(cardData, null, 2));
+
+      const response = await api.post("/cards", cardData, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+         },
       });
-      if (!response.ok) throw new Error("Erro ao criar cartão");
-      return response.json();
+      return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["cards"] });
@@ -154,12 +158,15 @@ export function useUpdateCard() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, cardData }) => {
-      const response = await fetch(`/api/admin/cards/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(cardData),
+      console.log("DADOS A ENVIAR:", JSON.stringify(cardData, null, 2));
+      const token = Cookies.get("token");
+      const response = await api.put(`/cards/${id}`, cardData, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json" },
+          "Accept": "application/json"
       });
-      return response.json();
+      return response.data;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["cards"] }),
   });
