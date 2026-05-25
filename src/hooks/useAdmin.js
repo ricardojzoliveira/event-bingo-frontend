@@ -1,28 +1,57 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "../api/api";
+import Cookies from "js-cookie";
 
+// get all events
 export function useAdminEvents() {
   return useQuery({
     queryKey: ["admin", "events"],
     queryFn: async () => {
-      const response = await fetch("/api/admin/events");
-      if (!response.ok) throw new Error("Erro ao carregar eventos");
-      return response.json();
+      const token = Cookies.get("token");
+
+      const response = await api.get("/events", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
     },
   });
 }
 
+// get event by id
+export function useAdminEvent(id) {
+  return useQuery({
+    queryKey: ["admin", "events", id],
+    queryFn: async () => {
+      if (!id) return null;
+      const token = Cookies.get("token");
+
+      const response = await api.get(`/events/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    },
+    enabled: !!id,
+  });
+}
+
+// post event
 export function useCreateEvent() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (eventData) => {
-      const response = await fetch("/api/admin/events", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(eventData),
+      const token = Cookies.get("token");
+
+      const response = await api.post("/events", eventData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-      if (!response.ok) throw new Error("Erro ao criar evento");
-      return response.json();
+      return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "events"] });
@@ -30,16 +59,19 @@ export function useCreateEvent() {
   });
 }
 
+// delete event
 export function useDeleteEvent() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (eventId) => {
-      const response = await fetch(`/api/admin/events/${eventId}`, {
-        method: "DELETE",
+      const token = Cookies.get("token");
+      const response = await api.delete(`/events/${eventId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-      if (!response.ok) throw new Error("Error deleting event");
-      return eventId;
+      return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "events"] });
@@ -47,18 +79,19 @@ export function useDeleteEvent() {
   });
 }
 
+// update event status
 export function useUpdateEventStatus() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ eventId, status }) => {
-      const response = await fetch(`/api/admin/events/${eventId}/status`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
+      const token = Cookies.get("token");
+      const response = await api.patch(`/events/${eventId}`, {status}, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+        },
       });
-      if (!response.ok) throw new Error("Error updating status");
-      return response.json();
+      return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "events"] });
@@ -66,35 +99,25 @@ export function useUpdateEventStatus() {
   });
 }
 
-export function useAdminEvent(id) {
-  return useQuery({
-    queryKey: ["admin", "events", id], // Key específica para este evento
-    queryFn: async () => {
-      const response = await fetch("/api/admin/events");
-      const events = await response.json();
-      const found = events.find((e) => e.id === id);
-      if (!found) throw new Error("Event not Found");
-      return found;
-    },
-  });
-}
-
+// update event info
 export function useUpdateEvent() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, eventData }) => {
-      const response = await fetch(`/api/admin/events/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(eventData),
+      const token = Cookies.get("token");
+      const response = await api.put(`/events/${id}`, eventData, {
+        headers: { 
+          Authorization: `Bearer ${token}`
+         },
       });
-      return response.json();
+      return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "events"] });
     },
   });
 }
+
 
 export function useCreateCard() {
   const queryClient = useQueryClient();

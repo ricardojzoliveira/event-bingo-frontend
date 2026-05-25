@@ -19,8 +19,8 @@ export default function CreateEvent({ initialData, onSubmit, isEditing = false, 
   const [customSport, setCustomSport] = useState("");
   const [isCustomSport, setIsCustomSport] = useState(false);
 
-  const [team1, setteam1] = useState("");
-  const [team2, setteam2] = useState("");
+  const [home_team, sethome_team] = useState("");
+  const [away_team, setaway_team] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
 
@@ -42,8 +42,8 @@ export default function CreateEvent({ initialData, onSubmit, isEditing = false, 
         setIsCustomSport(true);
       }
 
-      setteam1(initialData.team1 || "");
-      setteam2(initialData.team2 || "");
+      sethome_team(initialData.home_team || "");
+      setaway_team(initialData.away_team || "");
 
       if (outcomes.includes(initialData.prediction)) {
         setPrediction(initialData.prediction);
@@ -57,20 +57,25 @@ export default function CreateEvent({ initialData, onSubmit, isEditing = false, 
       if (initialData.date) {
         const [d, t] = initialData.date.split(" ");
         setDate(d || "");
-        setTime(t || "");
+        if (t) {
+          setTime(t.substring(0,5));
+        };
       }
     }
   }, [initialData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const formatedTime = time ? (time.length === 5 ? `${time}:00` : time) : "00:00:00";
+    const dateTime = `${date} ${formatedTime}`;
+
     const eventData = {
       sport: isCustomSport ? customSport : sport,
-      team1,
-      team2,
-      date: `${date} ${time}`.trim(),
+      home_team,
+      away_team,
+      date: dateTime,
       prediction: isCustomPrediction ? customPrediction : prediction,
-      status: initialData?.status || "pending",
     };
 
     if (isEditing && onSubmit) {
@@ -140,11 +145,11 @@ export default function CreateEvent({ initialData, onSubmit, isEditing = false, 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Home Team / Athlete 1 *</label>
-                <input required value={team1} onChange={(e) => setteam1(e.target.value)} placeholder="Ex: FC Porto" className="w-full bg-slate-900/50 border border-slate-800 rounded-xl py-3.5 px-4 outline-none focus:border-bingo-red transition-all" />
+                <input required value={home_team} onChange={(e) => sethome_team(e.target.value)} placeholder="Ex: FC Porto" className="w-full bg-slate-900/50 border border-slate-800 rounded-xl py-3.5 px-4 outline-none focus:border-bingo-red transition-all" />
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1">Away Team / Athlete 2 *</label>
-                <input required value={team2} onChange={(e) => setteam2(e.target.value)} placeholder="Ex: Benfica" className="w-full bg-slate-900/50 border border-slate-800 rounded-xl py-3.5 px-4 outline-none focus:border-bingo-red transition-all" />
+                <input required value={away_team} onChange={(e) => setaway_team(e.target.value)} placeholder="Ex: Benfica" className="w-full bg-slate-900/50 border border-slate-800 rounded-xl py-3.5 px-4 outline-none focus:border-bingo-red transition-all" />
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 ml-1 text-red-500/80">Event Date *</label>

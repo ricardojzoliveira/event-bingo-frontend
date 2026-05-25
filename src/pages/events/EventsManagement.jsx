@@ -2,25 +2,44 @@ import { useAdminEvents, useDeleteEvent, useUpdateEventStatus } from "../../hook
 import { Plus, Search, Filter, Edit2, Trash2, CheckCircle, XCircle, Clock, ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import LoadingState from "../../components/common/LoadingState";
+import { formatDate } from "../../utils/date";
+import { useState } from "react";
 
 export default function EventManagement() {
-  const { data: events, isLoading } = useAdminEvents();
-  const { mutate: deleteEvent} = useDeleteEvent();
+  const { data: eventsData, isLoading } = useAdminEvents();
+  const { mutate: deleteEvent } = useDeleteEvent();
   const { mutate: updateStatus } = useUpdateEventStatus();
 
+  const [ searchQuery, setSearchQuery ] = useState("");
+
   const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this event ?")){
-        deleteEvent(id);
+    if (window.confirm("Are you sure you want to delete this event?")) {
+      deleteEvent(id);
     }
   };
 
   if (isLoading) return <LoadingState />;
 
+  // eventos ordenados pelo id invertido
+  const sortedEvents = eventsData ? [...eventsData].sort((a, b) => b.id - a.id) : [];
+
+  const events = sortedEvents.filter((event) => {
+    const query = searchQuery.toLowerCase().trim();
+    if (!query) return true;
+
+    return (
+      event.home_team?.toLowerCase().includes(query) || 
+      event.away?.toLowerCase().includes(query) ||
+      event.sport?.toLowerCase().includes(query) ||
+      event.prediction?.toLowerCase().includes(query)
+    );
+  });
+
   const stats = {
-    total: events?.length || 0,
-    won: events?.filter(e => e.status === "won").length || 0,
-    lost: events?.filter(e => e.status === "lost").length || 0,
-    pending: events?.filter(e => e.status === "pending").length || 0,
+    total: events.length,
+    won: events.filter(e => e.status === "Win").length,
+    lost: events.filter(e => e.status === "Lose").length,
+    pending: events.filter(e => e.status === "Pending").length,
   };
 
   return (
@@ -47,7 +66,11 @@ export default function EventManagement() {
         <div className="flex gap-4">
           <div className="relative flex-grow">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
-            <input className="w-full bg-slate-900/50 border border-slate-800 rounded-xl py-3 pl-12 text-sm" placeholder="Searching Events" />
+            <input 
+              className="w-full bg-slate-900/50 border border-slate-800 rounded-xl py-3 pl-12 text-sm" 
+              placeholder="Searching Events" 
+              value={searchQuery} 
+              onChange={(e) => setSearchQuery(e.target.value)} />
           </div>
           <button className="bg-slate-800 px-4 rounded-xl border border-slate-700 flex items-center gap-2 text-sm">
             <Filter size={18} /> Filter
@@ -69,45 +92,57 @@ export default function EventManagement() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/50">
-              {events.map((event) => (
-                <tr key={event.id} className="hover:bg-white/5 transition-colors">
-                  <td className="p-4">
-                    <div className="flex items-center gap-3">
-                       <span className="bg-red-900/30 text-red-500 text-[10px] font-bold px-2 py-0.5 rounded italic">{event.sport}</span>
-                       <span className="font-bold">{event.team1} vs {event.team2}</span>
-                    </div>
-                  </td>
-                  <td className="p-4 text-slate-400">{event.prediction}</td>
-                  <td className="p-4 text-slate-400">{event.date}</td>
-                  <td className="p-4">
-                    <div className="flex justify-center gap-2 text-slate-600">
-                      <button
-                        onClick={() => updateStatus({ eventId: event.id, status: "won"})} 
-                        className={`p-1 rounded-md transition-all ${event.status === 'won' ? 'text-green-500 bg-green-500/10' : 'text-slate-600 hover:text-green-500'}`}>
-                        <CheckCircle size={18} className={event.status === 'won' ? "text-green-500" : ""} />
-                      </button>
-                      <button
-                        onClick={() => updateStatus({ eventId: event.id, status: "lost"})}
-                        className={`p-1 rounded-md transition-all ${event.status === 'lost' ? 'text-red-500 bg-red-500/10' : 'text-slate-600 hover:text-red-500'}`}>
-                        <XCircle size={18} className={event.status === 'lost' ? "text-red-500" : ""} />
-                      </button>
-                      <button
-                        onClick={() => updateStatus({ eventId: event.id, status: "pending"})}
-                        className={`p-1 rounded-md transition-all ${event.status === 'pending' ? 'text-white bg-white/10' : 'text-slate-600 hover:text-white'}`}>
-                        <Clock size={18} className={event.status === 'pending' ? "text-white" : ""} />
-                      </button>
-                    </div>
-                  </td>
-                  <td className="p-4 text-center">
-                    <div className="flex justify-center gap-3">
-                      <Link to={`/admin/events/edit/${event.id}`}>
-                        <button className="text-blue-500 hover:text-blue-400"><Edit2 size={16}/></button>
-                      </Link>
-                      <button onClick={() => handleDelete(event.id)} className="text-red-500 hover:text-red-400"><Trash2 size={16}/></button>
-                    </div>
+              {events.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="p-8 text-center text-slate-500 font-bold uppercase tracking-wider">
+                    No events found.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                events.map((event) => (
+                  <tr key={event.id} className="hover:bg-white/5 transition-colors">
+                    <td className="p-4">
+                      <div className="flex items-center gap-3">
+                         <span className="bg-red-900/30 text-red-500 text-[10px] font-bold px-2 py-0.5 rounded italic">{event.sport}</span>
+                         <span className="font-bold">{event.home_team} vs {event.away_team}</span>
+                      </div>
+                    </td>
+                    <td className="p-4 text-slate-400">{event.prediction}</td>
+                    <td className="p-4 text-slate-400">{formatDate(event.date)}</td>
+                    <td className="p-4">
+                      <div className="flex justify-center gap-2 text-slate-600">
+                        
+                        <button
+                          onClick={() => updateStatus({ eventId: event.id, status: "Win" })} 
+                          className={`p-1 rounded-md transition-all ${event.status === 'Win' ? 'text-green-500 bg-green-500/10' : 'text-slate-600 hover:text-green-500'}`}>
+                          <CheckCircle size={18} className={event.status === 'Win' ? "text-green-500" : ""} />
+                        </button>
+                        
+                        <button
+                          onClick={() => updateStatus({ eventId: event.id, status: "Lose" })}
+                          className={`p-1 rounded-md transition-all ${event.status === 'Lose' ? 'text-red-500 bg-red-500/10' : 'text-slate-600 hover:text-red-500'}`}>
+                          <XCircle size={18} className={event.status === 'Lose' ? "text-red-500" : ""} />
+                        </button>
+                        
+                        <button
+                          onClick={() => updateStatus({ eventId: event.id, status: "Pending" })}
+                          className={`p-1 rounded-md transition-all ${event.status === 'Pending' ? 'text-white bg-white/10' : 'text-slate-600 hover:text-white'}`}>
+                          <Clock size={18} className={event.status === 'Pending' ? "text-white" : ""} />
+                        </button>
+
+                      </div>
+                    </td>
+                    <td className="p-4 text-center">
+                      <div className="flex justify-center gap-3">
+                        <Link to={`/admin/events/edit/${event.id}`}>
+                          <button className="text-blue-500 hover:text-blue-400"><Edit2 size={16}/></button>
+                        </Link>
+                        <button onClick={() => handleDelete(event.id)} className="text-red-500 hover:text-red-400"><Trash2 size={16}/></button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
