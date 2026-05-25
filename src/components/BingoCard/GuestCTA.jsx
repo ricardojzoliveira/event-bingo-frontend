@@ -1,4 +1,5 @@
 import { ShoppingCart, Lock } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function GuestCTA({ role, onBuy, isLoading, price }) {
   if (role === "user") {
@@ -23,7 +24,7 @@ export default function GuestCTA({ role, onBuy, isLoading, price }) {
           <button
             onClick={onBuy}
             disabled={isLoading}
-            className="bg-bingo-red hover:bg-[#cc0000] text-white font-black uppercase tracking-[0.2em] transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 text-[10px] py-4 px-10 rounded-2xl shadow-xl shadow-bingo-red/30"
+            className="bg-bingo-red hover:bg-[#cc0000] text-white font-black uppercase tracking-[0.2em] transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 text-[10px] py-4 px-10 rounded-2xl shadow-xl shadow-bingo-red/30 disabled:opacity-40 disabled:pointer-events-none"
           >
             {isLoading ? (
               <div className="h-4 w-4 animate-spin border-2 border-white/30 border-t-white rounded-full" />
@@ -48,9 +49,12 @@ export default function GuestCTA({ role, onBuy, isLoading, price }) {
         </div>
       </div>
 
-      <a href="/login" className="bg-bingo-red hover:bg-[#cc0000] text-white font-black text-[10px] uppercase tracking-[0.2em] py-4 px-10 rounded-2xl transition-all shadow-xl shadow-bingo-red/20">
+      <Link 
+        to="/login" 
+        className="bg-bingo-red hover:bg-[#cc0000] text-white font-black text-[10px] uppercase tracking-[0.2em] py-4 px-10 rounded-2xl transition-all shadow-xl shadow-bingo-red/20 text-center block md:inline-block"
+      >
         Sign in
-      </a>
+      </Link>
     </div>
   );
 }

@@ -4,29 +4,26 @@ import { Link } from "react-router-dom";
 import { useCards } from "../hooks/useCards";
 import { useAdminEvents } from "../hooks/useAdmin";
 import LoadingState from "../components/common/LoadingState";
+import { calculateCardProgress } from "../utils/cardHelpers";
 
 export default function Homepage({ role }) {
   const [activeTab, setActiveTab] = useState("market");
   const { data: serverCards, isLoading: loadingCards } = useCards();
-  const { data: globalEvents, isLoading: loadingEvents } = useAdminEvents();
 
-  if (loadingCards || loadingEvents) return <LoadingState message="Syncing data..." />;
+  if (loadingCards) return <LoadingState message="Syncing data..." />;
 
   const isLogged = role !== null;
 
   const cardsList = serverCards?.map((card) => {
-    const syncedEvents = card.events.map(cardEvent => {
-      const liveEvent = globalEvents?.find(e => e.id === cardEvent.id);
-      return liveEvent || cardEvent;
-    });
 
-    const wins = syncedEvents.filter((e) => e.status === "won").length;
-    const losses = syncedEvents.filter((e) => e.status === "lost").length;
-    const pending = syncedEvents.filter((e) => e.status === "pending").length;
-    const total = syncedEvents.length;
+      const { totalEvents, completedEvents } = calculateCardProgress(card.events);
 
-    return { ...card, events: syncedEvents, wins, losses, pending, total };
-  });
+      const wins = card.events?.filter((e) => e.status || "".toLowercase() === "win").length || 0;
+      const losses = card.events?.filter((e) => e.status || "".toLowercase() === "lose").length || 0;
+      const pending = card.events?.filter((e) => e.status || "".toLowercase() === "pending").length || 0;
+
+    return { ...card, wins, losses, pending, total: totalEvents };
+  }) || [];
 
   const marketplaceCards = cardsList?.filter(c => !c.isPurchased) || [];
   const activeUserCards = cardsList?.filter(c => c.isPurchased && c.pending > 0) || [];
@@ -38,7 +35,7 @@ export default function Homepage({ role }) {
       if (activeTab === "history") return historyUserCards;
       return marketplaceCards; 
     }
-    return marketplaceCards;
+    return cardsList;
   })();
 
   const steps = [
@@ -112,7 +109,7 @@ export default function Homepage({ role }) {
 
               <div className="p-8 border-b border-white/5">
                 <h2 className="text-2xl font-black text-white leading-tight pr-12 group-hover:text-bingo-red transition-colors">
-                  {card.title}
+                  {card.name}
                 </h2>
                 <p className="text-[10px] text-slate-500 font-bold uppercase mt-2 tracking-widest italic">
                   Created on {card.date || "Date not available"}
@@ -121,9 +118,9 @@ export default function Homepage({ role }) {
 
               <div className="p-8 space-y-5 grow bg-slate-900/20">
                 <div className="grid grid-cols-1 gap-3">
-                  <DetailItem icon={<Grid3x3 size={16} className="text-blue-500" />} label="Size" value={card.size} />
-                  <DetailItem icon={<DollarSign size={16} className="text-green-500" />} label="Line Prize" value={card.prizePerLine} isPrice />
-                  <DetailItem icon={<Trophy size={16} className="text-orange-500" />} label="Bingo" value={card.fullPrize} isPrice />
+                  <DetailItem icon={<Grid3x3 size={16} className="text-blue-500" />} label="Size" value={`${card.cols}x${card.rows}`} />
+                  <DetailItem icon={<DollarSign size={16} className="text-green-500" />} label="Line Prize" value={card.line_prize} isPrice />
+                  <DetailItem icon={<Trophy size={16} className="text-orange-500" />} label="Bingo" value={card.bingo_prize} isPrice />
                 </div>
 
                 <div className="mt-6 pt-6 border-t border-white/5">
