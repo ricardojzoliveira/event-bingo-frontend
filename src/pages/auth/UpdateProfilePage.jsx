@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCurrentUser, useUpdateProfile, useDeleteAccount, useSelfExclusion } from "../../hooks/useAuth";
+import { useCurrentUser, useUpdateProfile, useDeleteAccount } from "../../hooks/useAuth";
 import * as Icons from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import Cookies from "js-cookie";
@@ -11,7 +11,6 @@ export default function ProfileUpdatePage() {
   const { data: user, isLoading } = useCurrentUser();
   const mutation = useUpdateProfile();
   const deleteMutation = useDeleteAccount();
-  const selfExclusionMutation = useSelfExclusion();
 
   // Campos para o forms.
   const [fullName, setFullName] = useState("");
@@ -104,9 +103,12 @@ export default function ProfileUpdatePage() {
 
   const handleSelfExclusion = () => {
     if (window.confirm("ARE YOU SURE? You will be excluded from the platform.")) {
-      const payload = { status: "SUSPENDED" };
-      selfExclusionMutation.mutate(payload, {
-        onSuccess: () => navigate("/login")
+      mutation.mutate({ status: "SUSPENDED" }, {
+        onSuccess: () => {
+          Cookies.remove("token");
+          queryClient.clear();
+          navigate("/login");
+        }
       });
     }
   };

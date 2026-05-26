@@ -1,4 +1,4 @@
-import { useCurrentUser } from "../../hooks/useAuth"; // Mudámos para o teu hook padrão
+import { useCurrentUser } from "../../hooks/useAuth"; 
 import * as Icons from "lucide-react";
 import { Link } from "react-router-dom";
 
