@@ -178,3 +178,25 @@ export function useDeleteAccount() {
     },
   });
 }
+
+// Tive de criar este hook porque a navbar não atualiza.
+export function useSelfExclusion() {
+  const queryClient = useQueryClient();
+  const { data: user } = useCurrentUser();
+
+  return useMutation({
+    mutationFn: async () => {
+      const token = Cookies.get("token");
+      return await api.patch(`/users/${user.id}`, { status: "SUSPENDED" }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    },
+    onSuccess: () => {
+      Cookies.remove("token");
+      queryClient.setQueryData(["currentUser"], null); 
+      queryClient.clear(); 
+    },
+  });
+}

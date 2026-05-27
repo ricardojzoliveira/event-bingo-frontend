@@ -69,7 +69,7 @@ function App() {
           <Route
             path="/wallet"
             element={
-              role ? <WalletPage role={role} /> : <Navigate to="/login" />
+              role === "user" ? <WalletPage role={role} /> : <Navigate to="/" />
             }
           />
 

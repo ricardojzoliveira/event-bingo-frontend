@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCurrentUser, useUpdateProfile, useDeleteAccount } from "../../hooks/useAuth";
+import { useCurrentUser, useUpdateProfile, useDeleteAccount, useSelfExclusion } from "../../hooks/useAuth";
 import * as Icons from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import Cookies from "js-cookie";
@@ -11,8 +11,8 @@ export default function ProfileUpdatePage() {
   const { data: user, isLoading } = useCurrentUser();
   const mutation = useUpdateProfile();
   const deleteMutation = useDeleteAccount();
+  const selfExclusionMutation = useSelfExclusion();
 
-  // Campos para o forms.
   const [fullName, setFullName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -30,7 +30,6 @@ export default function ProfileUpdatePage() {
   const [selectedAvatar, setSelectedAvatar] = useState(avatarChoices[0].url);
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
 
-  // Sincroniza os inputs com os dados reais do utilizador.
   useEffect(() => {
     if (user) {
       setFullName(user.full_name || "");
@@ -45,7 +44,6 @@ export default function ProfileUpdatePage() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validações básicas.
     if (!fullName.trim() || !username.trim() || !email.trim()) {
       alert("Fields cannot be empty.");
       return;
@@ -56,13 +54,11 @@ export default function ProfileUpdatePage() {
       return;
     }
 
-    // Extrai o nome do ficheiro do avatar.
     const avatarName = selectedAvatar
       .split("/")
       .pop()
       .replace(".png", "");
 
-    // Constrói o payload apenas com o que mudou.
     const payload = {};
 
     if (fullName !== user.full_name) payload.full_name = fullName;
@@ -70,19 +66,21 @@ export default function ProfileUpdatePage() {
     if (email !== user.email) payload.email = email;
     if (avatarName !== user.avatar) payload.avatar = avatarName;
 
-    // A password só vai se for preenchida.
     if (password && password.trim() !== "") {
       payload.password = password;
     }
 
-    // Verifica se algo foi alterado antes de enviar. Se não foi, não deixa fazer o pedido.
     const keys = Object.keys(payload);
     if (keys.length === 0) {
       alert("No changes to save!");
       return;
     }
 
-    mutation.mutate(payload);
+    mutation.mutate(payload, {
+      onSuccess: () => {
+        navigate(-1);
+      }
+    });
   };
 
   const handleDelete = () => {
@@ -103,11 +101,13 @@ export default function ProfileUpdatePage() {
 
   const handleSelfExclusion = () => {
     if (window.confirm("ARE YOU SURE? You will be excluded from the platform.")) {
-      mutation.mutate({ status: "SUSPENDED" }, {
+      selfExclusionMutation.mutate(null, { 
         onSuccess: () => {
-          Cookies.remove("token");
-          queryClient.clear();
-          navigate("/login");
+          navigate("/");
+        },
+        onError: (error) => {
+          console.error("Self-Exclusion Failed!", error);
+          alert("Could not process self-exclusion");
         }
       });
     }
@@ -207,9 +207,13 @@ export default function ProfileUpdatePage() {
             <Icons.AlertTriangle className="text-red-500" size={20} />
             Danger Zone
           </h3>
-          <button onClick={handleSelfExclusion} className="w-full bg-amber-900/20 border border-amber-600/30 text-amber-500 py-4 rounded-xl font-black uppercase text-xs hover:bg-amber-600/10 transition">
-            Request Self-Exclusion
-          </button>
+          
+          {user?.role === "user" && (
+            <button onClick={handleSelfExclusion} className="w-full bg-amber-900/20 border border-amber-600/30 text-amber-500 py-4 rounded-xl font-black uppercase text-xs hover:bg-amber-600/10 transition">
+              Request Self-Exclusion
+            </button>
+          )}
+          
           <button onClick={handleDelete} className="w-full bg-red-900/20 border border-red-900/50 text-red-500 py-4 rounded-xl font-black uppercase text-xs hover:bg-red-900/30 transition">
             Delete Account
           </button>
