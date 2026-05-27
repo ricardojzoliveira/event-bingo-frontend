@@ -86,8 +86,8 @@ export function useUpdateEventStatus() {
   return useMutation({
     mutationFn: async ({ eventId, status }) => {
       const token = Cookies.get("token");
-      const response = await api.patch(`/events/${eventId}`, {status}, {
-        headers: { 
+      const response = await api.patch(`/events/${eventId}`, { status }, {
+        headers: {
           Authorization: `Bearer ${token}`,
         },
       });
@@ -106,9 +106,9 @@ export function useUpdateEvent() {
     mutationFn: async ({ id, eventData }) => {
       const token = Cookies.get("token");
       const response = await api.put(`/events/${id}`, eventData, {
-        headers: { 
+        headers: {
           Authorization: `Bearer ${token}`
-         },
+        },
       });
       return response.data;
     },
@@ -128,10 +128,10 @@ export function useCreateCard() {
       //console.log("DADOS A ENVIAR:", JSON.stringify(cardData, null, 2));
 
       const response = await api.post("/cards", cardData, {
-        headers: { 
+        headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json"
-         },
+        },
       });
       return response.data;
     },
@@ -168,13 +168,81 @@ export function useUpdateCard() {
       console.log("DADOS A ENVIAR:", JSON.stringify(cardData, null, 2));
       const token = Cookies.get("token");
       const response = await api.put(`/cards/${id}`, cardData, {
-        headers: { 
+        headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json" },
-          "Accept": "application/json"
+          "Content-Type": "application/json"
+        },
+        "Accept": "application/json"
       });
       return response.data;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["cards"] }),
+  });
+}
+
+// Lista de users.
+export function useAllUsers() {
+  return useQuery({
+    queryKey: ["admin", "users"],
+    queryFn: async () => {
+      const token = Cookies.get("token");
+
+      const response = await api.get("/users", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    },
+  });
+}
+
+// Dados de um utilizador.
+export const useGetOneUser = (userId) => {
+  return useQuery({
+    queryKey: ["user", userId],
+    queryFn: async () => {
+      const token = Cookies.get("token");
+      const { data } = await api.get(`/users/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return data;
+    },
+    enabled: !!userId,
+  });
+};
+
+// Altera dados de um utilizador.
+export const useUpdateUserByAdmin = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ userId, payload }) => {
+      const token = Cookies.get("token");
+      const { data } = await api.patch(`/users/${userId}`, payload, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["admin", "users"]);
+      queryClient.invalidateQueries(["user"]);
+    },
+  });
+};
+
+// Elimina um utilizador.
+export function useAdminDeleteUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (userId) => {
+      const token = Cookies.get("token");
+      return await api.delete(`/users/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["admin", "users"]);
+    },
   });
 }

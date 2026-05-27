@@ -163,7 +163,6 @@ export function useDeleteAccount() {
 
   return useMutation({
     mutationFn: async (userId) => {
-      //ler token aqui para garantir que no momento certo
       const token = Cookies.get("token");
       
       return await api.delete(`/users/${userId}`, {
@@ -174,36 +173,8 @@ export function useDeleteAccount() {
     },
     onSuccess: () => {
       Cookies.remove("token");
-      queryClient.setQueryData(["currentUser"], null); // limpa a cache do user
-      queryClient.clear(); // limpa o resto da cache
-    },
-  });
-}
-
-// Self-exclusion.
-export function useSelfExclusion() {
-  const queryClient = useQueryClient();
-  const { data: user } = useCurrentUser();
-  const token = Cookies.get("token");
-
-  return useMutation({
-    mutationFn: async (updatedData) => {
-      const response = await api.patch(
-        `/users/${user.id}`,
-        updatedData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      return response.data;
-    },
-
-    onSuccess: () => {
-      Cookies.remove("token");
-      queryClient.clear();
+      queryClient.setQueryData(["currentUser"], null); 
+      queryClient.clear(); 
     },
   });
 }
