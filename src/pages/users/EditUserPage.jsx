@@ -49,7 +49,6 @@ export default function EditUserPage() {
 
     mutation.mutate({ userId, payload }, {
       onSuccess: () => {
-        alert("Utilizador atualizado com sucesso!");
         navigate(-1);
       }
     });
@@ -108,7 +107,7 @@ export default function EditUserPage() {
             disabled={mutation.isPending}
             className="w-full bg-bingo-red mt-10 py-4 rounded-2xl font-black uppercase tracking-widest hover:brightness-110 active:scale-[0.98] transition-all"
           >
-            {mutation.isPending ? "A Guardar..." : "Save Settings"}
+            {mutation.isPending ? "Saving..." : "Save Settings"}
           </button>
         </form>
       </div>
