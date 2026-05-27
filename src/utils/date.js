@@ -1,4 +1,4 @@
-export const formatDate = (dateString) => {
+export const formatDateTime = (dateString) => {
   if (!dateString) return "N/A";
 
   const normalized = dateString.replace("T", " ");
@@ -18,3 +18,20 @@ export const formatDate = (dateString) => {
 
   return dateFormatted;
 };
+
+export const formatDate = (dateString) => {
+  if (!dateString) return "N/A";
+
+  const normalized = dateString.replace("T", " ");
+
+  const [datePart, timePart] = normalized.split(" ");
+  if (!datePart) return dateString;
+
+  const [yyyy, mm, dd] = datePart.split("-");
+  if (!yyyy || !mm || !dd) return dateString;
+
+  const dateFormatted = `${dd}/${mm}/${yyyy}`;
+
+  return dateFormatted;
+};
+

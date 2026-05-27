@@ -9,19 +9,26 @@ import { Trophy } from "lucide-react";
 import { useAdminEvents } from "../hooks/useAdmin";
 import LoadingState from "../components/common/LoadingState"; 
 import { calculateCardProgress } from "../utils/cardHelpers";
+import { useCurrentUser } from "../hooks/useAuth";
 
 export default function GamePage({ role }) {
   const { id } = useParams();
   const [showSuccessMsg, setShowSuccessMsg] = useState(false);
 
   const { data: currentCard, isLoading: loadingCard, isError } = useCard(id);
+  const { data: user, isLoading, error } = useCurrentUser();
+
   const buyMutation = useBuyCard();
 
   const isLogged = role !== null;
   const isUser = role === "user";
-  const hasPurchased = currentCard?.isPurchased && role === "user";
 
-  const { completedEvents: wins, totalEvents: total } = calculateCardProgress(currentCard?.events);
+  const hasPurchased = isUser && user?.cards.some(userCard => Number(userCard.id) === Number(id));
+
+  const activeCardData = hasPurchased ? user?.cards?.find(userCard => Number(userCard.id) === Number(id)) : currentCard;
+
+  const { completedEvents: wins, totalEvents: total } = calculateCardProgress(activeCardData?.events);
+
   const progressText = (hasPurchased || role === "admin") ? `${wins}/${total}` : "-- / --";
 
   const handleBuyCard = () => {
@@ -96,7 +103,7 @@ export default function GamePage({ role }) {
 
         <div className={!hasPurchased && role !== "admin" ? "opacity-50 grayscale pointer-events-none" : ""}>
           <BingoCard 
-            data={currentCard} // Passamos os eventos já sincronizados!
+            data={activeCardData} 
             isLogged={hasPurchased || role === "admin"} 
           />
         </div>

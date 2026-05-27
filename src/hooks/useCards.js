@@ -27,33 +27,26 @@ export function useCard(id) {
   });
 }
 
+//buy card
 export const useBuyCard = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ cardId, price }) => {
-      const token = localStorage.getItem("user_id");
-      const response = await fetch("/api/user/buy-card", {
-        method: "POST",
+    mutationFn: async ({ cardId }) => {
+      const token = Cookies.get("token");
+      const response = await api.post(`cards/${cardId}/buy`, {}, {
         headers: { 
-          "Content-Type": "application/json",
           "Authorization": `Bearer ${token}` 
         },
-        body: JSON.stringify({ cardId, price }),
       });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message);
-      }
-      return response.json();
+      return response.data;
     },
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["profile"] });
+      queryClient.invalidateQueries({ queryKey: ["cards"] });
       
       queryClient.invalidateQueries({ queryKey: ["card", variables.cardId] });
       
-      queryClient.invalidateQueries({ queryKey: ["cards"] });
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
   });
 };

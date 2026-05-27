@@ -5,10 +5,13 @@ import { useCards } from "../hooks/useCards";
 import { useAdminEvents } from "../hooks/useAdmin";
 import LoadingState from "../components/common/LoadingState";
 import { calculateCardProgress } from "../utils/cardHelpers";
+import { useCurrentUser } from "../hooks/useAuth";
+import { formatDate } from "../utils/date";
 
 export default function Homepage({ role }) {
   const [activeTab, setActiveTab] = useState("market");
   const { data: serverCards, isLoading: loadingCards } = useCards();
+  const { data: currentUser, isLoading, error} = useCurrentUser();
 
   if (loadingCards) return <LoadingState message="Syncing data..." />;
 
@@ -18,11 +21,13 @@ export default function Homepage({ role }) {
 
       const { totalEvents, completedEvents } = calculateCardProgress(card.events);
 
-      const wins = card.events?.filter((e) => e.status || "".toLowercase() === "win").length || 0;
-      const losses = card.events?.filter((e) => e.status || "".toLowercase() === "lose").length || 0;
-      const pending = card.events?.filter((e) => e.status || "".toLowercase() === "pending").length || 0;
+  const wins = card.events?.filter((e) => (e.status || "").toLowerCase() === "win").length || 0;
+  const losses = card.events?.filter((e) => (e.status || "").toLowerCase() === "lose").length || 0;
+  const pending = card.events?.filter((e) => (e.status || "").toLowerCase() === "pending").length || 0;
 
-    return { ...card, wins, losses, pending, total: totalEvents };
+      const isPurchased = role === "user" && currentUser?.cards?.some(userCard => Number(userCard.id) === Number(card.id));
+
+    return { ...card, wins, losses, pending, total: totalEvents, isPurchased };
   }) || [];
 
   const marketplaceCards = cardsList?.filter(c => !c.isPurchased) || [];
@@ -47,7 +52,7 @@ export default function Homepage({ role }) {
   return (
     <main className="min-h-screen bg-bingo-dark text-slate-300 p-8 flex flex-col items-center">
       <header className="text-center max-w-2xl mb-12">
-        <h1 className="text-5xl font-black text-bingo-red mb-3 uppercase tracking-tighter italic">
+        <h1 className="text-5xl font-black text-bingo-red mb-3 uppercase tracking-tighter">
           Bingo Cards
         </h1>
         <p className="text-slate-400">
@@ -58,7 +63,7 @@ export default function Homepage({ role }) {
       </header>
       
       {role === "user" && (
-        <div className="flex gap-2 p-1.5 bg-slate-900/60 rounded-[2rem] border border-white/5 mb-12 backdrop-blur-md">
+        <div className="flex gap-2 p-1.5 bg-slate-900/60 rounded-4xl border border-white/5 mb-12 backdrop-blur-md">
         <TabButton 
           active={activeTab === "market"} 
           onClick={() => setActiveTab("market")}
@@ -112,7 +117,7 @@ export default function Homepage({ role }) {
                   {card.name}
                 </h2>
                 <p className="text-[10px] text-slate-500 font-bold uppercase mt-2 tracking-widest italic">
-                  Created on {card.date || "Date not available"}
+                  Created on {formatDate(card.date) || "Date not available"}
                 </p>
               </div>
 

@@ -2,7 +2,7 @@ import { useAdminEvents, useDeleteEvent, useUpdateEventStatus } from "../../hook
 import { Plus, Search, Filter, Edit2, Trash2, CheckCircle, XCircle, Clock, ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import LoadingState from "../../components/common/LoadingState";
-import { formatDate } from "../../utils/date";
+import { formatDateTime } from "../../utils/date";
 import { useState } from "react";
 
 export default function EventManagement() {
@@ -105,7 +105,7 @@ export default function EventManagement() {
                       </div>
                     </td>
                     <td className="p-4 text-slate-400">{event.prediction}</td>
-                    <td className="p-4 text-slate-400">{formatDate(event.date)}</td>
+                    <td className="p-4 text-slate-400">{formatDateTime(event.date)}</td>
                     <td className="p-4">
                       <div className="flex justify-center gap-2 text-slate-600">
                         
