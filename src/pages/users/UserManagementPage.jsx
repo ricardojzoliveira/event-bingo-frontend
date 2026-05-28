@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Mail, ChevronLeft, Users, UserCheck, UserMinus, UserX, Search, Edit2, Ban, Trash2, Wallet } from "lucide-react";
+import { Mail, ChevronLeft, Users, UserCheck, UserMinus, UserX, Search, Edit2, Ban, Trash2, Wallet, ArrowLeftRight } from "lucide-react";
 import LoadingState from "../../components/common/LoadingState";
 import { useAllUsers, useUpdateUserByAdmin, useAdminDeleteUser } from "../../hooks/useAdmin";
 import { useCurrentUser } from "../../hooks/useAuth";
@@ -126,6 +126,9 @@ export default function UserManagementPage() {
                                         <td className="p-6 text-right">
                                             {canPerformAction ? (
                                                 <>
+                                                    <Link to={`/admin/users/transactions/${u.id}`} className="inline-flex items-center justify-center p-2 rounded-lg transition-all hover:bg-gray-600 hover:text-gray-500 text-slate-500">
+                                                        <ArrowLeftRight size={16} />
+                                                    </Link>
                                                     <Link to={`/admin/users/edit/${u.id}`} className="inline-flex items-center justify-center p-2 rounded-lg transition-all hover:bg-blue-500/10 hover:text-blue-500 text-slate-500">
                                                         <Edit2 size={16} />
                                                     </Link>

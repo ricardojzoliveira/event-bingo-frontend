@@ -246,3 +246,19 @@ export function useAdminDeleteUser() {
     },
   });
 }
+
+export const useAdminTransactionsUSer = (userId) => {
+  return useQuery({
+    queryKey: ["admin", "transactions", userId],
+    queryFn: async () => {
+      const token = Cookies.get("token");
+      const { data } = await api.get(`/transactions/${userId}`, {
+        headers : {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      return data;
+    },
+    enabled: !!userId,
+  })
+};

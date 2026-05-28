@@ -22,6 +22,7 @@ import SettingsPage from "./pages/auth/UpdateProfilePage.jsx";
 import SuspendedScreen from "./pages/auth/SuspendedScreen.jsx";
 import UserManagementPage from "./pages/users/UserManagementPage.jsx";
 import EditUserPage from "./pages/users/EditUserPage.jsx";
+import UserTransactionsPage from "./pages/admin/TransactionsUser.jsx";
 
 function App() {
   const { data: user, isLoading, isError, error } = useCurrentUser();
@@ -112,7 +113,14 @@ function App() {
           <Route
             path="/admin/users"
             element={
-              role === "admin" ? <UserManagementPage /> : <Navigate to="/login" />
+              role === "admin" ? <UserManagementPage /> : <Navigate to="/" />
+            }
+          />
+
+          <Route 
+            path="/admin/users/transactions/:userId"
+            element={
+              role === "admin" ? <UserTransactionsPage /> : <Navigate to="/" />
             }
           />
 
