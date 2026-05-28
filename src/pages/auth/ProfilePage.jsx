@@ -1,9 +1,51 @@
-import { useCurrentUser } from "../../hooks/useAuth";
+import { useMemo } from "react";
+import { useCurrentUser, useWallet } from "../../hooks/useAuth";
 import * as Icons from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function ProfilePage() {
   const { data: user, isLoading } = useCurrentUser();
+  const { useTransactions } = useWallet();
+  const { data: transactions = [] } = useTransactions();
+
+  const stats = useMemo(() => {
+    const boughtCards = user?.cards?.length || 0;
+
+    const totalInvested = transactions
+      .filter(t => t.type === 'CARD')
+      .reduce((acc, curr) => acc + (curr.amount || 0), 0);
+
+    const totalEarned = transactions
+      .filter(t => t.type === 'PRIZE' || t.type === 2)
+      .reduce((acc, curr) => acc + (curr.amount || 0), 0);
+
+    return [
+      {
+        label: "Bought Cards",
+        value: boughtCards,
+        icon: Icons.CreditCard,
+        lifetime: "BOUGHT"
+      },
+      {
+        label: "Total Earned",
+        value: `€${totalEarned.toFixed(2)}`,
+        icon: Icons.Trophy,
+        lifetime: "EARNED"
+      },
+      {
+        label: "Total Invested",
+        value: `€${totalInvested.toFixed(2)}`,
+        icon: Icons.TrendingDown,
+        lifetime: "INVESTED"
+      },
+      {
+        label: "Net Profit",
+        value: `€${(totalEarned - totalInvested).toFixed(2)}`,
+        icon: Icons.TrendingUp,
+        lifetime: "PROFIT"
+      },
+    ];
+  }, [transactions, user?.cards?.length]);
 
   if (isLoading) return (
     <div className="min-h-screen bg-bingo-dark flex items-center justify-center">
@@ -12,13 +54,6 @@ export default function ProfilePage() {
   );
 
   const isUser = user?.role === "user";
-
-  const stats = [
-    { label: "Bought Cards", value: user?.stats?.totalPurchased || 0, icon: Icons.CreditCard, lifetime: "BOUGHT" },
-    { label: "Total Earned", value: user?.stats?.cardsWon || 0, icon: Icons.Trophy, lifetime: "TOTAL" },
-    { label: "Lines Won", value: user?.stats?.linesWon || 0, icon: Icons.Hash, lifetime: "LINES" },
-    { label: "Bingo", value: user?.stats?.fullPrizes || 0, icon: Icons.Crown, lifetime: "FULL" },
-  ];
 
   return (
     <div className="min-h-screen bg-bingo-dark text-white p-6 md:p-12">
