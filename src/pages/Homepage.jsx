@@ -41,7 +41,7 @@ export default function Homepage({ role }) {
       if (activeTab === "history") return historyUserCards;
       return marketplaceCards; 
     }
-    return role === "admin" ? cardsList: marketplaceCards;
+    return role === "admin" ? cardsList: marketplaceCards ;
   })();
 
   const steps = [

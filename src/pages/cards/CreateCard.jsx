@@ -77,6 +77,8 @@ export default function CreateCard({
       return parseInt(slot, 10);
     });
 
+    const currentDate = new Date().toISOString();
+
     const cardData = {
       name: title,
       cols: parseInt(gridSize),
@@ -85,6 +87,7 @@ export default function CreateCard({
       bingo_prize: parseFloat(fullPrize),
       price: parseFloat(price),
       events: eventsId,
+      date: currentDate
     };
 
     if (isEditing && onSubmit) {
@@ -104,7 +107,7 @@ export default function CreateCard({
     const isPending = statusStr === "pending";
 
     if (!isPending) return false;
-    
+
     return (
       e.home_team.toLowerCase().includes(searchTerm.toLowerCase()) ||
       e.away_team.toLowerCase().includes(searchTerm.toLowerCase())
