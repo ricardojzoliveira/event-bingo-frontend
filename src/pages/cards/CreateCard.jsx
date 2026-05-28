@@ -98,11 +98,18 @@ export default function CreateCard({
 
   if (loadingEvents) return <LoadingState />;
 
-  const filteredEvents = availableEvents?.filter(
-    (e) =>
+  const filteredEvents = availableEvents?.filter((e) => {
+
+    const statusStr = String(e.status || "").toLowerCase();
+    const isPending = statusStr === "pending";
+
+    if (!isPending) return false;
+    
+    return (
       e.home_team.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      e.away_team.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+      e.away_team.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  });
 
   const isProcessing = creating || externalLoading;
 
@@ -317,7 +324,7 @@ export default function CreateCard({
                     />
                   </div>
                   <p className="font-bold text-sm group-hover:text-white transition-colors">
-                    {event.team1} vs {event.team2}
+                    {event.home_team} vs {event.away_team}
                   </p>
                   <p className="text-[10px] text-slate-500 font-medium">
                     {event.prediction}

@@ -18,19 +18,20 @@ export default function Homepage({ role }) {
   const isLogged = role !== null;
 
   const cardsList = serverCards?.map((card) => {
-
-      const { totalEvents, completedEvents } = calculateCardProgress(card.events);
+    const { totalEvents, completedEvents } = calculateCardProgress(card.events);
 
   const wins = card.events?.filter((e) => (e.status || "").toLowerCase() === "win").length || 0;
   const losses = card.events?.filter((e) => (e.status || "").toLowerCase() === "lose").length || 0;
   const pending = card.events?.filter((e) => (e.status || "").toLowerCase() === "pending").length || 0;
 
-      const isPurchased = role === "user" && currentUser?.cards?.some(userCard => Number(userCard.id) === Number(card.id));
+  const isPurchased = role === "user" && (currentUser?.cards?.some(userCard => Number(userCard.id) === Number(card.id)) || false);
 
-    return { ...card, wins, losses, pending, total: totalEvents, isPurchased };
+  const isAvailable = pending === totalEvents;
+
+  return { ...card, wins, losses, pending, total: totalEvents, isPurchased, isAvailable };
   }) || [];
 
-  const marketplaceCards = cardsList?.filter(c => !c.isPurchased) || [];
+  const marketplaceCards = cardsList?.filter(c => !c.isPurchased && c.isAvailable) || [];
   const activeUserCards = cardsList?.filter(c => c.isPurchased && c.pending > 0) || [];
   const historyUserCards = cardsList?.filter(c => c.isPurchased && c.pending === 0) || [];
 
@@ -40,7 +41,7 @@ export default function Homepage({ role }) {
       if (activeTab === "history") return historyUserCards;
       return marketplaceCards; 
     }
-    return cardsList;
+    return role === "admin" ? cardsList: marketplaceCards;
   })();
 
   const steps = [
