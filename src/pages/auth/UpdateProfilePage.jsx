@@ -149,8 +149,9 @@ export default function ProfileUpdatePage() {
         </div>
       )}
 
-      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-
+      <div className="w-full max-w-2xl flex flex-col gap-8">
+        
+        {/* Formulário de Perfil */}
         <div className="bg-bingo-dark/50 border border-slate-800 backdrop-blur-sm rounded-[2rem] p-10 shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="flex flex-col items-center gap-5 border-b border-slate-800 pb-8 mb-6">
@@ -202,7 +203,7 @@ export default function ProfileUpdatePage() {
           </form>
         </div>
 
-        <div className="bg-red-950/10 border border-red-900/30 rounded-[2rem] p-10 shadow-2xl flex flex-col gap-6 h-fit">
+        <div className="bg-red-950/10 border border-bingo-red rounded-[2rem] p-10 shadow-2xl flex flex-col gap-6">
           <h3 className="text-xl font-black text-white uppercase tracking-widest text-center flex items-center justify-center gap-2">
             <Icons.AlertTriangle className="text-red-500" size={20} />
             Danger Zone
@@ -218,6 +219,7 @@ export default function ProfileUpdatePage() {
             Delete Account
           </button>
         </div>
+
       </div>
     </div>
   );
