@@ -33,10 +33,10 @@ export default function CreateCard({
 
   useEffect(() => {
     if (initialData) {
-      setTitle(initialData.title || "");
+      setTitle(initialData.name || "");
       setPrice(initialData.price?.toString() || "");
-      setPrizePerLine(initialData.prizePerLine?.replace("€", "") || "");
-      setFullPrize(initialData.fullPrize?.replace("€", "") || "");
+      setPrizePerLine(String(initialData.line_prize || "").replace("€", ""));
+      setFullPrize(String(initialData.bingo_prize || "").replace("€", ""));
       setGridEvents(initialData.events || []);
       setGridSize(Math.sqrt(initialData.events?.length || 9));
     }
@@ -129,7 +129,7 @@ export default function CreateCard({
             </Link>
             <h1 className="text-2xl font-black uppercase tracking-tighter">
               {isEditing
-                ? `Editing: ${initialData?.title}`
+                ? `Editing: ${initialData?.name}`
                 : "Create New Bingo Card"}
             </h1>
           </div>

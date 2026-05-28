@@ -38,10 +38,10 @@ export default function UserTransactionsPage() {
           
           <div className="text-center space-y-1">
             <h2 className="text-2xl font-black text-white uppercase tracking-widest">
-              User Statements
+              User Transactions
             </h2>
             <p className="text-slate-400 font-medium text-sm">
-              Auditing movements for: <span className="text-bingo-red font-bold">@{user?.username || 'user'}</span> ({user?.full_name})
+              User: <span className="text-bingo-red font-bold">{user?.full_name}</span>
             </p>
           </div>
 
@@ -59,7 +59,6 @@ export default function UserTransactionsPage() {
 
                 return (
                   <div
-                    /* 🟢 CORRIGIDO: Chave combinada única para silenciar o aviso do React */
                     key={`${tx.id || "tx"}-${index}`}
                     className="bg-slate-950/60 border border-slate-800/80 p-4 rounded-2xl flex justify-between items-center group hover:border-red-500/30 transition-all duration-300"
                   >

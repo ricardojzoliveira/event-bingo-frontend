@@ -23,6 +23,7 @@ export default function CreateEvent({ initialData, onSubmit, isEditing = false, 
   const [away_team, setaway_team] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const [status, setStatus] = useState("PENDING");
 
   const [prediction, setPrediction] = useState("");
   const [customPrediction, setCustomPrediction] = useState("");
@@ -44,6 +45,7 @@ export default function CreateEvent({ initialData, onSubmit, isEditing = false, 
 
       sethome_team(initialData.home_team || "");
       setaway_team(initialData.away_team || "");
+      setStatus(initialData.status || "PENDING");
 
       if (outcomes.includes(initialData.prediction)) {
         setPrediction(initialData.prediction);
@@ -55,11 +57,19 @@ export default function CreateEvent({ initialData, onSubmit, isEditing = false, 
       }
 
       if (initialData.date) {
-        const [d, t] = initialData.date.split(" ");
+        const delimiter = initialData.date.includes("T") ? "T" : " ";
+        const parts = initialData.date.split(delimiter);
+        
+        const d = parts[0]; 
+        const t = parts[1]; 
+        
         setDate(d || "");
+        
         if (t) {
-          setTime(t.substring(0,5));
-        };
+          setTime(t.substring(0, 5)); 
+        } else {
+          setTime("");
+        }
       }
     }
   }, [initialData]);
@@ -76,6 +86,7 @@ export default function CreateEvent({ initialData, onSubmit, isEditing = false, 
       away_team,
       date: dateTime,
       prediction: isCustomPrediction ? customPrediction : prediction,
+      status
     };
 
     if (isEditing && onSubmit) {
@@ -101,7 +112,7 @@ export default function CreateEvent({ initialData, onSubmit, isEditing = false, 
               {isEditing ? "Edit Event" : "Create New Event"}
             </h1>
             <p className="text-slate-500 text-sm font-bold uppercase">
-              {isEditing ? `Updating event ID: ${initialData?.id}` : "Add a new event to the system."}
+              {isEditing ? `Updating event: ${initialData?.home_team} vs ${initialData?.away_team}` : "Add a new event to the system."}
             </p>
           </div>
         </div>
