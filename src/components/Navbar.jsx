@@ -21,7 +21,7 @@ export default function Navbar({ role }) {
     "bg-bingo-red text-bingo-dark font-bold py-2 px-4 rounded-lg hover:brightness-110 flex items-center gap-2 transition-all shadow-md active:scale-95 whitespace-nowrap w-full md:w-auto justify-center";
 
   return (
-    <nav className="bg-bingo-dark text-white px-6 py-4 flex justify-between items-center shadow-md border-b-2 border-white relative z-50">
+    <nav className="bg-slate-900 text-white px-6 py-4 flex justify-between items-center shadow-[0_4px_20px_rgba(0,0,0,0.5)] border-b border-bingo-red/30 relative z-50">
       <div className="flex items-center gap-6">
         <Link
           to="/"
@@ -56,11 +56,11 @@ export default function Navbar({ role }) {
 
         {!role && (
           <>
-            <li className="w-full md:w-auto">
+            {/*<li className="w-full md:w-auto">
               <Link to="/support" onClick={closeMenu} className={btnStyle}>
                 <Headset size={20} /> Support
               </Link>
-            </li>
+            </li>*/}
             <li className="w-full md:w-auto">
               <Link to="/login" onClick={closeMenu} className={btnStyle}>
                 <LogIn size={20} />
@@ -82,11 +82,11 @@ export default function Navbar({ role }) {
                 <Wallet size={20} /> Wallet
               </Link>
             </li>
-            <li className="w-full md:w-auto">
+            {/*<li className="w-full md:w-auto">
               <Link to="/support" onClick={closeMenu} className={btnStyle}>
                 <Headset size={20} /> Support
               </Link>
-            </li>
+            </li>*/}
             <li className="w-full md:w-auto">
               <Link to="/logout" onClick={closeMenu} className={btnStyle}>
                 <LogOut size={20} /> Logout
