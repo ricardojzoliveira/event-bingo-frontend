@@ -104,6 +104,18 @@ export default function WalletPage() {
             <div className="space-y-3">
               <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Amount to {type}</label>
               <input type="number" placeholder="0.00" value={amount} onChange={(e) => setAmount(e.target.value)} className="w-full bg-[#051124] border-2 border-slate-800 rounded-2xl p-5 text-3xl font-black outline-none focus:border-bingo-red transition-all placeholder:text-slate-800" />
+                            <div className="grid grid-cols-4 gap-2">
+                {["10", "20", "50", "100"].map((val) => (
+                  <button
+                    key={val}
+                    type="button"
+                    onClick={() => setAmount(val)}
+                    className="bg-slate-800/30 border border-slate-700 py-2 rounded-lg hover:bg-slate-700 hover:text-white transition-all font-bold text-slate-400"
+                  >
+                    €{val}
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="border-t border-slate-800/80 pt-4 space-y-4">
