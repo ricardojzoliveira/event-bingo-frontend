@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Lock, Grid3x3, DollarSign, Trophy, Check, ShoppingCart, History, PlayCircle } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCards } from "../hooks/useCards";
 import { useAdminEvents } from "../hooks/useAdmin";
 import LoadingState from "../components/common/LoadingState";
@@ -9,9 +9,10 @@ import { useCurrentUser } from "../hooks/useAuth";
 import { formatDate } from "../utils/date";
 
 export default function Homepage({ role }) {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("market");
   const { data: serverCards, isLoading: loadingCards } = useCards();
-  const { data: currentUser, isLoading, error} = useCurrentUser();
+  const { data: currentUser, isLoading, error } = useCurrentUser();
 
   if (loadingCards) return <LoadingState message="Syncing data..." />;
 
@@ -20,15 +21,15 @@ export default function Homepage({ role }) {
   const cardsList = serverCards?.map((card) => {
     const { totalEvents, completedEvents } = calculateCardProgress(card.events);
 
-  const wins = card.events?.filter((e) => (e.status || "").toLowerCase() === "win").length || 0;
-  const losses = card.events?.filter((e) => (e.status || "").toLowerCase() === "lose").length || 0;
-  const pending = card.events?.filter((e) => (e.status || "").toLowerCase() === "pending").length || 0;
+    const wins = card.events?.filter((e) => (e.status || "").toLowerCase() === "win").length || 0;
+    const losses = card.events?.filter((e) => (e.status || "").toLowerCase() === "lose").length || 0;
+    const pending = card.events?.filter((e) => (e.status || "").toLowerCase() === "pending").length || 0;
 
-  const isPurchased = role === "user" && (currentUser?.cards?.some(userCard => Number(userCard.id) === Number(card.id)) || false);
+    const isPurchased = role === "user" && (currentUser?.cards?.some(userCard => Number(userCard.id) === Number(card.id)) || false);
 
-  const isAvailable = pending === totalEvents;
+    const isAvailable = pending === totalEvents;
 
-  return { ...card, wins, losses, pending, total: totalEvents, isPurchased, isAvailable };
+    return { ...card, wins, losses, pending, total: totalEvents, isPurchased, isAvailable };
   }) || [];
 
   const marketplaceCards = cardsList?.filter(c => !c.isPurchased && c.isAvailable) || [];
@@ -39,9 +40,9 @@ export default function Homepage({ role }) {
     if (role === "user") {
       if (activeTab === "active") return activeUserCards;
       if (activeTab === "history") return historyUserCards;
-      return marketplaceCards; 
+      return marketplaceCards;
     }
-    return role === "admin" ? cardsList: marketplaceCards ;
+    return role === "admin" ? cardsList : marketplaceCards;
   })();
 
   const steps = [
@@ -56,42 +57,49 @@ export default function Homepage({ role }) {
         <h1 className="text-5xl font-black text-bingo-red mb-3 uppercase tracking-tighter">
           Bingo Cards
         </h1>
-        <p className="text-slate-400">
-          {isLogged
-            ? `Welcome back! You have ${activeUserCards.length} cards in progress.`
-            : "Choose your card and win prizes by predicting sports events"}
-        </p>
+        <div className="bg-slate-900/40 border border-bingo-red/20 p-6 rounded-3xl mt-6">
+          <p className="text-slate-200 font-bold text-lg mb-4">
+            {isLogged
+              ? `Welcome back ${currentUser.username}! You have ${activeUserCards.length} cards in progress. Ready for more?`
+              : "Choose your card and win prizes by predicting sports events!"}
+          </p>
+          <div className="flex justify-center gap-4">
+            <span className="text-bingo-red font-black uppercase text-sm tracking-widest italic">
+              {isLogged ? "Get another card now" : "Start your journey today"}
+            </span>
+          </div>
+        </div>
       </header>
-      
+
       {role === "user" && (
         <div className="flex gap-2 p-1.5 bg-slate-900/60 rounded-4xl border border-white/5 mb-12 backdrop-blur-md">
-        <TabButton 
-          active={activeTab === "market"} 
-          onClick={() => setActiveTab("market")}
-          icon={<ShoppingCart size={16} />}
-          label="Marketplace"
-          count={marketplaceCards.length}
-        />
-        {isLogged && (
-          <>
-            <TabButton 
-              active={activeTab === "active"} 
-              onClick={() => setActiveTab("active")}
-              icon={<PlayCircle size={16} />}
-              label="My Active Cards"
-              count={activeUserCards.length}
-              color="text-green-500"
-            />
-            <TabButton 
-              active={activeTab === "history"} 
-              onClick={() => setActiveTab("history")}
-              icon={<History size={16} />}
-              label="History"
-              count={historyUserCards.length}
-            />
-          </>
-        )}
-      </div>
+          <TabButton
+            active={activeTab === "market"}
+            onClick={() => setActiveTab("market")}
+            icon={<ShoppingCart size={16} />}
+            label="Marketplace"
+            count={marketplaceCards.length}
+          />
+          {isLogged && (
+            <>
+              <TabButton
+                active={activeTab === "active"}
+                onClick={() => setActiveTab("active")}
+                icon={<PlayCircle size={16} />}
+                label="My Active Cards"
+                count={activeUserCards.length}
+                color="text-green-500"
+              />
+              <TabButton
+                active={activeTab === "history"}
+                onClick={() => setActiveTab("history")}
+                icon={<History size={16} />}
+                label="History"
+                count={historyUserCards.length}
+              />
+            </>
+          )}
+        </div>
       )}
 
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-7xl mb-20 transition-all">
@@ -152,11 +160,10 @@ export default function Homepage({ role }) {
               <div className="p-8 pt-0">
                 <Link
                   to={`/card/${card.id}`}
-                  className={`block w-full py-4 rounded-2xl font-black text-center uppercase text-xs tracking-widest transition-all transform active:scale-95 shadow-xl ${
-                    card.isPurchased
-                      ? "bg-slate-800 hover:bg-slate-700 text-white border border-slate-700"
-                      : "bg-bingo-red hover:bg-red-600 text-white shadow-red-900/20"
-                  }`}
+                  className={`block w-full py-4 rounded-2xl font-black text-center uppercase text-xs tracking-widest transition-all transform active:scale-95 shadow-xl ${card.isPurchased
+                    ? "bg-slate-800 hover:bg-slate-700 text-white border border-slate-700"
+                    : "bg-bingo-red hover:bg-red-600 text-white shadow-red-900/20"
+                    }`}
                 >
                   {role === "admin" ? "Preview Structure" : card.isPurchased ? "Open My Card" : "View Card Details"}
                 </Link>
@@ -188,6 +195,19 @@ export default function Homepage({ role }) {
           </div>
         </section>
       )}
+      {!isLogged && (
+        <div className="fixed bottom-0 left-0 w-full bg-slate-900 border-t border-bingo-red/30 p-4 shadow-[0_-10px_20px_rgba(0,0,0,0.5)] z-50 flex justify-center items-center gap-6">
+          <h3 className="text-white font-black uppercase tracking-widest text-sm italic">
+            Join our community and start winning today!
+          </h3>
+          <button
+            className="bg-bingo-red hover:bg-red-600 text-white px-8 py-3 rounded-2xl font-black uppercase text-xs tracking-widest transition-all transform active:scale-95"
+            onClick={() => navigate("/register")}
+          >
+            Create Account
+          </button>
+        </div>
+      )}
     </main>
   );
 }
@@ -197,11 +217,10 @@ function TabButton({ active, onClick, icon, label, count, color = "text-slate-40
   return (
     <button
       onClick={onClick}
-      className={`px-6 py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all flex items-center gap-3 border ${
-        active 
-          ? "bg-slate-800 border-white/10 text-white shadow-xl scale-105" 
-          : "border-transparent text-slate-500 hover:text-slate-300"
-      }`}
+      className={`px-6 py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all flex items-center gap-3 border ${active
+        ? "bg-slate-800 border-white/10 text-white shadow-xl scale-105"
+        : "border-transparent text-slate-500 hover:text-slate-300"
+        }`}
     >
       <span className={active ? "text-bingo-red" : ""}>{icon}</span>
       {label}
