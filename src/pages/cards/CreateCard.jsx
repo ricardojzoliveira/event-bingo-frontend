@@ -108,6 +108,14 @@ export default function CreateCard({
 
     if (!isPending) return false;
 
+    const isAlreadyInGrid = gridEvents.some((slot) => {
+      if (!slot) return false;
+      const slotId = typeof slot === "object" ? slot.id : slot;
+      return parseInt(slotId, 10) === parseInt(e.id, 10);
+    });
+
+    if (isAlreadyInGrid) return false;
+
     return (
       e.home_team.toLowerCase().includes(searchTerm.toLowerCase()) ||
       e.away_team.toLowerCase().includes(searchTerm.toLowerCase())

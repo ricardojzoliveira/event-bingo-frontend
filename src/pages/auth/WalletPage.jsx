@@ -9,10 +9,11 @@ import {
 import { useCurrentUser, useWallet } from "../../hooks/useAuth";
 
 export default function WalletPage() {
+  const [ page, setPage] = useState(0);
   const { data: user } = useCurrentUser();
   const { useTransactions, useTransactionMutation } = useWallet();
 
-  const { data: walletData, isLoading } = useTransactions();
+  const { data: serverTransactions, isLoading } = useTransactions();
   const mutation = useTransactionMutation();
 
   const [amount, setAmount] = useState("");
@@ -49,7 +50,7 @@ export default function WalletPage() {
     if (value.length <= 5) setCardValid(value);
   };
 
-  const transactions = walletData || [];
+  const transactions = serverTransactions?.content || [];
   const sortedTransactions = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
 
   const handleOperation = () => {

@@ -81,7 +81,7 @@ export function useWallet() {
     return useQuery({
       queryKey: ["walletTransactions", token], 
       queryFn: async () => {
-        const response = await api.get("/transactions", {
+        const response = await api.get(`/transactions?size=9999&sort=date,desc`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

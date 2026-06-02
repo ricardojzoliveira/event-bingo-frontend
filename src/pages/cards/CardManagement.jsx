@@ -14,6 +14,7 @@ import LoadingState from "../../components/common/LoadingState";
 import { useAdminEvents, useDeleteCard } from "../../hooks/useAdmin";
 import { useState } from "react";
 import { calculateCardProgress } from "../../utils/cardHelpers";
+import { formatDate } from "../../utils/date";
 
 export default function CardManagement() {
   const { data: cards, isLoading: loadingCards } = useCards();
@@ -138,7 +139,7 @@ function AdminCardItem({ card, globalEvents }) {
             {card.name}
           </h3>
           <p className="text-slate-500 text-[10px] font-bold uppercase mt-1">
-            Created at {card.date || "10/03/2026"}
+            Created at {formatDate(card.date)}
           </p>
         </div>
         <Trophy

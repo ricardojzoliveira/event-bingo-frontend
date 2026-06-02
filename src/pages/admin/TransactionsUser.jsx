@@ -9,7 +9,7 @@ export default function UserTransactionsPage() {
   const { data: user, isLoading: loadingUser } = useGetOneUser(userId);
   const { data: walletData, isLoading: loadingTx } = useAdminTransactionsUSer(userId);
 
-  const transactions = walletData || [];
+  const transactions = walletData?.content || [];
 
   const sortedTransactions = [...transactions].sort((a, b) => {
     if (!a.date) return 1;

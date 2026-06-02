@@ -6,10 +6,12 @@ import { Link } from "react-router-dom";
 export default function ProfilePage() {
   const { data: user, isLoading } = useCurrentUser();
   const { useTransactions } = useWallet();
-  const { data: transactions = [] } = useTransactions();
+  const { data: serverTransactions, isLoading: loadingtx } = useTransactions(0, 100000);
 
   const stats = useMemo(() => {
     const boughtCards = user?.cards?.length || 0;
+
+    const transactions = serverTransactions?.content || [] ;
 
     const totalInvested = transactions
       .filter(t => t.type === 'CARD')
@@ -45,7 +47,7 @@ export default function ProfilePage() {
         lifetime: "PROFIT"
       },
     ];
-  }, [transactions, user?.cards?.length]);
+  }, [serverTransactions, user?.cards?.length]);
 
   if (isLoading) return (
     <div className="min-h-screen bg-bingo-dark flex items-center justify-center">

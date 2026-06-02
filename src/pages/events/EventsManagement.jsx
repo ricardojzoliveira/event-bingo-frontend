@@ -1,16 +1,18 @@
 import { useAdminEvents, useDeleteEvent, useUpdateEventStatus } from "../../hooks/useAdmin";
-import { Plus, Search, Filter, Edit2, Trash2, CheckCircle, XCircle, Clock, ChevronLeft } from "lucide-react";
+import { Plus, Search, Edit2, Trash2, CheckCircle, XCircle, Clock, ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import LoadingState from "../../components/common/LoadingState";
 import { formatDateTime } from "../../utils/date";
 import { useState } from "react";
+import { PaginationControls } from "../../components/common/PaginationControls";
 
 export default function EventManagement() {
-  const { data: eventsData, isLoading } = useAdminEvents();
+  const [page, setPage] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const { data: serverEvents, isLoading } = useAdminEvents();
   const { mutate: deleteEvent } = useDeleteEvent();
   const { mutate: updateStatus } = useUpdateEventStatus();
-
-  const [ searchQuery, setSearchQuery ] = useState("");
 
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this event?")) {
@@ -20,16 +22,16 @@ export default function EventManagement() {
 
   if (isLoading) return <LoadingState />;
 
-  // eventos ordenados pelo id invertido
-  const sortedEvents = eventsData ? [...eventsData].sort((a, b) => b.id - a.id) : [];
+ 
+  //const sortedEvents = [...rawrEvents].sort((a, b) => b.id - a.id);
 
-  const events = sortedEvents.filter((event) => {
+  const events = serverEvents.filter((event) => {
     const query = searchQuery.toLowerCase().trim();
     if (!query) return true;
 
     return (
       event.home_team?.toLowerCase().includes(query) || 
-      event.away?.toLowerCase().includes(query) ||
+      event.away_team?.toLowerCase().includes(query) ||
       event.sport?.toLowerCase().includes(query) ||
       event.prediction?.toLowerCase().includes(query)
     );

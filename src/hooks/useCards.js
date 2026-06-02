@@ -7,9 +7,9 @@ export function useCards() {
   return useQuery({
     queryKey: ["cards"],
     queryFn: async () => {
-      const response = await api.get("/cards");
+      const response = await api.get("/cards?size=999999");
 
-      return response.data;
+      return response.data.content;
     },
   });
 }

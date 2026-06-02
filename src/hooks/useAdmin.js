@@ -9,12 +9,12 @@ export function useAdminEvents() {
     queryFn: async () => {
       const token = Cookies.get("token");
 
-      const response = await api.get("/events", {
+      const response = await api.get("/events?size=999999&sort=date,desc", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      return response.data;
+      return response.data.content;
     },
   });
 }
@@ -95,6 +95,7 @@ export function useUpdateEventStatus() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin", "events"] });
+      queryClient.invalidateQueries({ queryKey: ["cards"] });
     },
   });
 }
@@ -123,9 +124,7 @@ export function useCreateCard() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (cardData) => {
-      const token = Cookies.get("token");
-
-      //console.log("DADOS A ENVIAR:", JSON.stringify(cardData, null, 2));
+      const token = Cookies.get("token"); 
 
       const response = await api.post("/cards", cardData, {
         headers: {
@@ -187,12 +186,12 @@ export function useAllUsers() {
     queryFn: async () => {
       const token = Cookies.get("token");
 
-      const response = await api.get("/users", {
+      const response = await api.get(`/users?size=999999`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      return response.data;
+      return response.data.content;
     },
   });
 }
@@ -252,7 +251,7 @@ export const useAdminTransactionsUSer = (userId) => {
     queryKey: ["admin", "transactions", userId],
     queryFn: async () => {
       const token = Cookies.get("token");
-      const { data } = await api.get(`/transactions/${userId}`, {
+      const { data } = await api.get(`/transactions/${userId}?size=999999&sort=date,desc`, {
         headers : {
           Authorization: `Bearer ${token}`
         }
