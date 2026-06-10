@@ -21,6 +21,12 @@ export default function AdminPanel() {
       icon: <Users size={24} />,
       path: "/admin/users",
     },
+    {
+      title: "Statistics",
+      desc: "Statistics Event Bingo",
+      icon: <Calendar size={24} />,
+      path: "/admin/statistics",
+    },
   ];
 
   return (
@@ -40,7 +46,7 @@ export default function AdminPanel() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {managementCards.map((card, index) => (
             <Link 
               key={index} 

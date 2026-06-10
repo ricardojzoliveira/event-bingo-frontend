@@ -23,6 +23,7 @@ import SuspendedScreen from "./pages/auth/SuspendedScreen.jsx";
 import UserManagementPage from "./pages/users/UserManagementPage.jsx";
 import EditUserPage from "./pages/users/EditUserPage.jsx";
 import UserTransactionsPage from "./pages/admin/TransactionsUser.jsx";
+import AdminStatistics from "./pages/admin/Statistics.jsx";
 
 function App() {
   const { data: user, isLoading, isError, error } = useCurrentUser();
@@ -121,6 +122,13 @@ function App() {
             path="/admin/users/transactions/:userId"
             element={
               role === "admin" ? <UserTransactionsPage /> : <Navigate to="/" />
+            }
+          />
+
+          <Route
+            path="/admin/statistics"
+            element={
+              role === "admin" ? <AdminStatistics /> : <Navigate to="/" />
             }
           />
 
