@@ -262,3 +262,19 @@ export const useAdminTransactionsUSer = (userId) => {
   })
 };
 
+export function useAdminLogs(page = 0, size = 20) {
+  return useQuery({
+    queryKey: ["admin", "logs", page, size],
+    queryFn: async () => {
+      const token = Cookies.get("token");
+      
+      // 🟢 CORRIGIDO: Adicionado o '&' entre a página e o tamanho para o Java interpretar os limites nativos
+      const response = await api.get(`/logs?page=${page}&size=${size}&sort=timestamp,desc`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    },
+  });
+}
