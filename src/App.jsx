@@ -23,7 +23,9 @@ import SuspendedScreen from "./pages/auth/SuspendedScreen.jsx";
 import UserManagementPage from "./pages/users/UserManagementPage.jsx";
 import EditUserPage from "./pages/users/EditUserPage.jsx";
 import UserTransactionsPage from "./pages/admin/TransactionsUser.jsx";
-import AdminStatistics from "./pages/admin/Statistics.jsx";
+import RecentActivity from "./pages/admin/RecentActivity.jsx";
+import { Logs } from "lucide-react";
+import LogsPage from "./pages/admin/LogsPage.jsx";
 
 function App() {
   const { data: user, isLoading, isError, error } = useCurrentUser();
@@ -135,6 +137,10 @@ function App() {
           <Route path="/admin/users/edit/:userId" element={<EditUserPage />} />
 
           <Route path="*" element={<NotFound />} />
+
+          <Route path="/admin/recentActivity" element={ role === "admin" ? <RecentActivity /> : <Navigate to="/" />}/>
+          <Route path="/admin/logs" element={ role === "admin" ? <LogsPage /> : <Navigate to="/" />}/>
+
         </Routes>
       </main>
     </div>

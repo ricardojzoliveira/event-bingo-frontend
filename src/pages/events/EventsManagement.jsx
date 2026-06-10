@@ -22,9 +22,6 @@ export default function EventManagement() {
 
   if (isLoading) return <LoadingState />;
 
- 
-  //const sortedEvents = [...rawrEvents].sort((a, b) => b.id - a.id);
-
   const events = serverEvents.filter((event) => {
     const query = searchQuery.toLowerCase().trim();
     if (!query) return true;
