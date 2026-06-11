@@ -124,7 +124,25 @@ export function useWallet() {
     });
   };
 
-  return { useTransactions, useTransactionMutation };
+  const useClaimPrizeMutation = () => {
+    return useMutation({
+      mutationFn: async (transactionId) => {
+        const response = await api.patch(
+          `/transactions/${transactionId}`,
+          { claimed: true }, 
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        return response.data;
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["walletTransactions"] });
+      },
+    });
+  };
+
+  return { useTransactions, useTransactionMutation, useClaimPrizeMutation };
 }
 
 // Atualiza informações do perfil do user.
