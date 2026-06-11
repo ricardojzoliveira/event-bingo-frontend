@@ -1,14 +1,13 @@
 import { useAdminEvents, useDeleteEvent, useUpdateEventStatus } from "../../hooks/useAdmin";
-import { Plus, Search, Edit2, Trash2, CheckCircle, XCircle, Clock, ChevronLeft } from "lucide-react";
+import { Plus, Search, Edit2, Trash2, CheckCircle, XCircle, Clock, ChevronLeft, Check, X, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import LoadingState from "../../components/common/LoadingState";
 import { formatDateTime } from "../../utils/date";
 import { useState } from "react";
-import { PaginationControls } from "../../components/common/PaginationControls";
 
 export default function EventManagement() {
-  const [page, setPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [confirmingStatus, setConfirmingStatus] = useState(null);
 
   const { data: serverEvents, isLoading } = useAdminEvents();
   const { mutate: deleteEvent } = useDeleteEvent();
@@ -20,9 +19,23 @@ export default function EventManagement() {
     }
   };
 
+  const handleStatusClick = (eventId, status) => {
+    setConfirmingStatus({ eventId, status });
+  };
+
+  const handleConfirmStatus = () => {
+    if (confirmingStatus) {
+      updateStatus({ 
+        eventId: confirmingStatus.eventId, 
+        status: confirmingStatus.status 
+      });
+      setConfirmingStatus(null);
+    }
+  };
+
   if (isLoading) return <LoadingState />;
 
-  const events = serverEvents.filter((event) => {
+  const events = serverEvents?.filter((event) => {
     const query = searchQuery.toLowerCase().trim();
     if (!query) return true;
 
@@ -32,7 +45,7 @@ export default function EventManagement() {
       event.sport?.toLowerCase().includes(query) ||
       event.prediction?.toLowerCase().includes(query)
     );
-  });
+  }) || [];
 
   const stats = {
     total: events.length,
@@ -69,7 +82,8 @@ export default function EventManagement() {
               className="w-full bg-slate-900/50 border border-slate-800 rounded-xl py-3 pl-12 text-sm" 
               placeholder="Searching Events" 
               value={searchQuery} 
-              onChange={(e) => setSearchQuery(e.target.value)} />
+              onChange={(e) => setSearchQuery(e.target.value)} 
+            />
           </div>
           <Link to="/admin/events/create" className="bg-bingo-red px-6 rounded-xl flex items-center gap-2 text-sm font-bold">
             <Plus size={18} /> New Event
@@ -83,8 +97,8 @@ export default function EventManagement() {
                 <th className="p-4">Event</th>
                 <th className="p-4">Prevision</th>
                 <th className="p-4">Date</th>
-                <th className="p-4 text-center">Status</th>
-                <th className="p-4 text-center">Actions</th>
+                <th className="p-4 text-center w-56">Status</th>
+                <th className="p-4 text-center w-28">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/50">
@@ -95,49 +109,93 @@ export default function EventManagement() {
                   </td>
                 </tr>
               ) : (
-                events.map((event) => (
-                  <tr key={event.id} className="hover:bg-white/5 transition-colors">
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
-                         <span className="bg-red-900/30 text-red-500 text-[10px] font-bold px-2 py-0.5 rounded italic">{event.sport}</span>
-                         <span className="font-bold">{event.home_team} vs {event.away_team}</span>
-                      </div>
-                    </td>
-                    <td className="p-4 text-slate-400">{event.prediction}</td>
-                    <td className="p-4 text-slate-400">{formatDateTime(event.date)}</td>
-                    <td className="p-4">
-                      <div className="flex justify-center gap-2 text-slate-600">
-                        
-                        <button
-                          onClick={() => updateStatus({ eventId: event.id, status: "Win" })} 
-                          className={`p-1 rounded-md transition-all ${event.status === 'Win' ? 'text-green-500 bg-green-500/10' : 'text-slate-600 hover:text-green-500'}`}>
-                          <CheckCircle size={18} className={event.status === 'Win' ? "text-green-500" : ""} />
-                        </button>
-                        
-                        <button
-                          onClick={() => updateStatus({ eventId: event.id, status: "Lose" })}
-                          className={`p-1 rounded-md transition-all ${event.status === 'Lose' ? 'text-red-500 bg-red-500/10' : 'text-slate-600 hover:text-red-500'}`}>
-                          <XCircle size={18} className={event.status === 'Lose' ? "text-red-500" : ""} />
-                        </button>
-                        
-                        <button
-                          onClick={() => updateStatus({ eventId: event.id, status: "Pending" })}
-                          className={`p-1 rounded-md transition-all ${event.status === 'Pending' ? 'text-white bg-white/10' : 'text-slate-600 hover:text-white'}`}>
-                          <Clock size={18} className={event.status === 'Pending' ? "text-white" : ""} />
-                        </button>
+                events.map((event) => {
+                  const isConfirmingThisEvent = confirmingStatus?.eventId === event.id;
+                  
+                  const isLocked = event.status === "Win" || event.status === "Lose";
 
-                      </div>
-                    </td>
-                    <td className="p-4 text-center">
-                      <div className="flex justify-center gap-3">
-                        <Link to={`/admin/events/edit/${event.id}`}>
-                          <button className="text-blue-500 hover:text-blue-400"><Edit2 size={16}/></button>
-                        </Link>
-                        <button onClick={() => handleDelete(event.id)} className="text-red-500 hover:text-red-400"><Trash2 size={16}/></button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                  return (
+                    <tr key={event.id} className="hover:bg-white/5 transition-colors group">
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          <span className="bg-red-900/30 text-red-500 text-[10px] font-bold px-2 py-0.5 rounded italic">{event.sport}</span>
+                          <span className="font-bold">{event.home_team} vs {event.away_team}</span>
+                        </div>
+                      </td>
+                      <td className="p-4 text-slate-400">{event.prediction}</td>
+                      <td className="p-4 text-slate-400">{formatDateTime(event.date)}</td>
+                      
+                      <td className="p-4 relative">
+                        <div className="flex justify-center items-center">
+                          {isLocked ? (
+                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-[10px] font-black uppercase border select-none ${
+                              event.status === "Win" 
+                                ? "bg-green-500/10 border-green-500/20 text-green-400" 
+                                : "bg-red-500/10 border-red-500/20 text-red-400"
+                            }`}>
+                              <Lock size={10} strokeWidth={3} />
+                                {event.status}
+                            </span>
+                          ) : isConfirmingThisEvent ? (
+                            <div className="flex items-center gap-2 bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl shadow-xl animate-scale-up text-[10px] font-bold tracking-tight uppercase">
+                              <span className="text-slate-400">Confirm {confirmingStatus.status}?</span>
+                              <button 
+                                onClick={handleConfirmStatus}
+                                className="p-1 bg-green-500/20 text-green-400 border border-green-500/30 rounded-md hover:bg-green-500 hover:text-black transition-all cursor-pointer"
+                              >
+                                <Check size={12} strokeWidth={3} />
+                              </button>
+                              <button 
+                                onClick={() => setConfirmingStatus(null)}
+                                className="p-1 bg-red-500/20 text-red-400 border border-red-500/30 rounded-md hover:bg-red-500 hover:text-white transition-all cursor-pointer"
+                              >
+                                <X size={12} strokeWidth={3} />
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="flex gap-2 text-slate-600">
+                              <button
+                                onClick={() => handleStatusClick(event.id, "Win")} 
+                                className="p-1 text-slate-600 hover:text-green-500 rounded-md transition-all cursor-pointer"
+                              >
+                                <CheckCircle size={18} />
+                              </button>
+                              
+                              <button
+                                onClick={() => handleStatusClick(event.id, "Lose")}
+                                className="p-1 text-slate-600 hover:text-red-500 rounded-md transition-all cursor-pointer"
+                              >
+                                <XCircle size={18} />
+                              </button>
+                              
+                              <button
+                                disabled
+                                className="p-1 text-white bg-white/10 rounded-md opacity-40 cursor-not-allowed"
+                              >
+                                <Clock size={18} />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+
+                      <td className="p-4 text-center">
+                        <div className="flex justify-center gap-3">
+                          {isLocked ? (
+                            <span className="text-[10px] uppercase font-bold text-slate-600 select-none italic pt-0.5">Read Only</span>
+                          ) : (
+                            <>
+                              <Link to={`/admin/events/edit/${event.id}`}>
+                                <button className="text-blue-500 hover:text-blue-400 cursor-pointer"><Edit2 size={16}/></button>
+                              </Link>
+                              <button onClick={() => handleDelete(event.id)} className="text-red-500 hover:text-red-400 cursor-pointer"><Trash2 size={16}/></button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>

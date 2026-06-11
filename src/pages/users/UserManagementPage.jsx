@@ -82,20 +82,16 @@ export default function UserManagementPage() {
   return (
     <div className="min-h-screen bg-bingo-dark p-6 md:p-12 text-white">
       <div className="max-w-7xl mx-auto space-y-8">
-        <div className="border border-bingo-red rounded-2xl p-8 bg-slate-900/20 flex items-center gap-6">
+        <div className="border border-bingo-red/50 rounded-2xl p-6 bg-slate-900/20 flex items-center gap-6">
           <Link
             to="/admin"
-            className="p-3 hover:bg-slate-800 rounded-xl text-bingo-red border border-slate-800"
+            className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={24} className="text-bingo-red" />
           </Link>
           <div>
-            <h1 className="text-3xl font-black uppercase tracking-tighter">
-              Users Management
-            </h1>
-            <p className="text-slate-500 font-bold uppercase text-sm">
-              Manage users
-            </p>
+            <h1 className="text-2xl font-black uppercase">Users Management</h1>
+            <p className="text-slate-500 text-sm">Manage users</p>
           </div>
         </div>
 

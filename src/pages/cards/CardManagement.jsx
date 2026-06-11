@@ -39,20 +39,14 @@ export default function CardManagement() {
   return (
     <div className="min-h-screen bg-bingo-dark p-6 md:p-12 text-white">
       <div className="max-w-7xl mx-auto space-y-8">
-        <div className="border border-bingo-red rounded-2xl p-8 bg-slate-900/20 flex items-center gap-6 relative overflow-hidden">
-          <Link
-            to="/admin"
-            className="p-3 hover:bg-slate-800 rounded-xl transition-all text-bingo-red border border-slate-800"
-          >
-            <ChevronLeft size={24} />
+
+        <div className="border border-bingo-red/50 rounded-2xl p-6 bg-slate-900/20 flex items-center gap-6">
+          <Link to="/admin" className="p-2 hover:bg-slate-800 rounded-lg transition-colors">
+            <ChevronLeft size={24} className="text-bingo-red" />
           </Link>
           <div>
-            <h1 className="text-3xl font-black uppercase tracking-tighter">
-              Cards Management
-            </h1>
-            <p className="text-slate-500 font-bold uppercase text-sm tracking-tight">
-              Create and edit cards
-            </p>
+            <h1 className="text-2xl font-black uppercase">Cards Management</h1>
+            <p className="text-slate-500 text-sm">Create and edit cards</p>
           </div>
         </div>
 
