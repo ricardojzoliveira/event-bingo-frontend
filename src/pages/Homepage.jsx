@@ -12,13 +12,19 @@ import { useCards } from "../hooks/useCards";
 import LoadingState from "../components/common/LoadingState";
 import { calculateCardProgress } from "../utils/cardHelpers";
 import { useCurrentUser } from "../hooks/useAuth";
+import { useWallet } from "../hooks/useAuth";
 import { formatDate } from "../utils/date";
+import ClaimPrize from "./ClaimPrize";
 
 export default function Homepage({ role }) {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("market");
   const { data: serverCards, isLoading: loadingCards } = useCards();
   const { data: currentUser } = useCurrentUser();
+
+  const { useTransactions, useClaimPrizeMutation } = useWallet();
+  const { data: transactions } = useTransactions();
+  const { mutate: claimPrize } = useClaimPrizeMutation();
 
   if (loadingCards) return <LoadingState message="Syncing data..." />;
 
@@ -73,6 +79,10 @@ export default function Homepage({ role }) {
     return role === "admin" ? cardsList : marketplaceCards;
   })();
 
+  const handleCollectPrize = (transactionId) => {
+    claimPrize(transactionId);
+  };
+
   const steps = [
     {
       number: "1",
@@ -108,6 +118,12 @@ export default function Homepage({ role }) {
           </span>
         </div>
       </header>
+
+      <ClaimPrize 
+        transactions={transactions} 
+        currentUserId={currentUser?.id} 
+        onCollect={handleCollectPrize} 
+      />
 
       {role === "user" && (
         <div className="flex gap-3 p-2 bg-bingo-dark/40 rounded-3xl border border-bingo-red/20 mb-12 backdrop-blur-md">
@@ -148,7 +164,6 @@ export default function Homepage({ role }) {
             >
               <div className="p-8 border-b border-bingo-red/20 bg-bingo-dark flex flex-col gap-2">
                 <div className="flex items-start justify-between gap-4">
-
                   <h2 className="text-2xl font-black text-white leading-tight group-hover:text-bingo-red transition-colors">
                     {card.name}
                   </h2>
@@ -180,10 +195,7 @@ export default function Homepage({ role }) {
                       Line Prize
                     </span>
                     <strong className="text-lg font-black text-slate-200 tracking-tight">
-                      €
-                      {card.line_prize
-                        ? Number(card.line_prize).toFixed(2)
-                        : "0.00"}
+                      € {card.line_prize ? Number(card.line_prize).toFixed(2) : "0.00"}
                     </strong>
                   </div>
 
@@ -192,10 +204,7 @@ export default function Homepage({ role }) {
                       <Trophy size={11} /> Bingo Prize
                     </span>
                     <strong className="text-lg font-black text-white tracking-tight">
-                      €
-                      {card.bingo_prize
-                        ? Number(card.bingo_prize).toFixed(2)
-                        : "0.00"}
+                      € {card.bingo_prize ? Number(card.bingo_prize).toFixed(2) : "0.00"}
                     </strong>
                   </div>
                 </div>
@@ -216,15 +225,11 @@ export default function Homepage({ role }) {
                       <>
                         <div
                           className="bg-green-500 h-full rounded-full transition-all duration-700"
-                          style={{
-                            width: `${(card.wins / card.total) * 100}%`,
-                          }}
+                          style={{ width: `${(card.wins / card.total) * 100}%` }}
                         />
                         <div
                           className="bg-bingo-red h-full rounded-full transition-all duration-700"
-                          style={{
-                            width: `${(card.losses / card.total) * 100}%`,
-                          }}
+                          style={{ width: `${(card.losses / card.total) * 100}%` }}
                         />
                       </>
                     ) : (
@@ -251,9 +256,7 @@ export default function Homepage({ role }) {
                     <>
                       <span>Get Card</span>
                       <span className="opacity-30 font-normal">|</span>
-                      <span className="text-white">
-                        €{card.price?.toFixed(2)}
-                      </span>
+                      <span className="text-white">€{card.price?.toFixed(2)}</span>
                     </>
                   )}
                 </Link>
@@ -276,10 +279,7 @@ export default function Homepage({ role }) {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
             {steps.map((step, index) => (
-              <div
-                key={index}
-                className="flex flex-col items-center text-center gap-5"
-              >
+              <div key={index} className="flex flex-col items-center text-center gap-5">
                 <div className="w-14 h-14 bg-bingo-red text-white flex items-center justify-center rounded-2xl text-2xl font-black rotate-3 shadow-lg shadow-red-950/30">
                   <span className="-rotate-3">{step.number}</span>
                 </div>

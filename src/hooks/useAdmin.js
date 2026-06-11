@@ -268,7 +268,6 @@ export function useAdminLogs(page = 0, size = 20) {
     queryFn: async () => {
       const token = Cookies.get("token");
       
-      // 🟢 CORRIGIDO: Adicionado o '&' entre a página e o tamanho para o Java interpretar os limites nativos
       const response = await api.get(`/logs?page=${page}&size=${size}&sort=timestamp,desc`, {
         headers: {
           Authorization: `Bearer ${token}`,
