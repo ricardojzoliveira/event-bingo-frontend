@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAdminEvents, useCreateCard } from "../../hooks/useAdmin";
+import { useAdminEvents, useCreateCard } from "../../hooks/use-admin";
 import {
   ChevronLeft,
   Plus,

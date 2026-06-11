@@ -1,4 +1,4 @@
-import { useAdminEvents, useDeleteEvent, useUpdateEventStatus } from "../../hooks/useAdmin";
+import { useAdminEvents, useDeleteEvent, useUpdateEventStatus } from "../../hooks/use-admin";
 import { Plus, Search, Edit2, Trash2, CheckCircle, XCircle, Clock, ChevronLeft, Check, X, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import LoadingState from "../../components/common/LoadingState";
@@ -58,7 +58,7 @@ export default function EventManagement() {
     <div className="min-h-screen bg-bingo-dark p-6 md:p-12 text-white">
       <div className="max-w-6xl mx-auto space-y-8">
         
-        <div className="border border-bingo-red/50 rounded-2xl p-6 bg-slate-900/20 flex items-center gap-6">
+        <div className="border border-bingo-red rounded-2xl p-6 bg-slate-900/20 flex items-center gap-6">
           <Link to="/admin" className="p-2 hover:bg-slate-800 rounded-lg transition-colors">
             <ChevronLeft size={24} className="text-bingo-red" />
           </Link>

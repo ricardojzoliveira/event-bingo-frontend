@@ -8,11 +8,11 @@ import {
   Check,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useCards } from "../hooks/useCards";
+import { useCards } from "../hooks/use-cards";
 import LoadingState from "../components/common/LoadingState";
 import { calculateCardProgress } from "../utils/cardHelpers";
-import { useCurrentUser } from "../hooks/useAuth";
-import { useWallet } from "../hooks/useAuth";
+import { useCurrentUser } from "../hooks/use-auth";
+import { useWallet } from "../hooks/use-auth";
 import { formatDate } from "../utils/date";
 import ClaimPrize from "./ClaimPrize";
 

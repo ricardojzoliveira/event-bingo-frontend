@@ -33,7 +33,7 @@ export default function AdminPanel() {
   return (
     <div className="min-h-screen bg-bingo-dark p-6 md:p-12">
       <div className="max-w-6xl mx-auto space-y-8">
-        <div className="border border-bingo-red/50 rounded-2xl p-8 bg-slate-900/20 backdrop-blur-sm relative overflow-hidden">
+        <div className="border border-bingo-red rounded-2xl p-8 bg-slate-900/20 backdrop-blur-sm relative overflow-hidden">
           <div className="relative z-10">
             <div className="flex items-center gap-3 text-bingo-red mb-2">
               <Activity size={24} strokeWidth={3} />
@@ -56,7 +56,7 @@ export default function AdminPanel() {
             <Link
               key={index}
               to={card.path}
-              className="group border border-slate-800 rounded-2xl p-6 bg-slate-900/10 hover:border-bingo-red/50 transition-all duration-300 relative"
+              className="group border border-slate-800 rounded-2xl p-6 bg-slate-900/10 hover:border-bingo-red transition-all duration-300 relative"
             >
               <div className="flex justify-between items-start mb-6">
                 <div className="p-3 bg-slate-800/50 rounded-xl text-bingo-red group-hover:bg-bingo-red group-hover:text-white transition-all">

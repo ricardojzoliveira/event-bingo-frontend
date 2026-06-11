@@ -530,7 +530,7 @@ export const handlers = [
   const index = db.findIndex(c => c.id === id);
 
   if (index !== -1) {
-    db[index] = { ...db[index], ...updatedCard, id }; // Mantém o ID original
+    db[index] = { ...db[index], ...updatedCard, id }; 
     saveCardsDB(db);
     return HttpResponse.json(db[index]);
   }

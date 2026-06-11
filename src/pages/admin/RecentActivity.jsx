@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAdminLogs } from "../../hooks/useAdmin";
+import { useAdminLogs } from "../../hooks/use-admin";
 import { Link } from "react-router-dom";
 import { ArrowRight, ChevronLeft, AlertCircle, CheckCircle2, XCircle } from "lucide-react";
 

@@ -19,8 +19,8 @@ import {
   useAllUsers,
   useUpdateUserByAdmin,
   useAdminDeleteUser,
-} from "../../hooks/useAdmin";
-import { useCurrentUser } from "../../hooks/useAuth";
+} from "../../hooks/use-admin";
+import { useCurrentUser } from "../../hooks/use-auth";
 import { PaginationControls } from "../../components/common/PaginationControls";
 
 export default function UserManagementPage() {
@@ -82,7 +82,7 @@ export default function UserManagementPage() {
   return (
     <div className="min-h-screen bg-bingo-dark p-6 md:p-12 text-white">
       <div className="max-w-7xl mx-auto space-y-8">
-        <div className="border border-bingo-red/50 rounded-2xl p-6 bg-slate-900/20 flex items-center gap-6">
+        <div className="border border-bingo-red rounded-2xl p-6 bg-slate-900/20 flex items-center gap-6">
           <Link
             to="/admin"
             className="p-2 hover:bg-slate-800 rounded-lg transition-colors"

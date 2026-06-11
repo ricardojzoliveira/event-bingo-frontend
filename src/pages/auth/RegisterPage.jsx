@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useRegister } from "../../hooks/useAuth"; 
+import { useRegister } from "../../hooks/use-auth"; 
 import * as Icons from "lucide-react";
 
 export default function RegisterPage({ setRole }) {

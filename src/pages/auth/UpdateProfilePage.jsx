@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCurrentUser, useUpdateProfile, useDeleteAccount, useSelfExclusion } from "../../hooks/useAuth";
+import { useCurrentUser, useUpdateProfile, useDeleteAccount, useSelfExclusion } from "../../hooks/use-auth";
 import * as Icons from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import Cookies from "js-cookie";

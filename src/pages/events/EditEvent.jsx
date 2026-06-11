@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useAdminEvent, useUpdateEvent } from "../../hooks/useAdmin";
+import { useAdminEvent, useUpdateEvent } from "../../hooks/use-admin";
 import CreateEvent from "./CreateEvent"; 
 import LoadingState from "../../components/common/LoadingState";
 

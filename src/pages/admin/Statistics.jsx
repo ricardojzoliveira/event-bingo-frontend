@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, Filler } from 'chart.js';
 import { Line, Bar } from 'react-chartjs-2';
 import { ChevronLeft, TrendingUp, Wallet, ArrowDown, Gift, BarChart2, Activity } from 'lucide-react';
-import { useAllUsers, useAdminEvents } from '../../hooks/useAdmin';
-import { useCards } from '../../hooks/useCards';
-import { useWallet } from '../../hooks/useAuth';
+import { useAllUsers, useAdminEvents } from '../../hooks/use-admin';
+import { useCards } from '../../hooks/use-cards';
+import { useWallet } from '../../hooks/use-auth';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend, Filler);
 

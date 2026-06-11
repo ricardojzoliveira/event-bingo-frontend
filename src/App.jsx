@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { useCurrentUser } from "./hooks/useAuth.js";
+import { useCurrentUser } from "./hooks/use-auth.js";
 import Navbar from "./components/Navbar";
 import GamePage from "./pages/GamePage";
 import Homepage from "./pages/Homepage.jsx";

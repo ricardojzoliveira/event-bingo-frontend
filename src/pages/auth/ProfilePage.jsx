@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useCurrentUser, useWallet } from "../../hooks/useAuth";
+import { useCurrentUser, useWallet } from "../../hooks/use-auth";
 import * as Icons from "lucide-react";
 import { Link } from "react-router-dom";
 

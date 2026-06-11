@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useGetOneUser, useAdminTransactionsUSer } from "../../hooks/useAdmin";
+import { useGetOneUser, useAdminTransactionsUSer } from "../../hooks/use-admin";
 import * as Icons from "lucide-react";
 
 export default function UserTransactionsPage() {

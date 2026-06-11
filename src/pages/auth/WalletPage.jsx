@@ -6,10 +6,9 @@ import {
   TrendingUp,
   CreditCard,
 } from "lucide-react";
-import { useCurrentUser, useWallet } from "../../hooks/useAuth";
+import { useCurrentUser, useWallet } from "../../hooks/use-auth";
 
 export default function WalletPage() {
-  const [page, setPage] = useState(0);
   const { data: user } = useCurrentUser();
   const { useTransactions, useTransactionMutation } = useWallet();
 
@@ -58,17 +57,26 @@ export default function WalletPage() {
     if (!numAmount || numAmount < 10) {
       return alert("The minimum amount is 10€");
     }
-    if (!cardNumber || !cardValid || !cardHolderName || !ccNumber) return alert("Please fill in all credit card fields");
+    if (!cardNumber || !cardValid || !cardHolderName || !ccNumber) {
+      return alert("Please fill in all credit card fields");
+    }
 
-    mutation.mutate(
-      { amount: numAmount, type, cardNumber, cardValid, cardHolderName, ccNumber },
-      {
-        onSuccess: () => {
-          setAmount(""); setCardNumber(""); setCardValid(""); setCardHolderName(""); setCcNumber("");
-        },
-        onError: (error) => alert("Operation failed: " + error.message),
-      }
-    );
+    // 🟢 OTIMIZADO: Agrupamos os estados locais nesta variável limpa antes de enviar
+    const payload = {
+      amount: numAmount,
+      type,
+      cardNumber,
+      cardValid,
+      cardHolderName,
+      ccNumber
+    };
+
+    mutation.mutate(payload, {
+      onSuccess: () => {
+        setAmount(""); setCardNumber(""); setCardValid(""); setCardHolderName(""); setCcNumber("");
+      },
+      onError: (error) => alert("Operation failed: " + error.message),
+    });
   };
 
   return (

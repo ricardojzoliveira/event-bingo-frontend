@@ -8,7 +8,7 @@ export default function AuditLogsPage() {
       <div className="max-w-6xl mx-auto space-y-8">
 
 
-        <div className="border border-bingo-red/50 rounded-2xl p-6 bg-slate-900/20 flex items-center gap-6">
+        <div className="border border-bingo-red rounded-2xl p-6 bg-slate-900/20 flex items-center gap-6">
           <Link to="/admin" className="p-2 hover:bg-slate-800 rounded-lg transition-colors">
             <ChevronLeft size={24} className="text-bingo-red" />
           </Link>

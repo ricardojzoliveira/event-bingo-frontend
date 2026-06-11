@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useCreateEvent } from "../../hooks/useAdmin";
+import { useCreateEvent } from "../../hooks/use-admin";
 import {
   ChevronLeft,
   Trophy,
@@ -103,7 +103,7 @@ export default function CreateEvent({ initialData, onSubmit, isEditing = false, 
   return (
     <div className="min-h-screen bg-bingo-dark p-6 md:p-12 text-white">
       <div className="max-w-4xl mx-auto space-y-6">
-        <div className="border border-bingo-red/50 rounded-2xl p-6 bg-slate-900/20 flex items-center gap-6">
+        <div className="border border-bingo-red rounded-2xl p-6 bg-slate-900/20 flex items-center gap-6">
           <Link to="/admin/events" className="p-2 hover:bg-slate-800 rounded-lg transition-colors text-bingo-red">
             <ChevronLeft size={24} />
           </Link>
@@ -208,7 +208,7 @@ export default function CreateEvent({ initialData, onSubmit, isEditing = false, 
             <button
               type="submit"
               disabled={isProcessing}
-              className="w-full bg-red-900/40 hover:bg-red-800 text-bingo-red border border-bingo-red/50 py-4 rounded-xl font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 disabled:opacity-50 shadow-lg shadow-red-950/20"
+              className="w-full bg-red-900/40 hover:bg-red-800 text-bingo-red border border-bingo-red py-4 rounded-xl font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-3 disabled:opacity-50 shadow-lg shadow-red-950/20"
             >
               {isProcessing ? "Processing..." : isEditing ? <><Save size={20}/> Save Changes</> : <><PlusCircle size={20} /> Create Event</>}
             </button>

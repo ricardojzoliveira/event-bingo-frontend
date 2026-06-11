@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { useCard, useBuyCard } from "../hooks/useCards";
+import { useCard, useBuyCard } from "../hooks/use-cards";
 import BingoCard from "../components/BingoCard/BingoCard";
 import BingoLegend from "../components/BingoCard/BingoLegend";
 import GuestCTA from "../components/BingoCard/GuestCTA";
 import StatBox from "../components/BingoCard/StatBox";
 import { Trophy } from "lucide-react";
-import { useAdminEvents } from "../hooks/useAdmin";
+import { useAdminEvents } from "../hooks/use-admin";
 import LoadingState from "../components/common/LoadingState"; 
 import { calculateCardProgress } from "../utils/cardHelpers";
-import { useCurrentUser } from "../hooks/useAuth";
+import { useCurrentUser } from "../hooks/use-auth";
 
 export default function GamePage({ role }) {
   const { id } = useParams();
