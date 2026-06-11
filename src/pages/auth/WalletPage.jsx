@@ -9,7 +9,7 @@ import {
 import { useCurrentUser, useWallet } from "../../hooks/useAuth";
 
 export default function WalletPage() {
-  const [ page, setPage] = useState(0);
+  const [page, setPage] = useState(0);
   const { data: user } = useCurrentUser();
   const { useTransactions, useTransactionMutation } = useWallet();
 
@@ -31,7 +31,7 @@ export default function WalletPage() {
 
   const handleDateChange = (e) => {
     let value = e.target.value.replace(/\D/g, "");
-    const currentYear = new Date().getFullYear() % 100; 
+    const currentYear = new Date().getFullYear() % 100;
 
     if (value.length >= 2) {
       let month = parseInt(value.slice(0, 2), 10);
@@ -46,7 +46,7 @@ export default function WalletPage() {
 
       value = month.toString().padStart(2, '0') + (year ? "/" + year : "");
     }
-    
+
     if (value.length <= 5) setCardValid(value);
   };
 
@@ -55,7 +55,9 @@ export default function WalletPage() {
 
   const handleOperation = () => {
     const numAmount = parseFloat(amount);
-    if (!numAmount || numAmount <= 0) return alert("Please enter a valid amount");
+    if (!numAmount || numAmount < 10) {
+      return alert("The minimum amount is 10€");
+    }
     if (!cardNumber || !cardValid || !cardHolderName || !ccNumber) return alert("Please fill in all credit card fields");
 
     mutation.mutate(
@@ -103,9 +105,18 @@ export default function WalletPage() {
             </div>
 
             <div className="space-y-3">
+              <div className="bg-red-500/10 border border-red-500/50 rounded-xl p-3 flex items-center justify-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                </span>
+                <h2 className="text-sm font-black uppercase tracking-wider text-red-500">
+                  Minimum operation: 10€
+                </h2>
+              </div>
               <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Amount to {type}</label>
               <input type="number" placeholder="0.00" value={amount} onChange={(e) => setAmount(e.target.value)} className="w-full bg-[#051124] border-2 border-slate-800 rounded-2xl p-5 text-3xl font-black outline-none focus:border-bingo-red transition-all placeholder:text-slate-800" />
-                            <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-4 gap-2">
                 {["10", "20", "50", "100"].map((val) => (
                   <button
                     key={val}
