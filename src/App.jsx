@@ -26,6 +26,7 @@ import UserTransactionsPage from "./pages/admin/TransactionsUser.jsx";
 import RecentActivity from "./pages/admin/RecentActivity.jsx";
 import { Logs } from "lucide-react";
 import LogsPage from "./pages/admin/LogsPage.jsx";
+import AdminStatistics from "./pages/admin/Statistics.jsx";
 
 function App() {
   const { data: user, isLoading, isError, error } = useCurrentUser();
