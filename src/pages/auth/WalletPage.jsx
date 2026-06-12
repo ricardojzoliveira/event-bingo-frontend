@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Wallet,
   ArrowUpCircle,
@@ -11,6 +11,15 @@ import { useCurrentUser, useWallet } from "../../hooks/use-auth";
 export default function WalletPage() {
   const { data: user } = useCurrentUser();
   const { useTransactions, useTransactionMutation } = useWallet();
+
+  const [feedback, setFeedback] = useState({ message: "", type: "" });
+
+  useEffect(() => {
+    if (feedback.message) {
+      const timer = setTimeout(() => setFeedback({ message: "", type: "" }), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [feedback]);
 
   const { data: serverTransactions, isLoading } = useTransactions();
   const mutation = useTransactionMutation();
@@ -35,12 +44,14 @@ export default function WalletPage() {
     if (value.length >= 2) {
       let month = parseInt(value.slice(0, 2), 10);
       if (month > 12) month = 12;
-      if (month < 1 && value.length >= 2) month = 1;
+      if (month < 1) month = 1;
 
       let year = value.slice(2, 4);
       if (year.length === 2) {
         let yearNum = parseInt(year, 10);
-        if (yearNum < currentYear) year = currentYear.toString();
+        if (yearNum <= currentYear) {
+          year = (currentYear + 1).toString();
+        }
       }
 
       value = month.toString().padStart(2, '0') + (year ? "/" + year : "");
@@ -53,29 +64,40 @@ export default function WalletPage() {
   const sortedTransactions = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
 
   const handleOperation = () => {
+    setFeedback({ message: "", type: "" });
     const numAmount = parseFloat(amount);
+
     if (!numAmount || numAmount < 10) {
-      return alert("The minimum amount is 10€");
+      setFeedback({ message: "The minimum operation amount is 10€", type: "error" });
+      return;
     }
-    if (!cardNumber || !cardValid || !cardHolderName || !ccNumber) {
-      return alert("Please fill in all credit card fields");
+    if (cardHolderName.length < 3) {
+      setFeedback({ message: "Please enter a valid card holder name", type: "error" });
+      return;
+    }
+    if (cardNumber.replace(/\s/g, "").length < 16) {
+      setFeedback({ message: "Card number must have 16 digits", type: "error" });
+      return;
+    }
+    if (cardValid.length < 5) {
+      setFeedback({ message: "Please enter a valid expiry date (MM/YY)", type: "error" });
+      return;
+    }
+    if (ccNumber.length < 3) {
+      setFeedback({ message: "CVC must have 3 digits", type: "error" });
+      return;
     }
 
-    // 🟢 OTIMIZADO: Agrupamos os estados locais nesta variável limpa antes de enviar
-    const payload = {
-      amount: numAmount,
-      type,
-      cardNumber,
-      cardValid,
-      cardHolderName,
-      ccNumber
-    };
+    const payload = { amount: numAmount, type, cardNumber, cardValid, cardHolderName, ccNumber };
 
     mutation.mutate(payload, {
       onSuccess: () => {
+        setFeedback({ message: "Operation successful!", type: "success" });
         setAmount(""); setCardNumber(""); setCardValid(""); setCardHolderName(""); setCcNumber("");
       },
-      onError: (error) => alert("Operation failed: " + error.message),
+      onError: (error) => {
+        setFeedback({ message: error.message || "Operation failed", type: "error" });
+      },
     });
   };
 
@@ -102,6 +124,12 @@ export default function WalletPage() {
             <h3 className="text-2xl font-black uppercase tracking-tight flex items-center gap-2">
               <TrendingUp className="text-red-500" /> New Operation
             </h3>
+
+            {feedback.message && (
+              <div className={`p-4 rounded-xl text-sm font-bold flex items-center gap-3 border ${feedback.type === 'error' ? 'bg-red-500/10 border-red-500/50 text-red-500' : 'bg-green-500/10 border-green-500/50 text-green-500'}`}>
+                {feedback.message}
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-4">
               <button type="button" onClick={() => setType("deposit")} className={`flex items-center justify-center gap-2 py-4 rounded-xl font-bold transition-all ${type === "deposit" ? "bg-bingo-red shadow-lg shadow-red-600/20 scale-[1.02]" : "bg-slate-800/50 border border-slate-700 text-slate-400 hover:border-slate-500"}`}>
@@ -142,7 +170,17 @@ export default function WalletPage() {
               <h4 className="text-sm font-black uppercase tracking-wider text-slate-400 flex items-center gap-2">
                 <CreditCard size={16} className="text-red-500" /> Card Details
               </h4>
-              <input type="text" placeholder="Card Holder Name" value={cardHolderName} onChange={(e) => setCardHolderName(e.target.value)} className="w-full bg-[#051124] border-2 border-slate-800 rounded-xl p-3 text-sm font-medium outline-none focus:border-bingo-red transition-all" />
+              <div className="space-y-1">
+                <input
+                  type="text"
+                  placeholder="Card Holder Name"
+                  value={cardHolderName}
+                  onChange={(e) => setCardHolderName(e.target.value)}
+                  maxLength={20}
+                  className="w-full bg-[#051124] border-2 border-slate-800 rounded-xl p-3 text-sm font-medium outline-none focus:border-bingo-red transition-all"
+                />
+                <p className="text-[10px] text-slate-600 text-right">{cardHolderName.length}/20</p>
+              </div>
               <input type="text" placeholder="0000 0000 0000 0000" value={cardNumber} onChange={handleCardNumberChange} maxLength={19} className="w-full bg-[#051124] border-2 border-slate-800 rounded-xl p-3 text-sm font-medium outline-none focus:border-bingo-red transition-all" />
               <div className="grid grid-cols-2 gap-4">
                 <input type="text" placeholder="MM/YY" value={cardValid} onChange={handleDateChange} maxLength={5} className="w-full bg-[#051124] border-2 border-slate-800 rounded-xl p-3 text-sm font-medium outline-none focus:border-bingo-red transition-all" />

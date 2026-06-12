@@ -7,7 +7,7 @@ import GuestCTA from "../components/BingoCard/GuestCTA";
 import StatBox from "../components/BingoCard/StatBox";
 import { Trophy } from "lucide-react";
 import { useAdminEvents } from "../hooks/use-admin";
-import LoadingState from "../components/common/LoadingState"; 
+import LoadingState from "../components/common/LoadingState";
 import { calculateCardProgress } from "../utils/cardHelpers";
 import { useCurrentUser } from "../hooks/use-auth";
 
@@ -38,6 +38,12 @@ export default function GamePage({ role }) {
         onSuccess: () => {
           setShowSuccessMsg(true);
           setTimeout(() => setShowSuccessMsg(false), 4000);
+        },
+        onError: (err) => {
+          const isInsufficientFunds = err?.response?.status === 400;
+          const errorMessage = isInsufficientFunds 
+            ? "Insufficient funds" 
+            : (err?.response?.data?.message || "Purchase failed.");
         }
       }
     );
@@ -54,7 +60,7 @@ export default function GamePage({ role }) {
   return (
     <div className="min-h-screen bg-bingo-dark p-6 md:p-12">
       <div className="max-w-5xl mx-auto space-y-8">
-        
+
         {showSuccessMsg && (
           <div className="bg-green-500/10 border border-green-500/50 p-6 rounded-2xl text-green-500 text-center font-black uppercase animate-in fade-in slide-in-from-top-4">
             Card purchased successfully! Good luck.
@@ -62,7 +68,9 @@ export default function GamePage({ role }) {
         )}
         {buyMutation.isError && (
           <div className="bg-red-500/10 border border-red-500/50 p-6 rounded-2xl text-red-500 text-center font-black uppercase">
-            {buyMutation.error.message}
+            {buyMutation.error?.response?.status === 400
+              ? "Insufficient funds"
+              : buyMutation.error.message}
           </div>
         )}
 
@@ -87,11 +95,11 @@ export default function GamePage({ role }) {
         </div>
 
         {!hasPurchased && (isUser || !isLogged) && (
-          <GuestCTA 
-            role={role} 
-            price={currentCard.price} 
-            onBuy={handleBuyCard} 
-            isLoading={buyMutation.isPending} 
+          <GuestCTA
+            role={role}
+            price={currentCard.price}
+            onBuy={handleBuyCard}
+            isLoading={buyMutation.isPending}
           />
         )}
 
@@ -102,9 +110,9 @@ export default function GamePage({ role }) {
         )}
 
         <div className={!hasPurchased && role !== "admin" ? "opacity-50 grayscale pointer-events-none" : ""}>
-          <BingoCard 
-            data={activeCardData} 
-            isLogged={hasPurchased || role === "admin"} 
+          <BingoCard
+            data={activeCardData}
+            isLogged={hasPurchased || role === "admin"}
           />
         </div>
 
