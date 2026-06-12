@@ -22,7 +22,6 @@ export default function CreateCard({
   const { data: availableEvents, isLoading: loadingEvents } = useAdminEvents();
   const { mutate: createCard, isPending: creating } = useCreateCard();
 
-  // Estados do Formulário - Inicializam com initialData se existir
   const [gridSize, setGridSize] = useState(3);
   const [title, setTitle] = useState("");
   const [prizePerLine, setPrizePerLine] = useState("");
@@ -37,8 +36,28 @@ export default function CreateCard({
       setPrice(initialData.price?.toString() || "");
       setPrizePerLine(String(initialData.line_prize || "").replace("€", ""));
       setFullPrize(String(initialData.bingo_prize || "").replace("€", ""));
-      setGridEvents(initialData.events || []);
+      
       setGridSize(Math.sqrt(initialData.events?.length || 9));
+
+      const signature = initialData.eventsSignature || "";
+      const rawEvents = initialData.events || [];
+
+      const orderedIds = signature.trim()
+        ? signature.trim().split('-').map(id => Number(id))
+        : [];
+
+      if (orderedIds.length > 0) {
+        const sortedEvents = [...rawEvents].sort((a, b) => {
+          const indexA = orderedIds.indexOf(Number(a.id));
+          const indexB = orderedIds.indexOf(Number(b.id));
+          if (indexA === -1) return 1;
+          if (indexB === -1) return -1;
+          return indexA - indexB;
+        });
+        setGridEvents(sortedEvents);
+      } else {
+        setGridEvents(rawEvents);
+      }
     }
   }, [initialData]);
 
@@ -102,7 +121,6 @@ export default function CreateCard({
   if (loadingEvents) return <LoadingState />;
 
   const filteredEvents = availableEvents?.filter((e) => {
-
     const statusStr = String(e.status || "").toLowerCase();
     const isPending = statusStr === "pending";
 
@@ -192,8 +210,9 @@ export default function CreateCard({
                     <button
                       key={s}
                       type="button"
+                      disabled={isEditing}
                       onClick={() => handleSizeChange(s)}
-                      className={`p-3 rounded-xl border-2 font-black transition-all ${gridSize === s ? "border-bingo-red bg-bingo-red/10 text-white shadow-inner" : "border-slate-800 text-slate-600 hover:border-slate-700"}`}
+                      className={`p-3 rounded-xl border-2 font-black transition-all ${gridSize === s ? "border-bingo-red bg-bingo-red/10 text-white shadow-inner" : "border-slate-800 text-slate-600 hover:border-slate-700 disabled:opacity-30"}`}
                     >
                       {s}x{s}
                     </button>
@@ -276,7 +295,7 @@ export default function CreateCard({
                       </p>
                       <button
                         onClick={() => addEventToSlot(null, idx)}
-                        className="absolute -top-2 -right-2 bg-red-600 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:scale-110 shadow-lg z-10"
+                        className="absolute -top-2 -right-2 bg-red-600 p-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all hover:scale-110 shadow-lg z-10 cursor-pointer"
                       >
                         <Trash2 size={12} />
                       </button>

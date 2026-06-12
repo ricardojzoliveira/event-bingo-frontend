@@ -8,21 +8,24 @@ import {
   Edit2,
   Trash2,
   ChevronLeft,
+  Users,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import LoadingState from "../../components/common/LoadingState";
-import { useAdminEvents, useDeleteCard } from "../../hooks/use-admin";
+import { useAdminEvents, useDeleteCard, useAllUsers } from "../../hooks/use-admin"; 
 import { useState } from "react";
 import { calculateCardProgress } from "../../utils/cardHelpers";
 import { formatDate } from "../../utils/date";
+import UsersBoughtCard from "../../components/UsersBoughtCard";
 
 export default function CardManagement() {
   const { data: cards, isLoading: loadingCards } = useCards();
   const { data: globalEvents, isLoading: loadingEvents } = useAdminEvents();
+  const { data: globalUsers, isLoading: loadingUsers } = useAllUsers();
 
-  const [ searchBox, setSearchBox ] = useState("");
+  const [searchBox, setSearchBox] = useState("");
 
-  if (loadingCards || loadingEvents) return <LoadingState />;
+  if (loadingCards || loadingEvents || loadingUsers) return <LoadingState />;
 
   const stats = {
     total: cards?.length || 0,
@@ -59,10 +62,7 @@ export default function CardManagement() {
 
         <div className="flex gap-4">
           <div className="relative flex-grow">
-            <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
-              size={18}
-            />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
             <input
               className="w-full bg-slate-900/50 border border-bingo-red rounded-xl py-4 pl-12 text-sm focus:border-bingo-red outline-none transition-all"
               placeholder="Search Cards..." 
@@ -83,6 +83,7 @@ export default function CardManagement() {
               key={card.id}
               card={card}
               globalEvents={globalEvents}
+              globalUsers={globalUsers}
             />
           ))}
         </div>
@@ -100,17 +101,16 @@ function StatMiniCard({ label, value, color }) {
         </p>
         <span className="text-3xl font-black">{value}</span>
       </div>
-      <div
-        className={`p-3 rounded-xl bg-white/5 ${color === "red" ? "text-bingo-red" : "text-slate-600"}`}
-      >
+      <div className={`p-3 rounded-xl bg-white/5 ${color === "red" ? "text-bingo-red" : "text-slate-600"}`}>
         <LayoutGrid size={24} />
       </div>
     </div>
   );
 }
 
-function AdminCardItem({ card, globalEvents }) {
+function AdminCardItem({ card, globalEvents, globalUsers = [] }) {
   const { mutate: deleteCard } = useDeleteCard();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const syncedEvents = card.events?.map((cardEvent) => {
     const live = globalEvents?.find((g) => g.id === cardEvent.id);
@@ -123,10 +123,21 @@ function AdminCardItem({ card, globalEvents }) {
     }
   };
 
-  const { totalEvents, completedEvents, progressPercent } = calculateCardProgress(syncedEvents)
+  const { totalEvents, completedEvents, progressPercent } = calculateCardProgress(syncedEvents);
+  
+  const purchasesList = globalUsers
+    .filter((user) => {
+      const userCards = user.cards || [];
+      return userCards.some((userCard) => Number(userCard.id) === Number(card.id));
+    })
+    .map((user) => ({
+      username: user.username || "Unknown Player",
+      email: user.email || "N/A"
+    }));
 
   return (
-    <div className="bg-slate-900/20 border border-bingo-red rounded-3xl p-6 space-y-6 hover:border-bingo-red/30 transition-all group">
+    <div className="bg-slate-900/20 border border-bingo-red rounded-3xl p-6 space-y-6 hover:border-bingo-red/30 transition-all group relative">
+      
       <div className="flex justify-between items-start">
         <div>
           <h3 className="text-xl font-black uppercase leading-tight">
@@ -136,19 +147,23 @@ function AdminCardItem({ card, globalEvents }) {
             Created at {formatDate(card.date)}
           </p>
         </div>
-        <Trophy
-          className="text-bingo-red opacity-50 group-hover:opacity-100 transition-opacity"
-          size={24}
-        />
+        <Trophy className="text-bingo-red opacity-50 group-hover:opacity-100 transition-opacity" size={24} />
       </div>
 
       <div className="flex gap-2">
-        <span className="bg-slate-800 text-[10px] font-black px-2 py-1 rounded text-slate-400 uppercase">
+        <span className="bg-slate-800 text-[10px] font-black px-2 py-1 rounded text-slate-400 uppercase font-mono">
           {`${card.cols}x${card.rows}`}
         </span>
-        <span className="bg-slate-800 text-[10px] font-black px-2 py-1 rounded text-slate-400 uppercase">
+        <span className="bg-slate-800 text-[10px] font-black px-2 py-1 rounded text-slate-400 uppercase font-mono">
           {totalEvents} events
         </span>
+        
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="bg-bingo-red/10 border border-bingo-red/20 text-bingo-red hover:bg-bingo-red hover:text-white transition-all text-[10px] font-black px-2 py-1 rounded flex items-center gap-1 uppercase tracking-tight cursor-pointer font-mono shadow-sm"
+        >
+          <Users size={11} /> {purchasesList.length} bets
+        </button>
       </div>
 
       <div className="space-y-2">
@@ -168,50 +183,46 @@ function AdminCardItem({ card, globalEvents }) {
 
       <div className="grid grid-cols-2 gap-4 pt-2">
         <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800">
-          <p className="text-[8px] uppercase font-black text-slate-500">
-            Line Prize
-          </p>
-          <p className="text-green-500 font-bold">
-            {card.line_prize || "€50"}
-          </p>
+          <p className="text-[8px] uppercase font-black text-slate-500">Line Prize</p>
+          <p className="text-green-500 font-bold">€ {card.line_prize ? Number(card.line_prize).toFixed(2) : "0.00"}</p>
         </div>
         <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800">
-          <p className="text-[8px] uppercase font-black text-slate-500">
-            Bingo Prize
-          </p>
-          <p className="text-yellow-500 font-bold">
-            {card.bingo_prize || "€500"}
-          </p>
+          <p className="text-[8px] uppercase font-black text-slate-500">Bingo Prize</p>
+          <p className="text-yellow-500 font-bold">€ {card.bingo_prize ? Number(card.bingo_prize).toFixed(2) : "0.00"}</p>
         </div>
       </div>
 
       <div className="flex justify-between items-center border-t border-slate-800 pt-4">
-        <span className="text-[10px] font-black text-slate-500 uppercase">
-          Cost to Play
-        </span>
-        <span className="text-xl font-black text-yellow-500">
-          €{card.price}
-        </span>
+        <span className="text-[10px] font-black text-slate-500 uppercase">Cost to Play</span>
+        <span className="text-xl font-black text-yellow-500">€{card.price?.toFixed(2)}</span>
       </div>
 
       <div className="grid grid-cols-3 gap-2 pt-2">
         <Link to={`/card/${card.id}`} className="block">
-          <button className="w-full bg-bingo-red/10 hover:bg-bingo-red text-bingo-red hover:text-white py-2.5 rounded-xl transition-all flex justify-center items-center border border-bingo-red/20">
+          <button className="w-full bg-bingo-red/10 hover:bg-bingo-red text-bingo-red hover:text-white py-2.5 rounded-xl transition-all flex justify-center items-center border border-bingo-red/20 cursor-pointer">
             <Eye size={18} />
           </button>
         </Link>
         <Link to={`/admin/cards/edit/${card.id}`} className="block">
-          <button className="w-full bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-xl transition-all flex justify-center items-center border border-slate-700">
+          <button className="w-full bg-slate-800 hover:bg-slate-700 text-white py-2.5 rounded-xl transition-all flex justify-center items-center border border-slate-700 cursor-pointer">
             <Edit2 size={18} />
           </button>
         </Link>
         <button
           onClick={handleDelete}
-          className="bg-slate-800 hover:bg-red-900/50 text-white py-2.5 rounded-xl transition-all flex justify-center items-center border border-slate-700"
+          className="bg-slate-800 hover:bg-red-900/50 text-white py-2.5 rounded-xl transition-all flex justify-center items-center border border-slate-700 cursor-pointer"
         >
           <Trash2 size={18} />
         </button>
       </div>
+
+      <UsersBoughtCard
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        cardName={card.name}
+        purchases={purchasesList}
+      />
+
     </div>
   );
 }
