@@ -122,7 +122,7 @@ export default function ProfilePage() {
               <div className="flex flex-col gap-4">
                 <Link
                   to="/settings"
-                  className="w-full flex items-center gap-5 bg-slate-900/40 hover:bg-slate-800 border-2 border-bingo-red text-white px-8 py-6 rounded-4xl transition-all group active:scale-[0.98] shadow-xl shadow-bingo-red/5"
+                  className="w-full flex items-center gap-5 bg-slate-900/40 hover:bg-slate-800 border-2 border-bingo-red text-white px-8 py-6 rounded-2xl transition-all group active:scale-[0.98] shadow-xl shadow-bingo-red/5"
                 >
                   <Icons.Settings size={22} className="text-bingo-red transition-transform group-hover:rotate-12" />
                   <span className="font-black text-xs uppercase tracking-[0.15em]">Account Settings</span>
@@ -161,7 +161,7 @@ export default function ProfilePage() {
           <div className="max-w-md mx-auto pt-4">
             <Link
               to="/settings"
-              className="w-full flex items-center gap-5 bg-slate-900/40 hover:bg-slate-800 border-2 border-bingo-red text-white px-8 py-6 transition-all group active:scale-[0.98] shadow-xl shadow-bingo-red/5"
+              className="w-full flex items-center gap-5 bg-slate-900/40 hover:bg-slate-800 border-2 border-bingo-red rounded-2xl text-white px-8 py-6 transition-all group active:scale-[0.98] shadow-xl shadow-bingo-red/5"
             >
               <Icons.Settings size={22} className="text-bingo-red transition-transform group-hover:rotate-12" />
               <span className="font-black text-xs uppercase tracking-[0.15em]">Account Settings</span>
