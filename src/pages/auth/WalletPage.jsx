@@ -111,7 +111,7 @@ export default function WalletPage() {
           </h1>
         </div>
 
-        <div className="relative overflow-hidden bg-slate-900/40 border-2 border-red-500/30 rounded-[2rem] p-8 flex justify-between items-center shadow-2xl shadow-red-500/5">
+        <div className="relative overflow-hidden bg-slate-900/40 border-2 border-red-500/30 rounded-4xl p-8 flex justify-between items-center shadow-2xl shadow-red-500/5">
           <div className="z-10">
             <p className="text-slate-400 text-sm font-bold uppercase tracking-widest mb-1">Available Balance</p>
             <h2 className="text-6xl md:text-7xl font-black tracking-tighter">€{user?.balance?.toFixed(2) || "0.00"}</h2>
@@ -120,7 +120,7 @@ export default function WalletPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-slate-900/40 border-2 border-red-500/30 rounded-[2rem] p-8 space-y-6 flex flex-col">
+          <div className="bg-slate-900/40 border-2 border-red-500/30 rounded-4xl p-8 space-y-6 flex flex-col">
             <h3 className="text-2xl font-black uppercase tracking-tight flex items-center gap-2">
               <TrendingUp className="text-red-500" /> New Operation
             </h3>
@@ -193,7 +193,7 @@ export default function WalletPage() {
             </button>
           </div>
 
-          <div className="bg-slate-900/40 border-2 border-red-500/30 rounded-[2rem] p-8 space-y-6 flex flex-col h-full">
+          <div className="bg-slate-900/40 border-2 border-red-500/30 rounded-4xl p-8 space-y-6 flex flex-col h-full">
             <h3 className="text-2xl font-black uppercase tracking-tight">Transaction History</h3>
             <div className="space-y-3 max-h-[550px] overflow-y-auto pr-2 custom-scrollbar flex-1">
               {isLoading ? <p className="text-center py-10 text-slate-500 animate-pulse">Loading...</p> : transactions.length === 0 ? <p className="text-center py-10 text-slate-600">No movements recorded yet.</p> : (

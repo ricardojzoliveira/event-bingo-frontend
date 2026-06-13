@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useCurrentUser, useWallet } from "../../hooks/use-auth";
 import * as Icons from "lucide-react";
 import { Link } from "react-router-dom";
+import LoadingState from "../../components/common/LoadingState";
 
 export default function ProfilePage() {
   const { data: user, isLoading } = useCurrentUser();
@@ -49,11 +50,7 @@ export default function ProfilePage() {
     ];
   }, [serverTransactions, user?.cards?.length]);
 
-  if (isLoading) return (
-    <div className="min-h-screen bg-bingo-dark flex items-center justify-center">
-      <div className="text-white font-black tracking-[0.5em] animate-pulse">LOADING...</div>
-    </div>
-  );
+  if (isLoading) return <LoadingState />
 
   const isUser = user?.role === "user";
 
@@ -61,7 +58,7 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-bingo-dark text-white p-6 md:p-12">
       <div className="max-w-6xl mx-auto space-y-8">
 
-        <div className="relative overflow-hidden bg-slate-900/20 border-2 border-bingo-red p-8 md:p-12 rounded-[3rem] backdrop-blur-md shadow-2xl shadow-bingo-red/5">
+        <div className="relative overflow-hidden bg-slate-900/20 border-2 border-bingo-red p-8 md:p-12 rounded-4xl backdrop-blur-md shadow-2xl shadow-bingo-red/5">
           <div className="absolute -top-24 -right-24 w-64 h-64 bg-bingo-red/10 rounded-full blur-[80px]" />
 
           <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
@@ -97,7 +94,7 @@ export default function ProfilePage() {
         {isUser ? (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
             <div className="lg:col-span-4 flex flex-col gap-6">
-              <div className="flex-1 bg-bingo-dark border-2 border-bingo-red p-8 rounded-[2.5rem] flex flex-col items-center justify-center text-center shadow-xl shadow-bingo-red/5">
+              <div className="flex-1 bg-bingo-dark border-2 border-bingo-red p-8 rounded-4xl flex flex-col items-center justify-center text-center shadow-xl shadow-bingo-red/5">
                 <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.4em] mb-3">
                   Available Balance
                 </p>
@@ -108,14 +105,14 @@ export default function ProfilePage() {
                 <div className="flex flex-col w-full gap-3 mt-10">
                   <Link
                     to="/wallet"
-                    className="w-full text-center bg-bingo-red text-white py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] transition-all active:scale-95 shadow-lg shadow-bingo-red/20"
+                    className="w-full text-center bg-bingo-red text-white py-4 rounded-4xl font-black uppercase tracking-[0.2em] text-[11px] transition-all active:scale-95 shadow-lg shadow-bingo-red/20"
                   >
                     Deposit Now
                   </Link>
 
                   <Link
                     to="/wallet"
-                    className="w-full text-center bg-slate-900 border-2 border-white/10 hover:bg-slate-800 text-white py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] transition-all active:scale-95"
+                    className="w-full text-center bg-slate-900 border-2 border-white/10 hover:bg-slate-800 text-white py-4 rounded-4xl font-black uppercase tracking-[0.2em] text-[11px] transition-all active:scale-95"
                   >
                     Withdraw Funds
                   </Link>
@@ -125,7 +122,7 @@ export default function ProfilePage() {
               <div className="flex flex-col gap-4">
                 <Link
                   to="/settings"
-                  className="w-full flex items-center gap-5 bg-slate-900/40 hover:bg-slate-800 border-2 border-bingo-red text-white px-8 py-6 rounded-[2rem] transition-all group active:scale-[0.98] shadow-xl shadow-bingo-red/5"
+                  className="w-full flex items-center gap-5 bg-slate-900/40 hover:bg-slate-800 border-2 border-bingo-red text-white px-8 py-6 rounded-4xl transition-all group active:scale-[0.98] shadow-xl shadow-bingo-red/5"
                 >
                   <Icons.Settings size={22} className="text-bingo-red transition-transform group-hover:rotate-12" />
                   <span className="font-black text-xs uppercase tracking-[0.15em]">Account Settings</span>
@@ -137,10 +134,10 @@ export default function ProfilePage() {
               {stats.map((stat, i) => (
                 <div
                   key={i}
-                  className="bg-bingo-dark border-2 border-bingo-red p-8 rounded-[2.5rem] flex flex-col justify-between shadow-xl shadow-bingo-red/5 group transition-all duration-300"
+                  className="bg-bingo-dark border-2 border-bingo-red p-8 rounded-4xl flex flex-col justify-between shadow-xl shadow-bingo-red/5 group transition-all duration-300"
                 >
                   <div className="flex justify-between items-start">
-                    <div className="bg-slate-900 p-4 rounded-2xl border border-white/5 transition-colors group-hover:border-bingo-red/40">
+                    <div className="bg-slate-900 p-4 rounded-4xl border border-white/5 transition-colors group-hover:border-bingo-red/40">
                       <stat.icon size={22} className="text-bingo-red" />
                     </div>
                     <p className="text-slate-600 text-[9px] font-black uppercase tracking-[0.4em]">
@@ -164,7 +161,7 @@ export default function ProfilePage() {
           <div className="max-w-md mx-auto pt-4">
             <Link
               to="/settings"
-              className="w-full flex items-center gap-5 bg-slate-900/40 hover:bg-slate-800 border-2 border-bingo-red text-white px-8 py-6 rounded-[2rem] transition-all group active:scale-[0.98] shadow-xl shadow-bingo-red/5"
+              className="w-full flex items-center gap-5 bg-slate-900/40 hover:bg-slate-800 border-2 border-bingo-red text-white px-8 py-6 transition-all group active:scale-[0.98] shadow-xl shadow-bingo-red/5"
             >
               <Icons.Settings size={22} className="text-bingo-red transition-transform group-hover:rotate-12" />
               <span className="font-black text-xs uppercase tracking-[0.15em]">Account Settings</span>
