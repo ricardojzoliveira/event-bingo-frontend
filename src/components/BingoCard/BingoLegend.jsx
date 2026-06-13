@@ -6,7 +6,7 @@ export default function BingoLegend() {
   ];
 
   return (
-    <div className="w-full max-w-5xl mx-auto mt-8 border border-bingo-red rounded-3xl p-8 bg-[#02182B]/50 backdrop-blur-sm">
+    <div className="w-full max-w-5xl mx-auto mt-8 border border-bingo-red rounded-2xl p-8 bg-[#02182B]/50 backdrop-blur-sm">
       <div className="flex flex-col items-center">
         
         <h4 className="text-[10px] uppercase tracking-[0.2em] font-black text-slate-500 mb-8">
