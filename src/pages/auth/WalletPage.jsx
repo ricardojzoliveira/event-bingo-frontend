@@ -104,13 +104,6 @@ export default function WalletPage() {
   return (
     <div className="min-h-screen bg-bingo-dark text-white p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-8">
-        <div className="text-center space-y-4">
-          <h1 className="text-5xl md:text-6xl font-black tracking-tight uppercase flex items-center justify-center gap-4">
-            <Wallet className="text-bingo-red shrink-0" size={48} />
-            <span>Wallet</span>
-          </h1>
-        </div>
-
         <div className="relative overflow-hidden bg-slate-900/40 border-2 border-red-500/30 rounded-4xl p-8 flex justify-between items-center shadow-2xl shadow-red-500/5">
           <div className="z-10">
             <p className="text-slate-400 text-sm font-bold uppercase tracking-widest mb-1">Available Balance</p>

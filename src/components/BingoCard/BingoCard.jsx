@@ -29,7 +29,7 @@ export default function BingoCard({ data, isLogged }) {
   const smGridClass = gridColsClasses[gridSize] || "sm:grid-cols-3";
 
   return (
-    <div className="border-2 border-bingo-red rounded-2xl p-4 sm:p-8 bg-[#02182B] shadow-[0_0_20px_rgba(220,38,38,0.1)] text-white w-full max-w-full overflow-hidden">
+    <div className="border border-bingo-red rounded-2xl p-4 sm:p-8 bg-bingo-dark] shadow-[0_0_20px_rgba(220,38,38,0.1)] text-white w-full max-w-full overflow-hidden">
       <h3 className="font-bold text-xl mb-6 uppercase tracking-tight italic">Bingo Card</h3>
 
       {sortedEvents.length > 0 ? (

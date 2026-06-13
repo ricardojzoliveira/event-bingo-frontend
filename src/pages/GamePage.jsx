@@ -74,10 +74,10 @@ export default function GamePage({ role }) {
           </div>
         )}
 
-        <div className="border-2 border-bingo-red rounded-[2.5rem] p-8 bg-slate-900/20 backdrop-blur-sm shadow-2xl shadow-bingo-red/5 text-white">
+        <div className="border border-bingo-red rounded-2xl p-8 bg-bingo-dark backdrop-blur-sm shadow-2xl shadow-bingo-red/5 text-white">
           <div className="flex justify-between items-start mb-10">
             <div>
-              <h2 className="text-4xl font-black tracking-tighter uppercase italic">{currentCard.name}</h2>
+              <h2 className="text-4xl font-black tracking-tighter uppercase">{currentCard.name}</h2>
               <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em] mt-1">
                 Card {currentCard.rows}x{currentCard.cols} • {total} events
               </p>
