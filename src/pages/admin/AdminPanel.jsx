@@ -1,6 +1,6 @@
 import { Calendar, Grid, Users, ArrowRight, Activity } from "lucide-react";
 import { Link } from "react-router-dom";
-import RecentActivity from "../../pages/admin/RecentActivity";
+import RecentActivity from "./logs/RecentActivity";
 
 export default function AdminPanel() {
   const managementCards = [

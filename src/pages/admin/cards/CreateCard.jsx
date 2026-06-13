@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAdminEvents, useCreateCard } from "../../hooks/use-admin";
+import { useAdminEvents, useCreateCard } from "../../../hooks/use-admin";
 import {
   ChevronLeft,
   Plus,
@@ -10,7 +10,7 @@ import {
   Save,
   AlertCircle,
 } from "lucide-react";
-import LoadingState from "../../components/common/LoadingState";
+import LoadingState from "../../../components/LoadingState";
 
 export default function CreateCard({
   initialData,

@@ -22,9 +22,9 @@ import {
   BarChart2,
   Activity,
 } from "lucide-react";
-import { useAllUsers, useAdminEvents } from "../../hooks/use-admin";
-import { useCards } from "../../hooks/use-cards";
-import { useWallet } from "../../hooks/use-auth";
+import { useAllUsers, useAdminEvents } from "../../../hooks/use-admin";
+import { useCards } from "../../../hooks/use-cards";
+import { useWallet } from "../../../hooks/use-auth";
 
 ChartJS.register(
   CategoryScale,

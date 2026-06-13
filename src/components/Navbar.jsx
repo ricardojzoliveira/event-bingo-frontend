@@ -11,8 +11,11 @@ import {
   Menu,
   X,
 } from "lucide-react";
+import { useLogout } from "../hooks/use-auth";
 
 export default function Navbar({ role }) {
+  const logout = useLogout();
+
   const [isOpen, setIsOpen] = useState(false);
 
   const closeMenu = () => setIsOpen(false);
@@ -88,9 +91,9 @@ export default function Navbar({ role }) {
               </Link>
             </li>*/}
             <li className="w-full md:w-auto">
-              <Link to="/logout" onClick={closeMenu} className={btnStyle}>
+              <button onClick={logout} className={btnStyle}>
                 <LogOut size={20} /> Logout
-              </Link>
+              </button>
             </li>
           </>
         )}
@@ -108,9 +111,9 @@ export default function Navbar({ role }) {
               </Link>
             </li>
             <li className="w-full md:w-auto">
-              <Link to="/logout" onClick={closeMenu} className={btnStyle}>
+              <button onClick={logout} className={btnStyle}>
                 <LogOut size={20} /> Logout
-              </Link>
+              </button>
             </li>
           </>
         )}

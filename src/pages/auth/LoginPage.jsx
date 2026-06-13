@@ -1,7 +1,15 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useLogin } from "../../hooks/use-auth";
-import { User, Lock, Eye, EyeOff, Trophy, AlertCircle, Loader2 } from "lucide-react";
+import {
+  User,
+  Lock,
+  Eye,
+  EyeOff,
+  Trophy,
+  AlertCircle,
+  Loader2,
+} from "lucide-react";
 
 export default function LoginPage() {
   // Campos para o forms.
@@ -11,10 +19,18 @@ export default function LoginPage() {
 
   const navigate = useNavigate();
 
-  const { mutate: login, isPending, isError, error } = useLogin(() => {
-    // Se fizer login com sucesso, vai para a homepage com login feito.
-    navigate("/"); 
+  const { mutate: login, isPending, isError, error } = useLogin((userData) => {
+
+    const userRole = userData?.role.toLowerCase();
+    if (userRole === "admin") {
+      navigate("/admin");
+    } else {
+      navigate("/");
+    }
+
   });
+
+  const errorMessage = error?.message || "Error";
 
   // Função para submeter os dados para o hook.
   const handleSubmit = (e) => {
@@ -24,26 +40,29 @@ export default function LoginPage() {
 
   return (
     <div className="flex-grow flex flex-col items-center justify-center bg-bingo-dark p-6 min-h-[calc(100vh-76px)]">
-
       <div className="flex flex-col items-center mb-8">
         <div className="bg-bingo-red p-3 rounded-xl mb-4 shadow-lg shadow-bingo-red/20">
           <Trophy size={40} className="text-bingo-dark" />
         </div>
-        <h1 className="text-3xl font-black text-bingo-red uppercase tracking-tight">Event Bingo</h1>
+        <h1 className="text-3xl font-black text-bingo-red uppercase tracking-tight">
+          Event Bingo
+        </h1>
         <p className="text-slate-500 text-sm mt-1">Please log in to continue</p>
       </div>
 
       <div className="w-full max-w-[400px] bg-transparent border border-slate-800 rounded-3xl p-8 shadow-2xl">
         <form onSubmit={handleSubmit} className="space-y-6">
-
           {isError && (
             <div className="bg-red-500/10 border border-red-500/50 p-3 rounded-lg text-red-500 text-xs font-bold flex items-center gap-2 animate-shake">
-              <AlertCircle size={16} /> {"Invalid credentials"}
+              <AlertCircle size={16} />
+              {errorMessage}
             </div>
           )}
 
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 ml-1">Username</label>
+            <label className="text-xs font-bold text-slate-500 ml-1">
+              Username
+            </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
                 <User size={18} />
@@ -60,7 +79,9 @@ export default function LoginPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 ml-1">Password</label>
+            <label className="text-xs font-bold text-slate-500 ml-1">
+              Password
+            </label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
                 <Lock size={18} />
@@ -83,28 +104,25 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/*<div className="flex items-center justify-between text-xs font-medium">
-            <label className="flex items-center gap-2 text-slate-400 cursor-pointer hover:text-slate-300 transition-colors">
-              <input type="checkbox" className="rounded border-slate-700 bg-slate-900 text-bingo-red focus:ring-0 w-4 h-4" />
-              Remember me
-            </label>
-            <button type="button" className="text-bingo-red hover:brightness-125 transition-all">
-              Forgot your password?
-            </button>
-          </div>*/}
-
           <button
             type="submit"
             disabled={isPending}
             className="w-full bg-bingo-red text-white py-3.5 rounded-xl font-bold transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-50 disabled:cursor-wait shadow-lg shadow-bingo-red/20 flex items-center justify-center gap-2"
           >
-            {isPending ? <Loader2 className="animate-spin" size={20} /> : "Sign In"}
+            {isPending ? (
+              <Loader2 className="animate-spin" size={20} />
+            ) : (
+              "Sign In"
+            )}
           </button>
 
           <div className="text-center pt-2">
             <p className="text-sm text-slate-400">
               Don't have an account?{" "}
-              <Link to="/register" className="text-bingo-red font-bold hover:brightness-125 transition-all">
+              <Link
+                to="/register"
+                className="text-bingo-red font-bold hover:brightness-125 transition-all"
+              >
                 Create Account
               </Link>
             </p>

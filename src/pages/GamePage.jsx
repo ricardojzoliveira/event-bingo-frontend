@@ -7,7 +7,7 @@ import GuestCTA from "../components/BingoCard/GuestCTA";
 import StatBox from "../components/BingoCard/StatBox";
 import { Trophy } from "lucide-react";
 import { useAdminEvents } from "../hooks/use-admin";
-import LoadingState from "../components/common/LoadingState";
+import LoadingState from "../components/LoadingState";
 import { calculateCardProgress } from "../utils/cardHelpers";
 import { useCurrentUser } from "../hooks/use-auth";
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useCreateEvent } from "../../hooks/use-admin";
+import { useCreateEvent } from "../../../hooks/use-admin";
 import {
   ChevronLeft,
   Trophy,

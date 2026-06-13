@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useCurrentUser, useWallet } from "../../hooks/use-auth";
 import * as Icons from "lucide-react";
 import { Link } from "react-router-dom";
-import LoadingState from "../../components/common/LoadingState";
+import LoadingState from "../../components/LoadingState";
 
 export default function ProfilePage() {
   const { data: user, isLoading } = useCurrentUser();

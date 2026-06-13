@@ -14,14 +14,13 @@ import {
   Wallet,
   ArrowLeftRight,
 } from "lucide-react";
-import LoadingState from "../../components/common/LoadingState";
+import LoadingState from "../../../components/LoadingState";
 import {
   useAllUsers,
   useUpdateUserByAdmin,
   useAdminDeleteUser,
-} from "../../hooks/use-admin";
-import { useCurrentUser } from "../../hooks/use-auth";
-import { PaginationControls } from "../../components/common/PaginationControls";
+} from "../../../hooks/use-admin";
+import { useCurrentUser } from "../../../hooks/use-auth";
 
 export default function UserManagementPage() {
   const [page, setPage] = useState(0);

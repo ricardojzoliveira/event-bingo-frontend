@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useAdminEvent, useUpdateEvent } from "../../hooks/use-admin";
+import { useAdminEvent, useUpdateEvent } from "../../../hooks/use-admin";
 import CreateEvent from "./CreateEvent"; 
-import LoadingState from "../../components/common/LoadingState";
+import LoadingState from "../../../components/LoadingState";
 
 export default function EditEvent() {
   const { id } = useParams();

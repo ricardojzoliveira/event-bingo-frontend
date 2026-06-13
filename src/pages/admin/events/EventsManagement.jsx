@@ -2,7 +2,7 @@ import {
   useAdminEvents,
   useDeleteEvent,
   useUpdateEventStatus,
-} from "../../hooks/use-admin";
+} from "../../../hooks/use-admin";
 import {
   Plus,
   Search,
@@ -17,8 +17,8 @@ import {
   Lock,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import LoadingState from "../../components/common/LoadingState";
-import { formatDateTime } from "../../utils/date";
+import LoadingState from "../../../components/LoadingState";
+import { formatDateTime } from "../../../utils/date";
 import { useState } from "react";
 
 export default function EventManagement() {

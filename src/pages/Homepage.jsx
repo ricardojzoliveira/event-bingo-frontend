@@ -9,12 +9,12 @@ import {
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCards } from "../hooks/use-cards";
-import LoadingState from "../components/common/LoadingState";
+import LoadingState from "../components/LoadingState";
 import { calculateCardProgress } from "../utils/cardHelpers";
 import { useCurrentUser } from "../hooks/use-auth";
 import { useWallet } from "../hooks/use-auth";
 import { formatDate } from "../utils/date";
-import ClaimPrize from "./ClaimPrize";
+import ClaimPrize from "./users/ClaimPrize";
 
 export default function Homepage({ role }) {
   const navigate = useNavigate();

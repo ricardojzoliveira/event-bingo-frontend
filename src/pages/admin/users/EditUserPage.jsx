@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useGetOneUser, useUpdateUserByAdmin } from "../../hooks/use-admin";
+import { useGetOneUser, useUpdateUserByAdmin } from "../../../hooks/use-admin";
 import * as Icons from "lucide-react";
 
 export default function EditUserPage() {

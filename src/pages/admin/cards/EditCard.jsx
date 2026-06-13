@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useCard } from "../../hooks/use-cards";
-import { useUpdateCard } from "../../hooks/use-admin";
+import { useCard } from "../../../hooks/use-cards";
+import { useUpdateCard } from "../../../hooks/use-admin";
 import CreateCard from "./CreateCard";
-import LoadingState from "../../components/common/LoadingState";
+import LoadingState from "../../../components/LoadingState";
 
 export default function EditCard() {
 

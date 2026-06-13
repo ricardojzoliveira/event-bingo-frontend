@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import Cookies from "js-cookie";
+
 
 // register
 export const useRegister = (setRole, onSuccessCallback) => {
@@ -28,7 +30,7 @@ export const useRegister = (setRole, onSuccessCallback) => {
 };
 
 // login
-export const useLogin = (onSuccessCallback) => {
+/* export const useLogin = (onSuccessCallback) => {
   const queryClient = useQueryClient(); 
 
   return useMutation({
@@ -50,7 +52,62 @@ export const useLogin = (onSuccessCallback) => {
       if (onSuccessCallback) onSuccessCallback(); // if success go to homepage
     },
   });
-};
+}; */
+
+export function useLogin(onSuccessCallback) {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: async ({ username, password }) => {
+      try {
+        const loginRes = await api.post("/auth/login", { username, password });
+        const token = loginRes.data.token;
+        
+        Cookies.set("token", token, {
+          expires: 1,
+          secure: true,
+          sameSite: "strict",
+        });
+
+        const userRes = await api.get("/users/me", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        return userRes.data; 
+      } catch (err) {
+        if (err.config?.url?.includes("/login")) {
+          throw new Error("Invalid Credentials");
+        }
+        Cookies.remove("token");
+        const backendMessage = err.response?.data?.error || "Account error";
+        throw new Error(backendMessage);
+      }
+    },
+    onSuccess: (userData) => {
+
+      queryClient.setQueryData(["currentUser"], userData);
+      queryClient.invalidateQueries(["currentUser"]); 
+      queryClient.invalidateQueries(["profile"]);
+      
+      if (onSuccessCallback) onSuccessCallback(userData);
+    }
+  });
+}
+
+export function useLogout() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const logout = () => {
+    Cookies.remove("token");
+
+    queryClient.setQueryData(["currentUser"], null);
+
+    navigate("/", { replace: true }); 
+  };
+
+  return logout;
+}
 
 //checks user
 export const useCurrentUser = () => {

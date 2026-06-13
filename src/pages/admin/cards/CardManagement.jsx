@@ -1,4 +1,4 @@
-import { useCards } from "../../hooks/use-cards";
+import { useCards } from "../../../hooks/use-cards";
 import {
   Plus,
   Search,
@@ -11,16 +11,16 @@ import {
   Users,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import LoadingState from "../../components/common/LoadingState";
+import LoadingState from "../../../components/LoadingState";
 import {
   useAdminEvents,
   useDeleteCard,
   useAllUsers,
-} from "../../hooks/use-admin";
+} from "../../../hooks/use-admin";
 import { useState } from "react";
-import { calculateCardProgress } from "../../utils/cardHelpers";
-import { formatDate } from "../../utils/date";
-import UsersBoughtCard from "../../components/UsersBoughtCard";
+import { calculateCardProgress } from "../../../utils/cardHelpers";
+import { formatDate } from "../../../utils/date";
+import UsersBoughtCard from "../../../components/admin/UsersBoughtCard";
 
 export default function CardManagement() {
   const { data: cards, isLoading: loadingCards } = useCards();
