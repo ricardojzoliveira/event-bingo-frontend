@@ -4,12 +4,12 @@ import Cookies from "js-cookie";
 
 // register
 export const useRegister = (setRole, onSuccessCallback) => {
-  const queryClient = useQueryClient(); // get queryClient instance
+  const queryClient = useQueryClient(); 
 
   return useMutation({
     mutationFn: async (userData) => {
-      const response = await api.post("/auth/register", userData); // request
-      return response.data; // response from server
+      const response = await api.post("/auth/register", userData); 
+      return response.data; 
     },
     onSuccess: (data) => {
       if (data.token) {
@@ -19,8 +19,8 @@ export const useRegister = (setRole, onSuccessCallback) => {
           sameSite: "strict",
         }); // create token, save it during 24 hours and security
       }
-      queryClient.invalidateQueries(["currentUser"]); // clear current user cache and update it
-      queryClient.invalidateQueries(["profile"]); // clear profile cache and update it
+      queryClient.invalidateQueries(["currentUser"]);
+      queryClient.invalidateQueries(["profile"]);
 
       if (onSuccessCallback) onSuccessCallback(); // if success go to homepage
     },
@@ -29,12 +29,12 @@ export const useRegister = (setRole, onSuccessCallback) => {
 
 // login
 export const useLogin = (onSuccessCallback) => {
-  const queryClient = useQueryClient(); // get queryClient instance
+  const queryClient = useQueryClient(); 
 
   return useMutation({
     mutationFn: async (credentials) => {
-      const response = await api.post("/auth/login", credentials); // request
-      return response.data; // response from server
+      const response = await api.post("/auth/login", credentials); 
+      return response.data; 
     },
     onSuccess: (data) => {
       if (data.token) {
@@ -44,8 +44,8 @@ export const useLogin = (onSuccessCallback) => {
           sameSite: "strict",
         }); // create token, save it during 24 hours and security
       }
-      queryClient.invalidateQueries(["currentUser"]); // clear current user cache and update it
-      queryClient.invalidateQueries(["profile"]); // clear profile cache and update it
+      queryClient.invalidateQueries(["currentUser"]); 
+      queryClient.invalidateQueries(["profile"]); 
 
       if (onSuccessCallback) onSuccessCallback(); // if success go to homepage
     },
@@ -55,16 +55,15 @@ export const useLogin = (onSuccessCallback) => {
 //checks user
 export const useCurrentUser = () => {
   return useQuery({
-    queryKey: ["currentUser"], // react cache for current user
+    queryKey: ["currentUser"], 
     queryFn: async () => {
-      const token = Cookies.get("token"); // get token
+      const token = Cookies.get("token"); 
 
       if (!token) return null;
 
       const response = await api.get("/users/me", {
-        // request
         headers: {
-          Authorization: `Bearer ${token}`, // send token
+          Authorization: `Bearer ${token}`, 
         },
       });
 
@@ -72,7 +71,7 @@ export const useCurrentUser = () => {
 
       if (userData && userData.role) {
         // if userData and role exist
-        userData.role = userData.role.toLowerCase(); // transform role string
+        userData.role = userData.role.toLowerCase();
       }
 
       return userData; // return user data and role transformed
@@ -85,27 +84,26 @@ export const useCurrentUser = () => {
 
 // wallet functions
 export function useWallet() {
-  const queryClient = useQueryClient(); // get queryClient instance
-  const token = Cookies.get("token"); // get token
+  const queryClient = useQueryClient(); 
+  const token = Cookies.get("token"); 
 
   // get transactions
   const useTransactions = () => {
     return useQuery({
-      queryKey: ["walletTransactions", token], // react cache for transactions
+      queryKey: ["walletTransactions", token], 
       queryFn: async () => {
         const response = await api.get(
           `/transactions?size=999999&sort=date,desc`,
           {
-            // request
             headers: {
-              Authorization: `Bearer ${token}`, // send token
+              Authorization: `Bearer ${token}`,
             },
           },
         );
 
         return response.data; // if user token returns each user transactions, if admin token returns all transactions
       },
-      enabled: !!token, // waits for token to not be null or undefined
+      enabled: !!token, 
     });
   };
 
@@ -121,15 +119,15 @@ export function useWallet() {
         const response = await api.post("/transactions",payload, // request
           {
             headers: {
-              Authorization: `Bearer ${token}`, // send token
+              Authorization: `Bearer ${token}`, 
             },
           },
         );
-        return response.data; // response from server
+        return response.data;
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["currentUser"] }); // clear react current user cache and update it
-        queryClient.invalidateQueries({ queryKey: ["walletTransactions"] }); // clear react transactions cache and update it
+        queryClient.invalidateQueries({ queryKey: ["currentUser"] }); 
+        queryClient.invalidateQueries({ queryKey: ["walletTransactions"] }); 
       },
     });
   };
@@ -138,93 +136,93 @@ export function useWallet() {
   const useClaimPrizeMutation = () => {
     return useMutation({
       mutationFn: async (transactionId) => {
-        const response = await api.patch( // request
+        const response = await api.patch( 
           `/transactions/${transactionId}`,
           { claimed: true },
           {
-            headers: { Authorization: `Bearer ${token}` }, // token
+            headers: { Authorization: `Bearer ${token}` }, 
           },
         );
-        return response.data; // response from server 
+        return response.data; 
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["walletTransactions"] }); // clear react transactions cache and update it
+        queryClient.invalidateQueries({ queryKey: ["walletTransactions"] }); 
       },
     });
   };
 
-  return { useTransactions, useTransactionMutation, useClaimPrizeMutation }; // return all functions
+  return { useTransactions, useTransactionMutation, useClaimPrizeMutation }; 
 }
 
 // update user info
 export function useUpdateProfile() {
-  const queryClient = useQueryClient(); // get queryClient instance
-  const { data: user } = useCurrentUser(); // get user info
-  const token = Cookies.get("token"); // get token
+  const queryClient = useQueryClient(); 
+  const { data: user } = useCurrentUser(); 
+  const token = Cookies.get("token"); 
 
   return useMutation({
     mutationFn: async (updatedData) => {
-      const response = await api.patch(`/users/${user.id}`, updatedData, { // request
+      const response = await api.patch(`/users/${user.id}`, updatedData, { 
         headers: {
-          Authorization: `Bearer ${token}`, // send token
+          Authorization: `Bearer ${token}`, 
         },
       });
 
-      return response.data; // response from server
+      return response.data; 
     },
 
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["currentUser"],
       });
-    }, // clear react current user cache and update it if success on update user
+    }, 
   });
 }
 
 // delete account
 export function useDeleteAccount() {
-  const queryClient = useQueryClient(); // get queryClient instance
+  const queryClient = useQueryClient(); 
 
   return useMutation({
     mutationFn: async (userId) => {
-      const token = Cookies.get("token"); // get token
+      const token = Cookies.get("token"); 
 
-      return await api.delete(`/users/${userId}`, { // request
+      return await api.delete(`/users/${userId}`, { 
         headers: {
-          Authorization: `Bearer ${token}`, // send token
+          Authorization: `Bearer ${token}`, 
         },
       });
     },
     onSuccess: () => {
-      Cookies.remove("token"); // remove token
-      queryClient.setQueryData(["currentUser"], null); // clear react current user cache
-      queryClient.clear(); // clear query client instance
+      Cookies.remove("token"); 
+      queryClient.setQueryData(["currentUser"], null); 
+      queryClient.clear(); 
     },
   });
 }
 
 // self exclude user
 export function useSelfExclusion() {
-  const queryClient = useQueryClient(); // get queryClient instance
-  const { data: user } = useCurrentUser(); // get user info
+  const queryClient = useQueryClient(); 
+  const { data: user } = useCurrentUser(); 
 
   return useMutation({
     mutationFn: async () => {
-      const token = Cookies.get("token"); // get token
-      return await api.patch( // request
+      const token = Cookies.get("token"); 
+      return await api.patch( 
         `/users/${user.id}`,
-        { status: "SUSPENDED" }, // send user status
+        { status: "SUSPENDED" }, 
         {
           headers: {
-            Authorization: `Bearer ${token}`, // send token
+            Authorization: `Bearer ${token}`, 
           },
         },
       );
     },
     onSuccess: () => {
-      Cookies.remove("token"); // remove token
-      queryClient.setQueryData(["currentUser"], null); // clear react current user cache
-      queryClient.clear(); // clear query client instance
+      Cookies.remove("token"); 
+      queryClient.setQueryData(["currentUser"], null); 
+      queryClient.clear(); 
     },
   });
 }

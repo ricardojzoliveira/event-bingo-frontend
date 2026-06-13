@@ -5,11 +5,11 @@ import api from "../api/api";
 // get all cards
 export function useCards() {
   return useQuery({
-    queryKey: ["cards"], // react cache for cards
+    queryKey: ["cards"], 
     queryFn: async () => {
-      const response = await api.get("/cards?size=999999"); // request
+      const response = await api.get("/cards?size=999999"); 
 
-      return response.data.content; // cards lits
+      return response.data.content; 
     },
   });
 }
@@ -17,11 +17,11 @@ export function useCards() {
 // get card by id
 export function useCard(id) {
   return useQuery({
-    queryKey: ["card", id], // react cache for card
+    queryKey: ["card", id], 
     queryFn: async () => {      
-      const response = await api.get(`cards/${id}`); // request
+      const response = await api.get(`cards/${id}`);
 
-      return response.data; // cardid info
+      return response.data; 
     },
     enabled: !!id, // waits for id to not be null or undefined
   });
@@ -29,22 +29,22 @@ export function useCard(id) {
 
 //buy card
 export const useBuyCard = () => {
-  const queryClient = useQueryClient(); // get queryClient instance
+  const queryClient = useQueryClient(); 
 
   return useMutation({
     mutationFn: async ({ cardId }) => {
-      const token = Cookies.get("token"); // get token
-      const response = await api.post(`cards/${cardId}/buy`, {}, { // request
+      const token = Cookies.get("token"); 
+      const response = await api.post(`cards/${cardId}/buy`, {}, { 
         headers: { 
-          "Authorization": `Bearer ${token}` // send token
+          "Authorization": `Bearer ${token}` 
         },
       });
-      return response.data; // response from server 
+      return response.data;  
     },
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["cards"] }); // clear react cards cache and update it
-      queryClient.invalidateQueries({ queryKey: ["card", variables.cardId] }); // clear react card cache and update it
-      queryClient.invalidateQueries({ queryKey: ["currentUser"] }); // clear react current user cache and update it
+      queryClient.invalidateQueries({ queryKey: ["cards"] }); 
+      queryClient.invalidateQueries({ queryKey: ["card", variables.cardId] }); 
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] }); 
     },
   });
 };

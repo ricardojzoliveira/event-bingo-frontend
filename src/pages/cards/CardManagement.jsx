@@ -151,7 +151,7 @@ function AdminCardItem({ card, globalEvents, globalUsers = [] }) {
     }));
 
   return (
-    <div className="bg-slate-900/20 border border-bingo-red rounded-3xl p-6 space-y-6 hover:border-bingo-red/30 transition-all group relative">
+    <div className="bg-slate-900/20 border border-bingo-red/30 rounded-3xl p-6 space-y-6 hover:border-bingo-red transition-all group relative">
       <div className="flex justify-between items-start">
         <div>
           <h3 className="text-xl font-black uppercase leading-tight">

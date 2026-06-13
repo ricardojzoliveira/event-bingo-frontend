@@ -182,10 +182,12 @@ export default function CreateCard({
                 </label>
                 <input
                   value={title}
+                  maxLength={30}
                   onChange={(e) => setTitle(e.target.value)}
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 mt-2 outline-none focus:border-bingo-red transition-all"
                   placeholder="Ex: Weekend Specials"
                 />
+                <p className="text-[10px] text-slate-600 text-right">{title.length}/50</p>
               </div>
 
               <div>
