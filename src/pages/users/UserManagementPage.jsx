@@ -81,7 +81,7 @@ export default function UserManagementPage() {
 
   return (
     <div className="min-h-screen bg-bingo-dark p-6 md:p-12 text-white">
-      <div className="max-w-7xl mx-auto space-y-8">
+      <div className="max-w-6xl mx-auto space-y-8">
         <div className="border border-bingo-red rounded-2xl p-6 bg-slate-900/20 flex items-center gap-6">
           <Link
             to="/admin"
@@ -131,15 +131,15 @@ export default function UserManagementPage() {
             <input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-slate-900/50 border border-bingo-red rounded-xl py-4 pl-12 text-sm focus:border-bingo-red outline-none"
+              className="w-full bg-slate-900/50 border border-slate-800 rounded-xl py-3 pl-12 text-sm focus:outline-none"
               placeholder="Search by name or email..."
             />
           </div>
         </div>
 
-        <div className="bg-slate-900/40 border border-white/10 rounded-2xl overflow-hidden">
+        <div className="border border-slate-800 rounded-2xl overflow-hidden bg-slate-900/10">
           <table className="w-full text-left">
-            <thead className="bg-black/20 text-slate-500 uppercase text-[10px] font-black tracking-widest">
+            <thead className="bg-slate-800/50 text-slate-400 uppercase text-[10px] ">
               <tr>
                 <th className="p-6">User</th>
                 <th className="p-6">Username</th>
@@ -164,10 +164,10 @@ export default function UserManagementPage() {
                         <Mail size={12} /> {u.email}
                       </div>
                     </td>
-                    <td className="p-6 font-bold text-xs uppercase text-slate-400">
-                      {u.username}
+                    <td className="p-6 font-bold text-xs text-slate-400">
+                      @{u.username}
                     </td>
-                    <td className="p-6 font-bold text-xs uppercase text-slate-400">
+                    <td className="p-6 font-bold text-xs text-slate-400">
                       {u.role}
                     </td>
                     <td className="p-6">
@@ -251,7 +251,7 @@ function StatMiniCard({ label, value, color, icon: Icon }) {
         <span className="text-3xl font-black">{value}</span>
       </div>
       <div
-        className={`p-3 rounded-xl bg-white/5 ${color === "red" ? "text-bingo-red" : "text-slate-600"}`}
+        className={`p-3 rounded-xl ${color === "red" ? "text-bingo-red" : "text-slate-600"}`}
       >
         <Icon size={24} />
       </div>

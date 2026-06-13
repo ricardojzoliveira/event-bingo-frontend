@@ -12,7 +12,11 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import LoadingState from "../../components/common/LoadingState";
-import { useAdminEvents, useDeleteCard, useAllUsers } from "../../hooks/use-admin"; 
+import {
+  useAdminEvents,
+  useDeleteCard,
+  useAllUsers,
+} from "../../hooks/use-admin";
 import { useState } from "react";
 import { calculateCardProgress } from "../../utils/cardHelpers";
 import { formatDate } from "../../utils/date";
@@ -41,10 +45,12 @@ export default function CardManagement() {
 
   return (
     <div className="min-h-screen bg-bingo-dark p-6 md:p-12 text-white">
-      <div className="max-w-7xl mx-auto space-y-8">
-
+      <div className="max-w-6xl mx-auto space-y-8">
         <div className="border border-bingo-red rounded-2xl p-6 bg-slate-900/20 flex items-center gap-6">
-          <Link to="/admin" className="p-2 hover:bg-slate-800 rounded-lg transition-colors">
+          <Link
+            to="/admin"
+            className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+          >
             <ChevronLeft size={24} className="text-bingo-red" />
           </Link>
           <div>
@@ -62,10 +68,14 @@ export default function CardManagement() {
 
         <div className="flex gap-4">
           <div className="relative flex-grow">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+            <Search
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500"
+              size={18}
+            />
             <input
-              className="w-full bg-slate-900/50 border border-bingo-red rounded-xl py-4 pl-12 text-sm focus:border-bingo-red outline-none transition-all"
-              placeholder="Search Cards..." 
+              className="w-full bg-slate-900/50 border border-slate-800 rounded-xl py-3 pl-12 text-sm focus:outline-none"
+              placeholder="Searching Events"
+              value={searchBox}
               onChange={(e) => setSearchBox(e.target.value)}
             />
           </div>
@@ -73,7 +83,7 @@ export default function CardManagement() {
             to="/admin/cards/create"
             className="bg-bingo-red hover:bg-red-600 px-8 rounded-xl flex items-center gap-3 text-sm font-black uppercase transition-all shadow-lg shadow-red-900/20"
           >
-            <Plus size={20} /> Create Card
+            <Plus size={18} /> Create Card
           </Link>
         </div>
 
@@ -101,7 +111,9 @@ function StatMiniCard({ label, value, color }) {
         </p>
         <span className="text-3xl font-black">{value}</span>
       </div>
-      <div className={`p-3 rounded-xl bg-white/5 ${color === "red" ? "text-bingo-red" : "text-slate-600"}`}>
+      <div
+        className={`p-3 rounded-xl bg-white/5 ${color === "red" ? "text-bingo-red" : "text-slate-600"}`}
+      >
         <LayoutGrid size={24} />
       </div>
     </div>
@@ -123,21 +135,23 @@ function AdminCardItem({ card, globalEvents, globalUsers = [] }) {
     }
   };
 
-  const { totalEvents, completedEvents, progressPercent } = calculateCardProgress(syncedEvents);
-  
+  const { totalEvents, completedEvents, progressPercent } =
+    calculateCardProgress(syncedEvents);
+
   const purchasesList = globalUsers
     .filter((user) => {
       const userCards = user.cards || [];
-      return userCards.some((userCard) => Number(userCard.id) === Number(card.id));
+      return userCards.some(
+        (userCard) => Number(userCard.id) === Number(card.id),
+      );
     })
     .map((user) => ({
       username: user.username || "Unknown Player",
-      email: user.email || "N/A"
+      email: user.email || "N/A",
     }));
 
   return (
     <div className="bg-slate-900/20 border border-bingo-red rounded-3xl p-6 space-y-6 hover:border-bingo-red/30 transition-all group relative">
-      
       <div className="flex justify-between items-start">
         <div>
           <h3 className="text-xl font-black uppercase leading-tight">
@@ -147,7 +161,10 @@ function AdminCardItem({ card, globalEvents, globalUsers = [] }) {
             Created at {formatDate(card.date)}
           </p>
         </div>
-        <Trophy className="text-bingo-red opacity-50 group-hover:opacity-100 transition-opacity" size={24} />
+        <Trophy
+          className="text-bingo-red opacity-50 group-hover:opacity-100 transition-opacity"
+          size={24}
+        />
       </div>
 
       <div className="flex gap-2">
@@ -157,8 +174,8 @@ function AdminCardItem({ card, globalEvents, globalUsers = [] }) {
         <span className="bg-slate-800 text-[10px] font-black px-2 py-1 rounded text-slate-400 uppercase font-mono">
           {totalEvents} events
         </span>
-        
-        <button 
+
+        <button
           onClick={() => setIsModalOpen(true)}
           className="bg-bingo-red/10 border border-bingo-red/20 text-bingo-red hover:bg-bingo-red hover:text-white transition-all text-[10px] font-black px-2 py-1 rounded flex items-center gap-1 uppercase tracking-tight cursor-pointer font-mono shadow-sm"
         >
@@ -183,18 +200,30 @@ function AdminCardItem({ card, globalEvents, globalUsers = [] }) {
 
       <div className="grid grid-cols-2 gap-4 pt-2">
         <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800">
-          <p className="text-[8px] uppercase font-black text-slate-500">Line Prize</p>
-          <p className="text-green-500 font-bold">€ {card.line_prize ? Number(card.line_prize).toFixed(2) : "0.00"}</p>
+          <p className="text-[8px] uppercase font-black text-slate-500">
+            Line Prize
+          </p>
+          <p className="text-green-500 font-bold">
+            € {card.line_prize ? Number(card.line_prize).toFixed(2) : "0.00"}
+          </p>
         </div>
         <div className="bg-slate-900/50 p-3 rounded-xl border border-slate-800">
-          <p className="text-[8px] uppercase font-black text-slate-500">Bingo Prize</p>
-          <p className="text-yellow-500 font-bold">€ {card.bingo_prize ? Number(card.bingo_prize).toFixed(2) : "0.00"}</p>
+          <p className="text-[8px] uppercase font-black text-slate-500">
+            Bingo Prize
+          </p>
+          <p className="text-yellow-500 font-bold">
+            € {card.bingo_prize ? Number(card.bingo_prize).toFixed(2) : "0.00"}
+          </p>
         </div>
       </div>
 
       <div className="flex justify-between items-center border-t border-slate-800 pt-4">
-        <span className="text-[10px] font-black text-slate-500 uppercase">Cost to Play</span>
-        <span className="text-xl font-black text-yellow-500">€{card.price?.toFixed(2)}</span>
+        <span className="text-[10px] font-black text-slate-500 uppercase">
+          Cost to Play
+        </span>
+        <span className="text-xl font-black text-yellow-500">
+          €{card.price?.toFixed(2)}
+        </span>
       </div>
 
       <div className="grid grid-cols-3 gap-2 pt-2">
@@ -222,7 +251,6 @@ function AdminCardItem({ card, globalEvents, globalUsers = [] }) {
         cardName={card.name}
         purchases={purchasesList}
       />
-
     </div>
   );
 }
