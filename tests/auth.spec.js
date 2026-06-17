@@ -12,9 +12,9 @@ test('register', async ({ page }) => {
     await page.getByRole('textbox', { name: 'name@example.com' }).click();
     await page.getByRole('textbox', { name: 'name@example.com' }).fill('test@example.pt');
     await page.getByRole('textbox', { name: '••••••••' }).first().click();
-    await page.getByRole('textbox', { name: '••••••••' }).first().fill('123456');
+    await page.getByRole('textbox', { name: '••••••••' }).first().fill('Teste123!');
     await page.getByRole('textbox', { name: '••••••••' }).nth(1).click();
-    await page.getByRole('textbox', { name: '••••••••' }).nth(1).fill('123456');
+    await page.getByRole('textbox', { name: '••••••••' }).nth(1).fill('Teste123!');
     await page.getByRole('checkbox', { name: 'I confirm I am 18+ years old.' }).check();
     await page.getByRole('button', { name: 'Create Account' }).click();
     await expect(page.getByText('Welcome back test')).toBeVisible({ timeout: 10000 });
