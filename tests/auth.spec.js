@@ -19,3 +19,30 @@ test('register', async ({ page }) => {
     await page.getByRole('button', { name: 'Create Account' }).click();
     await expect(page.getByText('Welcome back test')).toBeVisible({ timeout: 10000 });
 });
+
+test('login', async ({ page }) => {
+  await page.goto('http://localhost:5173/'); 
+
+  await page.getByRole('link', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'Enter your username' }).click();
+  await page.getByRole('textbox', { name: 'Enter your username' }).fill('admin');
+  await page.getByRole('textbox', { name: 'Enter your username' }).click();
+  await page.getByRole('textbox', { name: '••••••••' }).fill('123');
+  await page.getByRole('button', { name: 'Sign In' }).click();
+  await expect(page.getByText('Welcome back admin')).toBeVisible({ timeout: 10000 });
+});
+
+test('logout', async ({ page }) => {
+  await page.goto('http://localhost:5173/'); 
+
+  await page.getByRole('link', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'Enter your username' }).click();
+  await page.getByRole('textbox', { name: 'Enter your username' }).fill('admin');
+  await page.getByRole('textbox', { name: 'Enter your username' }).click();
+  await page.getByRole('textbox', { name: '••••••••' }).fill('123');
+  await page.getByRole('button', { name: 'Sign In' }).click();
+  await expect(page.getByText('Welcome back admin')).toBeVisible({ timeout: 10000 });
+
+  await page.getByRole('button', { name: 'Logout' }).click();
+  await expect(page.getByText('Welcome back test')).not.toBeVisible({ timeout: 10000 });
+});
