@@ -194,11 +194,11 @@ test('claim-prize', async ({ page }) => {
   
   await page.getByRole('link', { name: 'Wallet' }).click();
 
-  const primeiraTransacao = page.locator('.custom-scrollbar > div').first();
+  const firstTransaction = page.locator('.custom-scrollbar > div').first();
 
-  await expect(primeiraTransacao.locator('p.font-black.text-sm')).toContainText(/prize|win/i);
+  await expect(firstTransaction.locator('p.font-black.text-sm')).toContainText(/prize|win/i);
   
-  const valorTexto = primeiraTransacao.locator('p.text-xl');
-  await expect(valorTexto).toHaveClass(/text-green-500/);
-  await expect(valorTexto).toContainText('+€');
+  const textValue = firstTransaction.locator('p.text-xl');
+  await expect(textValue).toHaveClass(/text-green-500/);
+  await expect(textValue).toContainText('+€');
 });
