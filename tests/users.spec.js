@@ -180,3 +180,25 @@ test('change-role', async ({ page }) => {
   const linhaAtualizada = page.locator('tbody tr', { hasText: usernameTarget });
   await expect(linhaAtualizada.getByText('ADMIN')).toBeVisible({ timeout: 5000 });
 });
+
+
+test('claim-prize', async ({ page }) => {
+  await page.goto('http://localhost:5173/');
+
+  await page.getByRole('link', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'Enter your username' }).fill('bob');
+  await page.getByRole('textbox', { name: '••••••••' }).fill('123456');
+  await page.getByRole('button', { name: 'Sign In' }).click();
+  
+  await page.getByRole('button', { name: 'Collect Rewards' }).click();
+  
+  await page.getByRole('link', { name: 'Wallet' }).click();
+
+  const primeiraTransacao = page.locator('.custom-scrollbar > div').first();
+
+  await expect(primeiraTransacao.locator('p.font-black.text-sm')).toContainText(/prize|win/i);
+  
+  const valorTexto = primeiraTransacao.locator('p.text-xl');
+  await expect(valorTexto).toHaveClass(/text-green-500/);
+  await expect(valorTexto).toContainText('+€');
+});
