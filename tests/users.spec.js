@@ -150,3 +150,55 @@ test('buy-card', async ({ page }) => {
   const successMessage = page.getByText('Card purchased successfully! Good luck.');
   await expect(successMessage).toBeVisible({ timeout: 5000 });
 });
+
+
+test('change-role', async ({ page }) => {
+  await page.goto('http://localhost:5173/');
+
+  await page.getByRole('link', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'Enter your username' }).fill('admin');
+  await page.getByRole('textbox', { name: '••••••••' }).fill('123');
+  await page.getByRole('button', { name: 'Sign In' }).click();
+
+  await page.getByRole('link', { name: 'Admin Panel' }).click();
+  await page.getByRole('link', { name: 'Users Management' }).click();
+
+  const editableUserLine = page.locator('tbody tr', { hasText: 'USER' }).first();
+  await expect(editableUserLine).toBeVisible({ timeout: 5000 });
+
+  const usernameTarget = await editableUserLine.locator('td').nth(1).innerText();
+
+  const editLink = editableUserLine.locator('a').nth(1);
+  await editLink.click();
+
+  await page.getByRole('button', { name: 'User', exact: true }).click();
+
+  await page.locator('div.absolute').getByRole('button', { name: 'Admin', exact: true }).click();
+
+  await page.getByRole('button', { name: 'Save Settings' }).click();
+
+  const linhaAtualizada = page.locator('tbody tr', { hasText: usernameTarget });
+  await expect(linhaAtualizada.getByText('ADMIN')).toBeVisible({ timeout: 5000 });
+});
+
+
+test('claim-prize', async ({ page }) => {
+  await page.goto('http://localhost:5173/');
+
+  await page.getByRole('link', { name: 'Login' }).click();
+  await page.getByRole('textbox', { name: 'Enter your username' }).fill('bob');
+  await page.getByRole('textbox', { name: '••••••••' }).fill('123456');
+  await page.getByRole('button', { name: 'Sign In' }).click();
+  
+  await page.getByRole('button', { name: 'Collect Rewards' }).click();
+  
+  await page.getByRole('link', { name: 'Wallet' }).click();
+
+  const firstTransaction = page.locator('.custom-scrollbar > div').first();
+
+  await expect(firstTransaction.locator('p.font-black.text-sm')).toContainText(/prize|win/i);
+  
+  const textValue = firstTransaction.locator('p.text-xl');
+  await expect(textValue).toHaveClass(/text-green-500/);
+  await expect(textValue).toContainText('+€');
+});
