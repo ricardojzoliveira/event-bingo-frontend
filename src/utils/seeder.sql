@@ -33,7 +33,7 @@ INSERT INTO events (id, prediction, date, sport, status, home_team, away_team) V
 -- ==========================================
 -- 💡 CORRIGIDO: Agora com a assinatura real dos IDs dos eventos em formato string
 INSERT INTO cards (id, name, rows, cols, line_prize, bingo_prize, price, approved, terminated, date, events_signature) VALUES
-(1, 'Champions League Special 3x3', 3, 3, 15.00, 150.00, 2.00, true, false, '2026-05-27 22:00:00', '1 2 3 4 5 6 7 8 9'),
+(1, 'Champions League Special 3x3', 3, 3, 15.00, 150.00, 2.00, true, false, '2026-05-27 22:00:00', '1-2-3-4-5-6-7-8-9'),
 (2, 'Multi-Sport Weekend 3x3',      3, 3, 25.00, 250.00, 3.50, true, false, '2026-05-27 22:00:00', '10 11 12 13 14 15 16 17 18'),
 (3, 'Pro Track 4x4',                4, 4, 50.00, 600.00, 5.00, true, false, '2026-05-27 22:00:00', '1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16'),
 (4, 'The Ultimate Jackpot 5x5',     5, 5, 100.00, 1500.00, 10.00, true, false, '2026-05-27 22:00:00', '1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25');

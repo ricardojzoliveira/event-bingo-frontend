@@ -40,7 +40,7 @@ test("updateStatus", async ({ page }) => {
   await page.getByPlaceholder("Searching Events").fill(gameToSearch);
   await page.waitForTimeout(500); 
 
-  const openEventLine = page.locator("tbody tr").first();
+  const openEventLine = page.locator("tbody tr", { hasText: "PSG" }).first();
   await expect(openEventLine).toBeVisible({ timeout: 5000 });
 
   const cellStatus = openEventLine.locator("td").nth(3);
@@ -64,7 +64,10 @@ test("updateEvent", async ({ page }) => {
   await page.getByRole("link", { name: "Admin Panel" }).click();
   await page.getByRole("link", { name: "Events Management" }).click();
 
-  const editableEventLine = page.locator("tbody tr", { hasNotText: "Read Only" }).first();
+  await page.getByPlaceholder("Searching Events").fill("Benfica");
+  await page.waitForTimeout(500);
+
+  const editableEventLine = page.locator("tbody tr", { hasText: "Benfica vs Braga" }).first();
   await expect(editableEventLine).toBeVisible({ timeout: 5000 });
 
   await editableEventLine.locator("td").last().locator("a").first().click();
@@ -91,16 +94,17 @@ test("deleteEvent", async ({ page }) => {
   await page.getByRole("link", { name: "Admin Panel" }).click();
   await page.getByRole("link", { name: "Events Management" }).click();
 
-  const deletableEventLine = page.locator("tbody tr", { hasNotText: "Read Only" }).first();
-  await expect(deletableEventLine).toBeVisible({ timeout: 5000 });
-
-  const gameToDelete = await deletableEventLine.locator("td span.font-bold").last().innerText();
-
   page.once("dialog", async (dialog) => {
     await dialog.accept();
   });
 
+  await page.getByPlaceholder("Searching Events").fill("Delete");
+  await page.waitForTimeout(500);
+
+  const deletableEventLine = page.locator("tbody tr", { hasText: "Delete vs Event" }).first();
+  await expect(deletableEventLine).toBeVisible({ timeout: 5000 });
+
   await deletableEventLine.locator("td").last().getByRole("button").last().click();
   
-  await expect(page.getByText(gameToDelete)).not.toBeVisible({ timeout: 10000 });
+  await expect(page.getByText("Delete vs Event")).not.toBeVisible({ timeout: 10000 });
 });

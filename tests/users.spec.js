@@ -6,7 +6,7 @@ test('updateProfile', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Enter your username' }).click();
     await page.getByRole('textbox', { name: 'Enter your username' }).fill('bob18');
     await page.getByRole('textbox', { name: '••••••••' }).click();
-    await page.getByRole('textbox', { name: '••••••••' }).fill('123456');
+    await page.getByRole('textbox', { name: '••••••••' }).fill('123');
     await page.getByRole('button', { name: 'Sign In' }).click();
     await page.getByRole('link', { name: 'Profile' }).click();
     await page.getByRole('link', { name: 'Account Settings' }).click();
@@ -34,7 +34,7 @@ test('selfExclude', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Enter your username' }).click();
     await page.getByRole('textbox', { name: 'Enter your username' }).fill('bob17');
     await page.getByRole('textbox', { name: '••••••••' }).click();
-    await page.getByRole('textbox', { name: '••••••••' }).fill('123456');
+    await page.getByRole('textbox', { name: '••••••••' }).fill('123');
     await page.getByRole('button', { name: 'Sign In' }).click();
     await page.getByRole('link', { name: 'Profile' }).click();
     await page.getByRole('link', { name: 'Account Settings' }).click();
@@ -47,7 +47,7 @@ test('selfExclude', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Enter your username' }).click();
     await page.getByRole('textbox', { name: 'Enter your username' }).fill('bob17');
     await page.getByRole('textbox', { name: '••••••••' }).click();
-    await page.getByRole('textbox', { name: '••••••••' }).fill('123456');
+    await page.getByRole('textbox', { name: '••••••••' }).fill('123');
     await page.getByRole('button', { name: 'Sign In' }).click();
     await expect(page.getByText('User is Suspended')).toBeVisible({ timeout: 10000 });
 });
@@ -59,7 +59,7 @@ test('deleteAccount', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Enter your username' }).click();
     await page.getByRole('textbox', { name: 'Enter your username' }).fill('bob16');
     await page.getByRole('textbox', { name: '••••••••' }).click();
-    await page.getByRole('textbox', { name: '••••••••' }).fill('123456');
+    await page.getByRole('textbox', { name: '••••••••' }).fill('123');
     await page.getByRole('button', { name: 'Sign In' }).click();
     await page.getByRole('link', { name: 'Profile' }).click();
     await page.getByRole('link', { name: 'Account Settings' }).click();
@@ -71,7 +71,7 @@ test('deleteAccount', async ({ page }) => {
     await page.getByRole('textbox', { name: 'Enter your username' }).click();
     await page.getByRole('textbox', { name: 'Enter your username' }).fill('bob16');
     await page.getByRole('textbox', { name: '••••••••' }).click();
-    await page.getByRole('textbox', { name: '••••••••' }).fill('123456');
+    await page.getByRole('textbox', { name: '••••••••' }).fill('123');
     await page.getByRole('button', { name: 'Sign In' }).click();
     await expect(page.getByText('User not Found')).toBeVisible({ timeout: 10000 });
 });
@@ -79,8 +79,8 @@ test('deposit', async ({ page }) => {
   await page.goto('http://localhost:5173/');
 
   await page.getByRole('link', { name: 'Login' }).click();
-  await page.getByRole('textbox', { name: 'Enter your username' }).fill('bob');
-  await page.getByRole('textbox', { name: '••••••••' }).fill('123456');
+  await page.getByRole('textbox', { name: 'Enter your username' }).fill('depositTest');
+  await page.getByRole('textbox', { name: '••••••••' }).fill('123');
   await page.getByRole('button', { name: 'Sign In' }).click();
   await page.getByRole('link', { name: 'Wallet' }).click();
 
@@ -105,7 +105,7 @@ test('withdraw', async ({ page }) => {
   await page.goto('http://localhost:5173/');
 
   await page.getByRole('link', { name: 'Login' }).click();
-  await page.getByRole('textbox', { name: 'Enter your username' }).fill('ricardo');
+  await page.getByRole('textbox', { name: 'Enter your username' }).fill('withdrawTest');
   await page.getByRole('textbox', { name: '••••••••' }).fill('123');
   await page.getByRole('button', { name: 'Sign In' }).click();
   await page.getByRole('link', { name: 'Wallet' }).click();
@@ -137,15 +137,21 @@ test('buy-card', async ({ page }) => {
 
   await page.getByRole('link', { name: 'Login' }).click();
   await page.getByRole('textbox', { name: 'Enter your username' }).fill('bob');
-  await page.getByRole('textbox', { name: '••••••••' }).fill('123456');
+  await page.getByRole('textbox', { name: '••••••••' }).fill('123'); 
   await page.getByRole('button', { name: 'Sign In' }).click();
 
   await page.getByRole('link', { name: 'Event Bingo' }).click();
-  const firstCard = page.locator('section > div').first();
+  
+  await page.waitForLoadState('networkidle');
 
-  await firstCard.getByRole('link', { name: /Get Card/i }).click();
+  const targetCard = page.locator('section > div', { hasText: 'Champions League Special 3x3' }).first();
+  await expect(targetCard).toBeVisible({ timeout: 5000 });
 
-  await page.getByRole('button', { name: 'Confirm Purchase' }).click();
+  await targetCard.getByRole('link', { name: /Get Card/i }).click();
+  const confirmButton = page.getByRole('button', { name: 'Confirm Purchase' });
+  await expect(confirmButton).toBeVisible({ timeout: 5000 });
+
+  await confirmButton.click();
 
   const successMessage = page.getByText('Card purchased successfully! Good luck.');
   await expect(successMessage).toBeVisible({ timeout: 5000 });
@@ -163,21 +169,18 @@ test('change-role', async ({ page }) => {
   await page.getByRole('link', { name: 'Admin Panel' }).click();
   await page.getByRole('link', { name: 'Users Management' }).click();
 
-  const editableUserLine = page.locator('tbody tr', { hasText: 'USER' }).first();
+  const editableUserLine = page.locator('tbody tr', { hasText: 'changeRoleTest' }).first();
   await expect(editableUserLine).toBeVisible({ timeout: 5000 });
-
-  const usernameTarget = await editableUserLine.locator('td').nth(1).innerText();
 
   const editLink = editableUserLine.locator('a').nth(1);
   await editLink.click();
 
   await page.getByRole('button', { name: 'User', exact: true }).click();
-
   await page.locator('div.absolute').getByRole('button', { name: 'Admin', exact: true }).click();
 
   await page.getByRole('button', { name: 'Save Settings' }).click();
 
-  const linhaAtualizada = page.locator('tbody tr', { hasText: usernameTarget });
+  const linhaAtualizada = page.locator('tbody tr', { hasText: 'changeRoleTest' }).first();
   await expect(linhaAtualizada.getByText('ADMIN')).toBeVisible({ timeout: 5000 });
 });
 
@@ -186,8 +189,8 @@ test('claim-prize', async ({ page }) => {
   await page.goto('http://localhost:5173/');
 
   await page.getByRole('link', { name: 'Login' }).click();
-  await page.getByRole('textbox', { name: 'Enter your username' }).fill('bob');
-  await page.getByRole('textbox', { name: '••••••••' }).fill('123456');
+  await page.getByRole('textbox', { name: 'Enter your username' }).fill('claimprizetest');
+  await page.getByRole('textbox', { name: '••••••••' }).fill('123');
   await page.getByRole('button', { name: 'Sign In' }).click();
   
   await page.getByRole('button', { name: 'Collect Rewards' }).click();
