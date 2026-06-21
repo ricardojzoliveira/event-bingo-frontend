@@ -1,12 +1,3 @@
--- Enums mapeados como inteiros (smallint):
--- role: 0 = USER, 1 = ADMIN
--- status: 0 = 0 (ou o correspondente numérico do teu Java)
--- ====================================================================
--- 2. POPULAÇÃO DA TABELA: users (Com as Passwords em Hash BCrypt)
--- ====================================================================
--- ====================================================================
--- 2. POPULAÇÃO DA TABELA: users (Hashes Oficiais do BCryptPasswordEncoder)
--- ====================================================================
 INSERT INTO "users" ("id", "avatar", "balance", "email", "full_name", "password", "role", "status", "username") VALUES
 
 (10, 'avatar1', 10.00, 'login@example.com', 'Login Test User', '$2a$10$Ef2IfNuvyuLJ0R0chbNhjOtHSGeM8xFKn2nQqAnZo6bD6qeEK1Wau', 'USER', '0', 'loginTest'),
@@ -20,11 +11,8 @@ INSERT INTO "users" ("id", "avatar", "balance", "email", "full_name", "password"
 (8, 'avatar1', 200.00, 'bob@example.com', 'Bob Trader', '$2a$10$Ef2IfNuvyuLJ0R0chbNhjOtHSGeM8xFKn2nQqAnZo6bD6qeEK1Wau', 'USER', '0', 'bob'),
 (9, 'avatar1', 0.00, 'changerole@example.com', 'Role Test', '$2a$10$Ef2IfNuvyuLJ0R0chbNhjOtHSGeM8xFKn2nQqAnZo6bD6qeEK1Wau', 'USER', '0', 'changeRoleTest'),
 (13, 'avatar1', 0.00, 'claimprize@example.com', 'Prize Test', '$2a$10$Ef2IfNuvyuLJ0R0chbNhjOtHSGeM8xFKn2nQqAnZo6bD6qeEK1Wau', 'USER', '0', 'claimprizetest');
--- ====================================================================
--- 3. POPULAÇÃO DA TABELA: events
--- ====================================================================
--- Status mapeado com base no teu seeder original:
--- 0 = PENDING, 1 = WIN, 2 = LOSE (Ajustado os primeiros para 1 se forem as tuas vitórias trancadas)
+
+
 INSERT INTO "events" ("id", "prediction", "date", "sport", "status", "home_team", "away_team") VALUES
 (1, 'Both teams score', '2026-05-30 20:00:00', 'Football', 2, 'Real Madrid', 'Borussia Dortmund'),
 (2, 'More than 2.5 goals', '2026-05-31 18:00:00', 'Football', 2, 'Sporting', 'Porto'),
@@ -38,7 +26,6 @@ INSERT INTO "events" ("id", "prediction", "date", "sport", "status", "home_team"
 (10, 'Away wins', '2026-06-08 19:00:00', 'Tennis', 2, 'Nadal', 'Djokovic'),
 (11, 'More than 1.5 goals', '2026-06-09 20:45:00', 'Football', 2, 'Arsenal', 'Chelsea'),
 (12, 'Home wins', '2026-06-10 18:30:00', 'Basket', 2, 'Bulls', 'Knicks'),
--- ID 13: O teu evento focado para o teste do PSG (Modo Pending = 0)
 (13, 'Both teams score', '2026-06-11 21:00:00', 'Football', 2, 'PSG', 'Marseille'),
 (14, 'Draw', '2026-06-12 19:00:00', 'Football', 2, 'Atletico Madrid', 'Sevilla'),
 (15, 'More than 2.5 goals', '2026-06-13 16:00:00', 'Football', 2, 'Bayern', 'Dortmund'),
@@ -54,35 +41,22 @@ INSERT INTO "events" ("id", "prediction", "date", "sport", "status", "home_team"
 (25, 'More than 2.5 goals', '2026-06-23 21:00:00', 'Football', 2, 'Real Sociedad', 'Athletic Bilbao'),
 (26, 'Draw', '2024-08-22 21:00:00', 'Football', 2, 'Delete', 'Event');
 
--- ====================================================================
--- 4. POPULAÇÃO DA TABELA: cards
--- ====================================================================
 INSERT INTO "cards" ("id", "name", "rows", "cols", "line_prize", "bingo_prize", "price", "approved", "terminated", "date", "events_signature") VALUES
 (1, 'Champions League Special 3x3', 3, 3, 15.00, 150.00, 2.00, true, false, '2026-05-27 22:00:00', '1-2-3-4-5-6-7-8-9'),
 (2, 'Multi-Sport Weekend 3x3',       3, 3, 25.00, 250.00, 3.50, true, false, '2026-05-27 22:00:00', '10-11-12-13-14-15-16-17-18'),
 (3, 'Edit Card Test',               4, 4, 50.00, 600.00, 5.00, true, false, '2026-05-27 22:00:00', '1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16'),
 (4, 'Delete Card Test',             5, 5, 100.00, 1500.00, 10.00, true, false, '2026-05-27 22:00:00', '1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17-18-19-20-21-22-23-24-25');
 
--- ====================================================================
--- 5. POPULAÇÃO DA TABELA DE JUNÇÃO: card_events
--- ====================================================================
 INSERT INTO "card_events" ("card_id", "event_id") VALUES
 (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9),
 (2, 10), (2, 11), (2, 12), (2, 13), (2, 14), (2, 15), (2, 16), (2, 17), (2, 18),
 (3, 1), (3, 2), (3, 3), (3, 4), (3, 5), (3, 6), (3, 7), (3, 8), (3, 9), (3, 10), (3, 11), (3, 12), (3, 13), (3, 14), (3, 15), (3, 16),
 (4, 1), (4, 2), (4, 3), (4, 4), (4, 5), (4, 6), (4, 7), (4, 8), (4, 9), (4, 10), (4, 11), (4, 12), (4, 13), (4, 14), (4, 15), (4, 16), (4, 17), (4, 18), (4, 19), (4, 20), (4, 21), (4, 22), (4, 23), (4, 24), (4, 25);
 
--- ====================================================================
--- 6. POPULAÇÃO DA TABELA: transactions
--- ====================================================================
--- O tipo (type) é um Enum ordinarizado. Se deposit=0, withdraw=1, prize=2.
--- Altera o '2' abaixo para o índice numérico exato do teu Enum Java para 'prize' se for diferente.
+
 INSERT INTO "transactions" ("id", "amount", "claimed", "date", "type", "user_id") VALUES
 (1, 50.00, false, '2026-06-18 23:00:00', 2, 13);
 
--- ====================================================================
--- 7. ATUALIZAÇÃO DOS SEQUENCERS (PostgreSQL NATIVO)
--- ====================================================================
 SELECT setval('users_seq', (SELECT MAX(id) FROM "users"));
 SELECT setval('events_seq', (SELECT MAX(id) FROM "events"));
 SELECT setval('cards_seq', (SELECT MAX(id) FROM "cards"));

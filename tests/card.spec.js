@@ -17,7 +17,6 @@ test('create-card', async ({ page }) => {
   await page.getByPlaceholder('50', { exact: true }).fill('100');
   await page.getByPlaceholder('500').fill('1000');
 
-  // Garante tempo para a lista de eventos pendentes do seeder carregar via React
   await page.waitForLoadState('networkidle');
 
   for (let i = 0; i < 9; i++) {
@@ -47,7 +46,6 @@ test('edit-card', async ({ page }) => {
   await page.getByRole('link', { name: 'Admin Panel' }).click();
   await page.getByRole('link', { name: 'Cards Management' }).click();
   
-  // 🟢 CORREÇÃO: Foca exatamente no cartão dedicado do seeder
   const targetCardItem = page.locator('div.group.relative', { hasText: 'Edit Card Test' }).first();
   await expect(targetCardItem).toBeVisible({ timeout: 5000 });
   
@@ -74,8 +72,7 @@ test('delete-card', async ({ page }) => {
   
   await page.getByRole('link', { name: 'Admin Panel' }).click();
   await page.getByRole('link', { name: 'Cards Management' }).click();
-  
-  // 🟢 CORREÇÃO: Foca exatamente no cartão do seeder feito para ser apagado
+
   const targetCardItem = page.locator('div.group.relative', { hasText: 'Delete Card Test' }).first();
   await expect(targetCardItem).toBeVisible({ timeout: 5000 });
   
@@ -84,7 +81,6 @@ test('delete-card', async ({ page }) => {
     await dialog.accept();
   });
   
-  // Clica no botão de apagar desse cartão específico
   await targetCardItem.locator('button').last().click();
   
   const cardApagadoHeading = page.getByRole('heading', { level: 3, name: 'Delete Card Test' });
