@@ -97,7 +97,7 @@ export default function Homepage({ role }) {
     {
       number: "3",
       title: "Win Prizes!",
-      desc: "Complete a line to win the base prize, or the full card for the jackpot!",
+      desc: "Complete a line and win immediatelly, or the full card for the bingo prize!",
     },
   ];
 
