@@ -74,7 +74,7 @@ export default function CardManagement() {
             />
             <input
               className="w-full bg-slate-900/50 border border-slate-800 rounded-xl py-3 pl-12 text-sm focus:outline-none"
-              placeholder="Searching Events"
+              placeholder="Searching Cards"
               value={searchBox}
               onChange={(e) => setSearchBox(e.target.value)}
             />

@@ -119,10 +119,10 @@ export default function Homepage({ role }) {
         </div>
       </header>
 
-      <ClaimPrize 
-        transactions={transactions} 
-        currentUserId={currentUser?.id} 
-        onCollect={handleCollectPrize} 
+      <ClaimPrize
+        transactions={transactions}
+        currentUserId={currentUser?.id}
+        onCollect={handleCollectPrize}
       />
 
       {role === "user" && (
@@ -168,9 +168,17 @@ export default function Homepage({ role }) {
                     {card.name}
                   </h2>
                   {card.isPurchased && (
-                    <span className="bg-green-500/10 backdrop-blur-md text-[9px] font-black px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-green-400 uppercase tracking-wider border border-green-500/20 shadow-lg shrink-0 mt-1">
-                      <Check size={11} strokeWidth={4} /> In&nbsp;Play
-                    </span>
+                    <>
+                      {card.pending > 0 ? (
+                        <span className="bg-green-500/10 backdrop-blur-md text-[9px] font-black px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-green-400 uppercase tracking-wider border border-green-500/20 shadow-lg shrink-0 mt-1">
+                          <Check size={11} strokeWidth={4} /> In&nbsp;Play
+                        </span>
+                      ) : (
+                        <span className="bg-slate-500/10 backdrop-blur-md text-[9px] font-black px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-slate-400 uppercase tracking-wider border border-slate-500/20 shadow-lg shrink-0 mt-1">
+                          <History size={11} /> Completed
+                        </span>
+                      )}
+                    </>
                   )}
                 </div>
 
@@ -195,7 +203,10 @@ export default function Homepage({ role }) {
                       Line Prize
                     </span>
                     <strong className="text-lg font-black text-slate-200 tracking-tight">
-                      € {card.line_prize ? Number(card.line_prize).toFixed(2) : "0.00"}
+                      €{" "}
+                      {card.line_prize
+                        ? Number(card.line_prize).toFixed(2)
+                        : "0.00"}
                     </strong>
                   </div>
 
@@ -204,7 +215,10 @@ export default function Homepage({ role }) {
                       <Trophy size={11} /> Bingo Prize
                     </span>
                     <strong className="text-lg font-black text-white tracking-tight">
-                      € {card.bingo_prize ? Number(card.bingo_prize).toFixed(2) : "0.00"}
+                      €{" "}
+                      {card.bingo_prize
+                        ? Number(card.bingo_prize).toFixed(2)
+                        : "0.00"}
                     </strong>
                   </div>
                 </div>
@@ -225,11 +239,15 @@ export default function Homepage({ role }) {
                       <>
                         <div
                           className="bg-green-500 h-full rounded-full transition-all duration-700"
-                          style={{ width: `${(card.wins / card.total) * 100}%` }}
+                          style={{
+                            width: `${(card.wins / card.total) * 100}%`,
+                          }}
                         />
                         <div
                           className="bg-bingo-red h-full rounded-full transition-all duration-700"
-                          style={{ width: `${(card.losses / card.total) * 100}%` }}
+                          style={{
+                            width: `${(card.losses / card.total) * 100}%`,
+                          }}
                         />
                       </>
                     ) : (
@@ -256,7 +274,9 @@ export default function Homepage({ role }) {
                     <>
                       <span>Get Card</span>
                       <span className="opacity-30 font-normal">|</span>
-                      <span className="text-white">€{card.price?.toFixed(2)}</span>
+                      <span className="text-white">
+                        €{card.price?.toFixed(2)}
+                      </span>
                     </>
                   )}
                 </Link>
@@ -279,7 +299,10 @@ export default function Homepage({ role }) {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
             {steps.map((step, index) => (
-              <div key={index} className="flex flex-col items-center text-center gap-5">
+              <div
+                key={index}
+                className="flex flex-col items-center text-center gap-5"
+              >
                 <div className="w-14 h-14 bg-bingo-red text-white flex items-center justify-center rounded-2xl text-2xl font-black rotate-3 shadow-lg shadow-red-950/30">
                   <span className="-rotate-3">{step.number}</span>
                 </div>
