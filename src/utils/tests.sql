@@ -12,7 +12,6 @@ INSERT INTO "users" ("id", "avatar", "balance", "email", "full_name", "password"
 (9, 'avatar1', 0.00, 'changerole@example.com', 'Role Test', '$2a$10$Ef2IfNuvyuLJ0R0chbNhjOtHSGeM8xFKn2nQqAnZo6bD6qeEK1Wau', 'USER', '0', 'changeRoleTest'),
 (13, 'avatar1', 0.00, 'claimprize@example.com', 'Prize Test', '$2a$10$Ef2IfNuvyuLJ0R0chbNhjOtHSGeM8xFKn2nQqAnZo6bD6qeEK1Wau', 'USER', '0', 'claimprizetest');
 
-
 INSERT INTO "events" ("id", "prediction", "date", "sport", "status", "home_team", "away_team") VALUES
 (1, 'Both teams score', '2026-05-30 20:00:00', 'Football', 2, 'Real Madrid', 'Borussia Dortmund'),
 (2, 'More than 2.5 goals', '2026-05-31 18:00:00', 'Football', 2, 'Sporting', 'Porto'),
