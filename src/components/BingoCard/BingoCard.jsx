@@ -20,24 +20,38 @@ export default function BingoCard({ data, isLogged }) {
 
   const gridSize = data?.cols || 3;
 
+  // Força o número fixo de colunas
   const gridColsClasses = {
-    3: "sm:grid-cols-3",
-    4: "sm:grid-cols-4",
-    5: "sm:grid-cols-5",
+    3: "grid-cols-3",
+    4: "grid-cols-4",
+    5: "grid-cols-5",
   };
 
-  const smGridClass = gridColsClasses[gridSize] || "sm:grid-cols-3";
+  // Ajusta o espaçamento (gap) consoante o tamanho do cartão
+  const gridGapClasses = {
+    3: "gap-1.5 sm:gap-6",
+    4: "gap-1 sm:gap-4",
+    5: "gap-0.5 sm:gap-3", // Gap mínimo para 5x5 caber no telemóvel
+  };
+
+  const gridClass = gridColsClasses[gridSize] || "grid-cols-3";
+  const gapClass = gridGapClasses[gridSize] || "gap-1.5 sm:gap-6";
 
   return (
-    <div className="border border-bingo-red rounded-2xl p-4 sm:p-8 bg-bingo-dark] shadow-[0_0_20px_rgba(220,38,38,0.1)] text-white w-full max-w-full overflow-hidden">
-      <h3 className="font-bold text-xl mb-6 uppercase tracking-tight italic">Bingo Card</h3>
+    <div className="border border-bingo-red rounded-2xl p-2 sm:p-8 bg-bingo-dark shadow-[0_0_20px_rgba(220,38,38,0.1)] text-white w-full max-w-full overflow-hidden">
+      <h3 className="font-bold text-lg sm:text-xl mb-4 sm:mb-6 uppercase tracking-tight italic">
+        Bingo Card
+      </h3>
 
       {sortedEvents.length > 0 ? (
-        <div
-          className={`grid grid-cols-[repeat(auto-fit,minmax(140px,1fr))] ${smGridClass} gap-3 sm:gap-6 mx-auto`}
-        >
+        <div className={`grid ${gridClass} ${gapClass} mx-auto w-full`}>
           {sortedEvents.map((event) => (
-            <BingoSquare key={event.id} event={event} isLogged={isLogged} />
+            <BingoSquare 
+              key={event.id} 
+              event={event} 
+              isLogged={isLogged} 
+              gridSize={gridSize} // Passa o gridSize para o filho ajustar a fonte!
+            />
           ))}
         </div>
       ) : (

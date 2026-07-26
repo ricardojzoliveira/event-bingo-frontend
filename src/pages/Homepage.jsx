@@ -126,7 +126,7 @@ export default function Homepage({ role }) {
       />
 
       {role === "user" && (
-        <div className="flex gap-3 p-2 bg-bingo-dark/40 rounded-3xl border border-bingo-red/20 mb-12 backdrop-blur-md">
+        <div className="flex flex-col sm:flex-row w-full max-w-md sm:max-w-none sm:w-auto gap-3 p-2 bg-bingo-dark/40 rounded-3xl border border-bingo-red/20 mb-12 backdrop-blur-md">
           <TabButton
             active={activeTab === "market"}
             onClick={() => setActiveTab("market")}
@@ -341,7 +341,7 @@ function TabButton({ active, onClick, icon, label, count }) {
   return (
     <button
       onClick={onClick}
-      className={`px-5 py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all flex items-center gap-2.5 border ${
+      className={`w-full sm:w-auto px-5 py-3 rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all flex items-center justify-center gap-2.5 border ${
         active
           ? "bg-bingo-red border-transparent text-white shadow-xl shadow-red-950/30 scale-105"
           : "border-transparent bg-transparent text-slate-500 hover:text-slate-300"
